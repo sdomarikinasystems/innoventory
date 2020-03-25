@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'url' => secure_url('APP_URL', 'https://procms.depedmarikina.ph'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------

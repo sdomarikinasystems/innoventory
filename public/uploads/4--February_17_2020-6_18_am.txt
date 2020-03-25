@@ -1,0 +1,80 @@
+--- SMES ---
+Username: smes
+password: 1809smes
+IP Address: 192.168.254.111
+
+--- SSSVES ---
+Username: sssves
+Password: 4316sssves
+IP Address: 192.168.0.116
+
+--- SRES ---
+Username: sres
+Password: sres02
+IP Address: 192.168.56.1
+
+--- NES ---
+Username: nes
+Password: nes552663
+IP Address: 192.168.0.16
+
+--- FES ---
+Username: fes
+Password: fes316
+IP Address: 10.138.126.170
+
+--- BES ---
+Username: bes
+Password: bes123456
+IP Address: 192.168.1.32
+
+--- HBES---
+Username: hbes
+Password: 1920hbes
+IP Address: 192.168.1.57
+
+--- CES ---
+Username: ces
+Password: ces739
+IP Address: 192.168.254.104
+
+--- PES ---
+Username: pes
+Password: pes123
+IP Address: 192.168.100.233
+
+--- MALES ---
+Username: males
+Password: males123
+IP Address: 192.168.1.38
+
+--- IVES ---
+Username: ives
+Password: ives321
+IP Address: 192.168.254.16
+
+--- LVES ---
+username: lves
+password: lves777
+IP Address: 
+
+-- MES ---
+Username: mes
+Password: mes333
+IP Address: 192.168.137.1
+
+--- SNES ---
+Username: snes
+Password: 3120snes
+IP Address: 192.168.254.102
+
+--- KMES ---
+Username: kmes
+Password: 1233kmes
+IP Address: 192.168.1.3
+
+--- KES ---
+Username: kes
+Password: kes444
+IP Address: 192.168.254.9
+

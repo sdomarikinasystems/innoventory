@@ -113,6 +113,7 @@ Route::post("/display_reminders_byorigin",["uses"=>"functions@getremorgi","as"=>
 Route::post("/delete_this_rmeinder_inhouse",["uses"=>"functions@delremthis","as"=>"deletethisreminder"]);
 Route::post("/load_new_announcements",["uses"=>"functions@lodnewannounce","as"=>"getmynewannouncements"]);
 Route::post("/load_allofmy_assuploads",["uses"=>"functions@lodresups","as"=>"getmyresourcesofassets"]);
+Route::post("/load_all_resource_bylatest",["uses"=>"functions@load_res_all_bylatest","as"=>"getallreourcesbylatest"]);
 Route::post("/upload_res_now",["uses"=>"functions@upresnow","as"=>"uploadresourcenow"]);
 Route::post("/delete_resource_singleton",["uses"=>"functions@deleresnow","as"=>"del_a_re_now"]);
 Route::post("/find_new_service_centers",["uses"=>"functions@findnewservcen","as"=>"findnewsercen"]);

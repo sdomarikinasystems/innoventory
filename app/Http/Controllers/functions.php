@@ -2739,6 +2739,60 @@ $omitted_tbl = "";
             Alert::success("Asset Uploaded.");
             return view("assetuploadresult",["i_newly"=>$inserted_new,"i_existing"=>$inserted_alreadyexisting,"i_not"=>$inserted_not,"i_logs"=>$mylogs,"i_incomplete"=>$blankcols,"total_assets"=>$tots,"nothere"=>$nothere,"omcount"=>$omitted_count,"om_logs"=>$omitted_tbl]);
     }
+     public function load_res_all_bylatest(){
+
+      $tag = $this->sdm_encrypt("get_uploaded_assets_allstation_bylatest",PKEY);
+      $client = new \GuzzleHttp\Client();
+            $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
+            "tag"=>$tag,
+        ]]);
+
+      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents(),PKEY),true);
+      $toecho = "";
+      for ($i=0; $i < count($output); $i++) { 
+        $toecho .= "<tr>
+<td>" . $output[$i]["name"] . "</td>
+
+          <td>";
+          switch($output[$i]["fileformat"]){
+           case "csv":
+             $toecho .= '<h4><i class="fas fa-file-csv"></i></h4>';
+           break;
+            case "pdf":
+             $toecho .= '<h4><i class="far fa-file-pdf"></i></h4>';
+           break;
+            case "docx":
+             $toecho .= '<h4><i class="fas fa-file-word"></i></h4>';
+           break;
+            case "xlsx":
+             $toecho .= '<h4><i class="fas fa-table"></i></h4>';
+           break;
+           case 'xls':
+             $toecho .= '<h4><i class="far fa-file-excel"></i></h4>';
+             break;
+            case "txt":
+             $toecho .= '<h4><i class="far fa-sticky-note"></i></h4>';
+           break;
+            }
+            $toecho .= "</td><td><a download='" . $output[$i]["realname"] . "' href='" . asset( '/uploads/' . $output[$i]["filename"]) . "'>" .  $output[$i]["realname"];
+            $toecho .= "</a></td>
+           <td>";
+
+
+           if ($output[$i]["username"] == "") {
+              $toecho .= "Not Available";
+           }else{
+            $toecho .= $output[$i]["username"];
+           }
+
+           $toecho .= "</td>
+            <td>" . date("F d, Y g:i a",strtotime($output[$i]["dateuploaded"])) . "</td>
+     
+        </tr>";
+      }
+
+      return $toecho;
+    }
     public function lodresups(){
 
       $tag = $this->sdm_encrypt("get_uploaded_assets",PKEY);
@@ -2778,21 +2832,14 @@ $omitted_tbl = "";
             }
 
 
-            $toecho .= "</td><td>" .  $output[$i]["realname"];
-            $toecho .= "</td>
+            $toecho .= "</td><td>  <a download='" . $output[$i]["realname"] . "' href='" . asset( '/uploads/' . $output[$i]["filename"]) . "'>" .  $output[$i]["realname"];
+            $toecho .= "</a></td>
            <td>" . $output[$i]["username"] . "</td>
             <td>" . date("F d, Y g:i a",strtotime($output[$i]["dateuploaded"])) . "</td>
              <td>
-              <div class='dropdown'>
-  <a class='btn btn-sm btn-primary dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-    Actions
-  </a>
+        
+     <a class='btn btn-danger btn-sm' onclick='opendeleteresource(this)' data-rid='" . $output[$i]["assetidres"] . "' data-toggle='modal' data-target='#modal_delnow' href='#'><i class='far fa-trash-alt'></i> Delete</a>
 
-  <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
-    <a download='" . $output[$i]["realname"] . "' class='dropdown-item' href='" . asset( '/uploads/' . $output[$i]["filename"]) . "'><i class='fas fa-file-download'></i> Download</a>
-     <a class='dropdown-item' onclick='opendeleteresource(this)' data-rid='" . $output[$i]["assetidres"] . "' data-toggle='modal' data-target='#modal_delnow' href='#'><i class='far fa-trash-alt'></i> Delete</a>
-  </div>
-</div>
              </td>
         </tr>";
       }

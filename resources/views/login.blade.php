@@ -51,18 +51,19 @@ ProcMS Innoventory
 						<div class="row">
 						<div class="col-lg-12">							
 							<div class="form-group">
+								<span class="float-right" id="em_val"></span>
 								<label><i class="far fa-id-card"></i> DepEd Email</label>
-								<input required="" autocomplete="off" type="email" placeholder="" class="form-control form-control-lg" name="user_employee_id">
+								<input required="" onchange="email_validator()"  autocomplete="off" id="typed_email" type="email" placeholder="ex: person@deped.gov.ph" class="form-control form-control-lg" name="user_employee_id">
 							</div>
 						</div>
 						<div class="col-lg-12 col-right">
 							<div class="form-group">
 								<label><i class="fas fa-shield-alt"></i> Password</label>
-								<input required="" autocomplete="off" type="password" placeholder="" class="form-control form-control-lg" name="user_employee_password">
+								<input required="" autocomplete="off" type="password" placeholder="Enter your password..." class="form-control form-control-lg" name="user_employee_password">
 							</div>
 						</div>
 						<div class="col-lg-12">
-							<button style="margin-top: 5px;" name="btn_login" class="btn btn-primary float-right" type="submit">Sign in <i class="fas fa-arrow-right"></i></button>
+							<button style="margin-top: 5px;" name="btn_login" id="btnsub" class="btn btn-primary float-right" type="submit">Sign in <i class="fas fa-arrow-right"></i></button>
 						</div>				
 					</form>
 					</div>			
@@ -72,6 +73,19 @@ ProcMS Innoventory
 	</div>
 </div>
 
+
+<script type="text/javascript">
+	function email_validator(){
+		var typedemail = $("#typed_email").val().toLowerCase();
+		if(!typedemail.includes("deped.gov.ph")){
+			$("#em_val").html("<span style='color:red;'>Not a valid deped email!</span>");
+			$("#btnsub").prop("disabled",true);
+		}else{
+			$("#em_val").html("");
+			$("#btnsub").prop("disabled",false);
+		}
+	}
+</script>
 <!-- </div> -->
 
 <center>
