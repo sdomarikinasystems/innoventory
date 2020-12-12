@@ -23,15 +23,15 @@ ProcMS - Innoventory
 			<select class="form-control" onchange="	LoadContentsbyservicecenter(this)" id="id_qrfilter">
 				
 			</select>
+
 		</div>
+		<a href="" class="mt-3" data-toggle="modal" data-target="#modal_miss"><i class="fas fa-question-circle"></i> Why some of my asset(s) are not displaying?</a>
 	</div>
 	<div class="col-sm-6">
 	<div class="card" id="startinginfo">
 		<div class="card-body">
 			<h5><i class="fas fa-tasks"></i> Check item(s) to Generate</h5>
 			<h6>You can <strong>Check All</strong> to print all QR Stickers for your asset(s) or individually select and filter them.</h6>
-			<hr>
-			<a href="" data-toggle="modal" data-target="#modal_miss"><i class="fas fa-question-circle"></i> I'm missing some items here</a>
 		</div>
 	</div>
 

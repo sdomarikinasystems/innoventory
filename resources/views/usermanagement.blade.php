@@ -60,7 +60,7 @@ ProcMS - Innoventory
   </div>
 </div>
 
-<form action="{{ route('add_a_new_user') }}" method="POST">
+<form action="{{ route('add_a_new_user') }}" autocomplete="off" method="POST">
   <div class="modal" tabindex="-1" role="dialog" id="modal_newaccount">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -89,48 +89,43 @@ ProcMS - Innoventory
               <div class="form-group">
           <label>Employee ID</label>
           <input type="text"  maxlength="7" minlength="7" required="" class="form-control" autocomplete="off" name="x_empid">
+        <p class="text-muted">This will be the default password for this account.</p>
       </div>
           </div>
           <div class="col-md-6">
               <div class="form-group">
           <label>Account Type</label>
-
-          <?php 
+            <?php 
             if(session("user_type")== "1"){
-           
-              ?>
+            ?>
    <!-- DIVISION SUPPY OFFICER -->
-    <select id="addtype" class="form-control"  name="x_usertype">
-               <option value="2">Principal</option>
+            <select id="addtype" class="form-control" required=""  name="x_usertype">
+              <option value=''  selected="" disabled="">Choose...</option>
+              <option value="2">Principal</option>
               <option value="3">Property Custodian</option>
-               <option value="4">Center Manager</option>
-          </select>
-              <?php
-            }else if(session("user_type")== "3"){
-?>
-   <select class="form-control"  name="x_usertype">
               <option value="4">Center Manager</option>
-          </select>
-
-
-<?php
-
+            </select>
+            <?php
+            }else if(session("user_type")== "3"){
+            ?>
+            <select id="addtype" class="form-control" required=""  name="x_usertype">
+            <option value="4">Center Manager</option>
+            </select>
+            <?php
             }else if(session("user_type")== "0"){
-              ?>
+            ?>
               <!-- //ADMIN -->
-
-               <select id="addtype" class="form-control"  name="x_usertype">
+            <select id="addtype" class="form-control" required=""  name="x_usertype">
+              <option value=''  selected="" disabled="">Choose...</option>
               <option value="0">Admin</option>
               <option value="1">Division Supply Officer</option>
               <option value="2">Principal</option>
               <option value="3">Property Custodian</option>
               <option value="4">Center Manager</option>
-          </select>
-
+            </select>
               <?php
             }
           ?>
-        
       </div>
           </div>
 
@@ -140,21 +135,16 @@ ProcMS - Innoventory
 // string of specified length 
 function random_strings($length_of_string) 
 { 
-
   // String of all alphanumeric character 
   $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; 
-
   // Shufle the $str_result and returns substring 
   // of specified length 
   return substr(str_shuffle($str_result), 
           0, $length_of_string); 
 } 
-
 // This function will generate 
 // Random string of length 10 
 $cocoa =  random_strings(10); 
-
-
 ?> 
  <input type="hidden" value="<?php echo $cocoa; ?>" minlength="6"  required="" class="form-control" autocomplete="off" name="x_pass">
 <input type="hidden" value="<?php echo $cocoa; ?>" minlength="6"  required="" class="form-control" autocomplete="off" name="x_repass">
@@ -283,7 +273,40 @@ $cocoa =  random_strings(10);
     </div>
   </div>
 </form>
+
+<form action="{{ route('shoot_reset_account_password') }}" method="POST">
+  {{ csrf_field() }}
+  <div class="modal" tabindex="-1" role="dialog" id="m_resetpass">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reset Account Password</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="theempid" name="employeeid">
+        <input type="hidden" id="theempnumber" name="employeenumber">
+        <p>Change password to default(Employee Number)?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Reset Password</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+
 <script type="text/javascript">
+
+  function lod_resetpass(control_obj){
+    $("#theempid").val($(control_obj).data("empid"));
+    $("#theempnumber").val($(control_obj).data("empnumber"));
+    
+  }
 function lod_editacc(control_obj){
   var theid_myval = $(control_obj).data("empid");
   // alert(theid_myval);
@@ -328,7 +351,7 @@ $("#emp_id_del").val($(control_obj).data("empid"));
     }
   })
     function setupcreate(){
-     $("#addtype").val("4");
+     // $("#addtype").val("4");
      $("#all_sc_name").val("{{ session('user_school') }}");
     }
 </script>

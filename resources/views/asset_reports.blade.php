@@ -6,19 +6,15 @@ ProcMS - Innoventory
 
 @section('contents')
 <style>
-.sub-group > li {
-	border: 0;
-}
-
-.list-group-dropdown {
-	display: none;
-}
-
-.list-group-dropdown > li {
-	padding: 8px 15px;
-}
-
-
+	.sub-group > li {
+		border: 0;
+	}
+	.list-group-dropdown {
+		display: none;
+	}
+	.list-group-dropdown > li {
+		padding: 8px 15px;
+	}
 </style>
 
 <h2>Reports</h2>

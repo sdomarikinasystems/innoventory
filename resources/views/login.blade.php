@@ -9,7 +9,8 @@ ProcMS Innoventory
 	@import url('https://fonts.googleapis.com/css?family=Work+Sans&display=swap');
 	body{
 		font-family: 'work sans', sans-serif;
-		background-image: url('https://images.pexels.com/photos/242236/pexels-photo-242236.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+		/*background-image: url('https://images.pexels.com/photos/242236/pexels-photo-242236.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');*/
+		background-color: #F7F7F9;
 		background-attachment: fixed;	
 	}
 	
@@ -25,7 +26,15 @@ ProcMS Innoventory
 	p {
 		margin-bottom: 0;
 	}
-	
+
+	@media only screen and (max-width: 600px) {
+  #pr_postion{
+		margin-top: 0px !important;
+	}
+}
+	#pr_postion{
+		margin-top: 60px;
+	}
 </style>
 
 <script type="text/javascript">
@@ -34,18 +43,16 @@ ProcMS Innoventory
 
 <div class="container login-container">
 	<div class="row">
-		<div class="col-sm-6" style="padding: 20px; background-color: #2980b9; border: 1px solid #666;">
-			<p>Procurement Management System</p>
-			<h2>INNOVENTORY</h2>
+		<div class="col-sm-6" style="padding: 20px; border-radius: 10px; background-color: #007DFF;">
+			<p id="pr_postion">Procurement Management System</p>
+			<h2 class="featurefont">INNOVENTORY</h2>
 			<hr>
 			<p>A project of the Schools Division Office - Marikina City <br> for School Year 2020-2021</p>
 		</div>
 		<div class="col-sm-6 col-left">
 			<div class="card">
-				<div class="card-header">
-					<h5>Sign-in</h3>
-				</div>
 				<div class="card-body">
+					<h5 class="mb-4 mt-0">Sign-in</h3>
 					<form action="{{ route('proc_sign_protocol') }}" method="POST">
 					   {{ csrf_field() }}
 						<div class="row">
@@ -72,7 +79,6 @@ ProcMS Innoventory
 		</div>
 	</div>
 </div>
-
 
 <script type="text/javascript">
 	function email_validator(){

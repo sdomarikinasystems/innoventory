@@ -139,7 +139,7 @@ if($_GET["isown"]){
 
      $.ajax({
     type: "POST",
-    url: "get_discrep_indetail",
+    url: "{{ route('lod_dis_indetail') }}",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
     success: function(data){
       $("#allassdisctbl").html(data);

@@ -134,3 +134,24 @@ Route::post("/see_inventory_station_status",["uses"=>"functions@get_station_in_s
 Route::post("/report_omitted_asset_singleton",["uses"=>"functions@rep_om_sing","as"=>"report_omitted_singleton"]);
 Route::post("/display_omitted_data",["uses"=>"functions@display_omitted_of_station","as"=>"disp_omm_reps"]);
 Route::post("/report_all_omitted_assets",["uses"=>"functions@rep_all_om_ass","as"=>"reportallomassets"]);
+
+// INNOVENTROY VERSION 2 
+
+// ASSET REGISTRY 
+Route::post("/add_new_semi_expendable",["uses"=>"functions@fire_add_semi_expendible","as"=>"shoot_add_semi_expendible"]);
+Route::post("/validate_uploaded_cvs_file",["uses"=>"functions@fire_preview_csv_semiexpendable","as"=>"shoot_preview_csv_semiexpendable"]);
+Route::post("/get_all_my_service_center",["uses"=>"functions@look_all_ofmy_service_center","as"=>"shoot_all_ofmy_service_center"]);
+Route::post("/get_semi_expendablebystation",["uses"=>"functions@look_semi_expendable_bystation","as"=>"stole_semi_expendable_bystation"]);
+
+Route::post("/get_mysemi_discrepancies",["uses"=>"functions@look_my_semiexpendable_descrepancies","as"=>"stole_my_semiexpendable_descrepancies"]);
+
+
+// USER MANAGEMENT
+Route::post("/reset_password_byadmin",["uses"=>"functions@fire_reset_account_password","as"=>"shoot_reset_account_password"]);
+
+
+
+// SEMI EXPENDIBLE VALIDATION PAGE
+Route::get("/innoventory/asset_registry/semi_expendable",["uses"=>"functions@fly_semi_expendable_validationpage","as"=>"goto_semi_expendable_validationpage"]);
+
+

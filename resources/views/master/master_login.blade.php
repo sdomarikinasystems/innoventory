@@ -24,7 +24,93 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<style type="text/css">
+@font-face {
+  font-family: archfont;
+  src: url({{ asset('fonts/Archive.otf')  }});
+}
+.featurefont{
+	font-family: archfont;
+}
 
+	pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+	.btn{
+		border-radius: 50px;
+		border:none;
+		min-width: 60px;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.alert{
+		border-radius: 6px;
+	}
+	.card{
+		border-radius: 10px !important;
+		animation-name: scale-in;
+		animation-duration: 0.3s;
+	}
+	.breadcrumb{
+		border-radius: 2px !important;
+	}
+	.modal-content{
+		border-radius: 6px !important;
+		border:none;
+		animation-name: scale-in;
+		animation-duration: 0.3s;
+	}
+	.dropdown-menu{
+		border-radius: 6px !important;
+		/*border:none;*/
+		box-shadow: 0px 20px 50px rgba(0,0,0,0.2);
+		background-color: rgba(255,255,255,0.9);
+	}
+	.form-control{
+		border-radius: 6px !important;
+		background-color: #dfe4ea;
+		border:none;
+	}
+	/*.form-control{
+		border-radius: 2px !important;
+	}*/
+	
+	.sub-list-group {
+		margin-top: 10px;
+		list-style-type: none;
+	}
+	
+	.sub-list-group > .sub-list {
+		padding: 8px 0;
+	}
+		.btn-primary{
+		background-color: #007DFF;
+	}
+	.btn-success{
+		background-color: #4DDB5E;
+	}
+	.btn-danger{
+		background-color: #FF3A30;
+	}
+	.btn-secondary{
+		color: black;
+		background-color: #DEDEDE;
+	}
+	.btn-warning{
+		background-color: #F6CB01;
+	}
+	@keyframes scale-in{
+		0%{
+			transform: scale(0.9);
+		}
+	}
+	
+</style>
 
 <body>
 	@include('sweet::alert')

@@ -6,7 +6,7 @@ ProcMS - Innoventory
 
 @section('contents')
 
-<h2>Asset Registry - Upload Summary</h2>
+<h2><i class="fas fa-box"></i> <span >Capital Outlay - Upload Summary</h2>
 
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
@@ -23,27 +23,27 @@ ProcMS - Innoventory
 				<tr>
 					<td>
 						<h6 class="text-muted">Total CSV Assets</h6>
-		<h2>{{ $total_assets }}</h2>
+		<h2>{{ $_GET['total_assets'] }}</h2>
 					</td>
 					<td>
 						<h6 class="text-muted">Inserted</h6>
-		<h2>{{ $i_newly }}</h2>
+		<h2>{{ $_GET['i_newly'] }}</h2>
 					</td>
 					<td>
 						<h6 class="text-muted">Not Inserted</h6>
-		<h2>{{ $i_not }}</h2>
+		<h2>{{ $_GET['i_not'] }}</h2>
 					</td>
 					<td>
 						<h6 class="text-muted">Updated</h6>
-		<h2>{{ $i_existing }}</h2>
+		<h2>{{ $_GET['i_existing'] }}</h2>
 					</td>
 					<td>
 						<h6 class="text-muted">Incomplete</h6>
-		<h2>{{ $i_incomplete }}</h2>
+		<h2>{{ $_GET['i_incomplete'] }}</h2>
 					</td>
 					<td>
 						<h6 class="text-muted">Omitted</h6>
-		<h2>{{ $omcount }}</h2>
+		<h2>{{ $_GET['omcount'] }}</h2>
 					</td>
 					<td>
 						<h6 class="text-muted">New Service Center(s)</h6>
@@ -54,10 +54,19 @@ ProcMS - Innoventory
 		</table>
 	</div>
 	<div class="col-sm-12 mb-4">
-		<div class="card">
-			<div class="card-body table-responsive">
-				<h5 class="card-title"><i class="fas fa-exclamation-triangle"></i> Assets with discrepancies</h5>
-				<table class="table table-sm table-bordered table-striped " id="tbl_allregups">
+
+		 <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+		  <li class="nav-item">
+		    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-exclamation-triangle"></i> Discrepancies</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-search-minus"></i> Omitted</a>
+		  </li>
+
+		</ul>
+		<div class="tab-content" id="pills-tabContent">
+		  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+<table class="table table-sm table-bordered table-striped " id="tbl_allregups">
 					<thead>
 						<tr>
 							<th>Property Number</th>
@@ -66,20 +75,12 @@ ProcMS - Innoventory
 						</tr>
 					</thead>
 					<tbody>
-						<?php echo $i_logs ?>
+						<?php echo $_GET["i_logs"]; ?>
 					</tbody>
 				</table>
-			</div>
-		</div>				
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-sm-12">
-		<div class="card">
-			<div class="card-body table-responsive">
-				<h5 class="card-title"><i class="fas fa-search-minus"></i> Assets not found from the recent upload</h5>
-				<table class="table table-sm table-bordered table-striped " id="tbl_allomitt">
+		  </div>
+		  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+<table class="table table-sm table-bordered table-striped " id="tbl_allomitt">
 					<thead>
 						<tr>
 						  <th scope="col">Property Number</th>
@@ -92,13 +93,16 @@ ProcMS - Innoventory
 						</tr>
 					</thead>
 					<tbody>
-						<?php echo $om_logs; ?>
+						<?php echo $_GET["om_logs"]; ?>
 					</tbody>
 				</table>
-			</div>
+		  </div>
+
 		</div>
+
 	</div>
 </div>
+
 
 <form action="{{ route('importallfoundservicecenters') }}" method="POST">
 		{{ csrf_field() }}
@@ -140,7 +144,7 @@ ProcMS - Innoventory
 	
   $("#tbl_allregups").DataTable();
 
-  var omcount = <?php echo json_encode($omcount); ?>;
+  var omcount = <?php echo json_encode($_GET["omcount"]); ?>;
   if(omcount != ""){
  $("#tbl_allomitt").DataTable();
  $("#om_panel").css("display","block");

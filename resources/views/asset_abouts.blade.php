@@ -24,7 +24,7 @@ ProcMS - Innoventory
     <div class="card mt-3">
       <div class="card-body">
         <img src="{{ asset('images/icon.png')}}" style="width: 100px;">
-        <h5 class="card-title mt-3">ProcMS - Innoventory <small>v.0.1</small></h5>
+        <h5 class="card-title mt-3">ProcMS - Innoventory <small>v.2.1</small><br>2020 - {{ date("Y") }}</h5>
         <h6 class="card-subtitle text-muted">Developed by SDO - Marikina Information and Communication Technology Unit (ICTU)</h6>
       </div>
     </div>

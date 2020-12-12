@@ -96,6 +96,542 @@ class functions extends Controller
     public function goto_regoms(){
        return view("asset_omissionreport");
     }
+    public function fly_semi_expendable_validationpage(){
+      return view("asset_semivalidation");
+    }
+
+    // FUNCTIONS
+    public function fire_reset_account_password(Request $req){
+      $reset_account_password = $this->send(["tag"=>"RESET_ACCOUNT_PASSWORD_BYADMIN",
+        "accid"=>$this->sdmenc($req["employeeid"]),
+        "empnum"=>$this->sdmenc($req["employeenumber"])]);
+      return $this->quick_result($reset_account_password,"usermanagement");
+    }
+
+    public function look_my_semiexpendable_omitted(){
+
+    }
+    public function look_my_semiexpendable_descrepancies(Request $req){
+        $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"])]);
+
+      $toecho = "";
+      $desccount = 0;
+      switch ($req["layout"]) {
+        case 'count':
+         for ($i=0; $i < count($semiex); $i++) {
+            $has_desc = false;
+            $sem_article = htmlentities($semiex[$i]["article"]);
+        $sem_description = htmlentities($semiex[$i]["description"]);
+        $sem_stocknumber = htmlentities($semiex[$i]["stock_number"]);
+        $sem_unitofmesure = htmlentities($semiex[$i]["unit_of_mesure"]);
+        $sem_unitval = htmlentities($semiex[$i]["unit_value"]);
+        $sem_balpercard = htmlentities($semiex[$i]["balance_per_card"]);
+        $sem_onhandper = htmlentities($semiex[$i]["on_hand_per_count"]);
+        $sem_remarks = htmlentities($semiex[$i]["remarks"]);
+        if($sem_article == "" || $sem_article == null){
+        $has_desc = true;
+        }
+        else{$existing = true;}
+        if($sem_description == "" || $sem_description == null){
+        $has_desc = true;
+        }
+        else{$existing = true;}
+        if($sem_stocknumber == "" || $sem_stocknumber == null){
+          $has_desc = true;
+        }
+        else{$existing = true;}
+        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+          $has_desc = true;
+        }
+        else{$existing = true;}
+        if($sem_unitval == "" || $sem_unitval == null){
+        $has_desc = true;
+        }
+        else{$existing = true;}
+        if($sem_balpercard == "" || $sem_balpercard == null){
+          $has_desc = true;
+        }
+        else{$existing = true;}
+         if(  $has_desc ){
+$desccount ++;
+         }
+         }
+
+        
+          $toecho  = $desccount ;
+          break;
+        case 'table':
+                for ($i=0; $i < count($semiex); $i++) {
+
+        $discrepancyList = "";
+        $sem_article = htmlentities($semiex[$i]["article"]);
+        $sem_description = htmlentities($semiex[$i]["description"]);
+        $sem_stocknumber = htmlentities($semiex[$i]["stock_number"]);
+        $sem_unitofmesure = htmlentities($semiex[$i]["unit_of_mesure"]);
+        $sem_unitval = htmlentities($semiex[$i]["unit_value"]);
+        $sem_balpercard = htmlentities($semiex[$i]["balance_per_card"]);
+        $sem_onhandper = htmlentities($semiex[$i]["on_hand_per_count"]);
+        $sem_remarks = htmlentities($semiex[$i]["remarks"]);
+        if($sem_article == "" || $sem_article == null){
+        $discrepancyList .=  "Missing Article" . "<br>";
+        }
+        else{$existing = true;}
+        if($sem_description == "" || $sem_description == null){
+        $discrepancyList .=  "Missing Description" . "<br>";
+        }
+        else{$existing = true;}
+        if($sem_stocknumber == "" || $sem_stocknumber == null){
+        $discrepancyList .=  "<strong>Missing Stock Number (Not Inserted)</strong>" . "<br>";
+        }
+        else{$existing = true;}
+        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+        $discrepancyList .=  "Missing Unit of Mesure" . "<br>";
+        }
+        else{$existing = true;}
+        if($sem_unitval == "" || $sem_unitval == null){
+        $discrepancyList .=  "Missing Unit value" . "<br>";
+        }
+        else{$existing = true;}
+        if($sem_balpercard == "" || $sem_balpercard == null){
+        $discrepancyList .=  "Missing Balance per Card" . "<br>";
+        }
+        else{$existing = true;}
+
+       if($discrepancyList != ""){
+          $toecho .= "<tr>
+            <td>" . ($i + 1) . "</td>
+            <td>";
+            if($sem_article == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+            }else{ $toecho .= $sem_article; } $toecho .= "</td>
+            <td>";
+            if($sem_description == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $toecho .= $sem_description; }
+             $toecho .= "</td>
+            <td>";
+            if($sem_stocknumber == ""){ 
+               $acceptable = false;
+               $toecho .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $toecho .= $sem_stocknumber; }
+             $toecho .= "</td>
+            <td>";
+
+            if($sem_unitofmesure == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $toecho .= $sem_unitofmesure; }
+             $toecho .= "</td>
+            <td>";
+            if($sem_unitval == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $toecho .= $sem_unitval; }
+            $toecho .= "</td>
+             <td>"; if($sem_balpercard == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $toecho .= $sem_balpercard; }$toecho .= "</td>
+            <td>" . $discrepancyList ."</td>
+          </tr>";
+        }
+      }
+          break;
+      }
+
+      return $toecho;
+    }
+    public function look_semi_expendable_bystation(Request $req){
+      $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"])]);
+
+      $toecho = "";
+
+      for ($i=0; $i < count($semiex); $i++) { 
+        $toecho .= "
+        <tr>
+        <td>" . $semiex[$i]["article"] .  "</td>
+        <td>" . $semiex[$i]["description"] . "</td>
+        <td>" . $semiex[$i]["stock_number"] . "</td>
+        <td>" . $semiex[$i]["unit_of_mesure"] . "</td>
+        <td>" . $semiex[$i]["unit_value"] . "</td>
+        <td>" . $semiex[$i]["balance_per_card"] . "</td>
+        <td>" . $semiex[$i]["on_hand_per_count"] . "</td>
+        <td>" . $semiex[$i]["remarks"] . "</td>
+        <td>" . '
+                    <div class="dropdown ">
+              <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Action
+              </a>
+            
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#semidispose"><i class="fas fa-trash"></i> Dispose</a>
+              </div>
+            </div>
+
+        '. "</td>
+        </tr>
+        ";
+      }
+
+      return $toecho;
+    }
+    public function look_all_ofmy_service_center(Request $req){
+      $out = $this->send(["tag"=>"GET_ALL_SERVICE_CENTERS_MYSTATION","station_id"=>$this->sdmenc($req["station_id"])]);
+      $toecho = "";
+
+      for ($i=0; $i < count($out); $i++) { 
+         $toecho .= "<option value='" . $out[$i]["id"] . "'>" . $out[$i]["office"] . "-" . $out[$i]["room_number"]  . "</option>";
+      }
+
+      return $toecho;
+    }
+    public function fire_add_semi_expendible(Request $req){
+       
+      $SchoolID = $this->sdmenc($req["sc_id"]);
+      $upload_CSVFILE = $req->file('thecsvfile');
+      $file = fopen($upload_CSVFILE, "r");
+      $toecho = "";
+
+
+      // SELECT ALL EXISTING SEMI EXPENDABLE
+      $AllSemiExpendable = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
+
+      // return json_encode($AllSemiExpendable);
+
+      $tbl_discrepancies = "";
+      $tbl_assetnofound = "";
+
+      $miss_col = 0;
+      $overall_assets = 0;
+      $perfect_data = 0;
+      $asset_inserted = 0;
+      $not_inserted = 0;
+      $exactsamecount = 0;
+      $rot_count = 0;
+      $omittedass = 0;
+      $asset_updated = 0;
+
+      $UploadedData = array();
+
+
+      while (($getData = fgetcsv($file, 10000, ",")) !== false){
+        if( $rot_count != 0){
+          // BLANKER 
+          $getData[7] = "";
+
+        $existing = false;
+        $datacount = 0;
+        $hasmiss = false;
+        $is_perfect = true;
+        $acceptable = true;
+        $has_existing_stock_number = false;
+        $discrepancyList = "";
+
+        $sem_article = htmlentities($getData[0]);
+        $sem_description = htmlentities($getData[1]);
+        $sem_stocknumber = htmlentities($getData[2]);
+        $sem_unitofmesure = htmlentities($getData[3]);
+        $sem_unitval = htmlentities($getData[4]);
+        $sem_balpercard = htmlentities($getData[5]);
+        $sem_onhandper = htmlentities($getData[6]);
+        $sem_shortover = htmlentities($getData[7]);
+        $sem_remarks = htmlentities($getData[8]);
+
+        array_push($UploadedData,  $sem_article . $sem_description . $sem_stocknumber . $sem_unitofmesure .  $sem_unitval . $sem_balpercard . $sem_onhandper . $sem_shortover . $sem_remarks);
+
+        // SEE IF HAS EXACT SAME
+        
+        $exact_same = false;
+        $data_match = 0;
+
+          for ($ix=0; $ix < count($AllSemiExpendable); $ix++) { 
+          $is_exact = true; 
+
+          //CHECK IF HAS EXISTING STOCK NUMBER
+          if($sem_stocknumber  != "" && $sem_stocknumber != null){
+              if($sem_stocknumber == $AllSemiExpendable[$ix]["stock_number"] ){
+                $has_existing_stock_number = true;
+              }
+          }
+          
+          if($sem_article !== $AllSemiExpendable[$ix]["article"] || $sem_description !== $AllSemiExpendable[$ix]["description"] || $sem_stocknumber !== $AllSemiExpendable[$ix]["stock_number"] || $sem_unitofmesure !== $AllSemiExpendable[$ix]["unit_of_mesure"] || $sem_unitval !== $AllSemiExpendable[$ix]["unit_value"] || $sem_balpercard !== $AllSemiExpendable[$ix]["balance_per_card"] || $sem_onhandper !== $AllSemiExpendable[$ix]["on_hand_per_count"] || $sem_shortover !== $AllSemiExpendable[$ix]["shortage_overage"] || $sem_remarks !== $AllSemiExpendable[$ix]["remarks"]){
+             $is_exact = false;
+          }
+
+          if($is_exact == true){
+            // THE DATA HAS MATCH
+            $exact_same = true;
+            $data_match ++;
+          }
+        }
+
+        if($data_match ==0){
+          // DATA IS NEW AND FRESH
+
+        }
+
+        
+        if($sem_article == "" || $sem_article == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Article" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_description == "" || $sem_description == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Description" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_stocknumber == "" || $sem_stocknumber == null){
+          $hasmiss = true;
+          $discrepancyList .=  "<strong>Missing Stock Number (Not Inserted)</strong>" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Unit of Mesure" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_unitval == "" || $sem_unitval == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Unit value" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_balpercard == "" || $sem_balpercard == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Balance per Card" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+
+
+        // Counstruct Discrepancy
+
+        if($discrepancyList != ""){
+          $tbl_discrepancies .= "<tr>
+            <td>" . ($rot_count +1) ."</td>
+            <td>";
+            if($sem_article == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            }else{ $tbl_discrepancies .= $sem_article; } $tbl_discrepancies .= "</td>
+            <td>";
+            if($sem_description == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_description; }
+             $tbl_discrepancies .= "</td>
+            <td>";
+            if($sem_stocknumber == ""){ 
+               $acceptable = false;
+               $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_stocknumber; }
+             $tbl_discrepancies .= "</td>
+            <td>";
+
+            if($sem_unitofmesure == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_unitofmesure; }
+             $tbl_discrepancies .= "</td>
+            <td>";
+            if($sem_unitval == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_unitval; }
+            $tbl_discrepancies .= "</td>
+             <td>"; if($sem_balpercard == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_balpercard; }$tbl_discrepancies .= "</td>
+            <td>" . $discrepancyList ."</td>
+          </tr>";
+        }
+        
+
+        if($existing == true && $datacount >= 1){
+          // Prove that there's exisiting data
+           $overall_assets++;
+        }else{
+          // NO EXISTING DATA
+          $acceptable = false;
+        }
+        if($exact_same == true){
+          //HAS EXACT SAME
+          $acceptable = false;
+          $exactsamecount++;
+        }
+        if($datacount == 6){
+           $perfect_data++;
+        }
+        if($existing == true && $hasmiss == true){
+          // has exisiting data but mussing column(s)
+            $miss_col ++;
+        }
+
+        if($acceptable == true){
+          // INSERT DATA
+        
+           if($has_existing_stock_number){
+            // UPDATE DATA ONLY
+             $insert_assetdata = $this->send(["tag"=>"UPDATE_SEMI_EXPENDABLE_DATA",
+                                              "sem_article"=>$this->sdmenc($sem_article),
+                                              "sem_description"=>$this->sdmenc($sem_description),
+                                              "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
+                                              "sem_unitofmesure"=>$this->sdmenc($sem_unitofmesure),
+                                              "sem_unitval"=>$this->sdmenc($sem_unitval),
+                                              "sem_balpercard"=>$this->sdmenc($sem_balpercard),
+                                              "sem_onhandper"=>$this->sdmenc($sem_onhandper),
+                                              "sem_shortover"=>$this->sdmenc($sem_shortover),
+                                              "sem_remarks"=>$this->sdmenc($sem_remarks),
+                                              "station_id"=>$this->sdmenc(session("user_school")),
+                                              "serv_center_id"=>$this->sdmenc($req["service_center_id"])],true);
+             $asset_updated++;
+           }else{
+            // ADD NEW DATA TO SEMI EXPENDABLE
+             $insert_assetdata = $this->send(["tag"=>"ADD_NEW_SEMI_EXPENDABLE",
+                                              "sem_article"=>$this->sdmenc($sem_article),
+                                              "sem_description"=>$this->sdmenc($sem_description),
+                                              "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
+                                              "sem_unitofmesure"=>$this->sdmenc($sem_unitofmesure),
+                                              "sem_unitval"=>$this->sdmenc($sem_unitval),
+                                              "sem_balpercard"=>$this->sdmenc($sem_balpercard),
+                                              "sem_onhandper"=>$this->sdmenc($sem_onhandper),
+                                              "sem_shortover"=>$this->sdmenc($sem_shortover),
+                                              "sem_remarks"=>$this->sdmenc($sem_remarks),
+                                              "station_id"=>$this->sdmenc(session("user_school")),
+                                              "serv_center_id"=>$this->sdmenc($req["service_center_id"])],true);
+              $asset_inserted ++;
+           }
+          
+
+           $toecho .= json_encode($insert_assetdata);
+
+        }else{
+          $not_inserted ++;
+        }
+        }
+        $rot_count++;
+      }
+
+
+            for ($i=0; $i < count($AllSemiExpendable); $i++) { 
+        $hmat = true;
+          for($x = 0; $x < count($UploadedData);$x ++){
+              $unifieds = $AllSemiExpendable[$i]["article"] . $AllSemiExpendable[$i]["description"]  .  $AllSemiExpendable[$i]["stock_number"] . $AllSemiExpendable[$i]["unit_of_mesure"]  . $AllSemiExpendable[$i]["unit_value"] . $AllSemiExpendable[$i]["balance_per_card"] . $AllSemiExpendable[$i]["on_hand_per_count"] .  $AllSemiExpendable[$i]["shortage_overage"] . $AllSemiExpendable[$i]["remarks"];
+
+
+              if( $unifieds == $UploadedData[$x]){
+                 $hmat = false;
+              }
+          }
+
+          if($hmat == true){
+            $omittedass ++;
+             $tbl_assetnofound .= "
+              <tr>
+               <td>" .$omittedass  .  "</td>
+                <td>" . $AllSemiExpendable[$i]["article"] .  "</td>
+                 <td>" . $AllSemiExpendable[$i]["description"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["stock_number"] . "</td>
+                   <td>" . $AllSemiExpendable[$i]["unit_of_mesure"] . "</td>
+                    <td>" . $AllSemiExpendable[$i]["unit_value"] . "</td>
+                     <td>" . $AllSemiExpendable[$i]["balance_per_card"] . "</td>
+                      <td>" . $AllSemiExpendable[$i]["on_hand_per_count"] . "</td>
+                       <td>" . $AllSemiExpendable[$i]["shortage_overage"] . "</td>
+                        <td>" . $AllSemiExpendable[$i]["remarks"] . "</td>
+              </tr>
+             ";
+          }
+      }
+
+
+      $toecho .= "<br>-------------<br>";
+        $toecho .= "OVERALL ASSETS : " .  $overall_assets . "<br>";
+        $toecho .= "PERFECT DATA : " . $perfect_data . "<br>";
+        $toecho .= "ASSET WITH COLUMNS : " . $miss_col . "<br>";
+        $toecho .= "ASSET INSERTED : " . $asset_inserted . "/" . $overall_assets . "<br>";
+        $toecho .= "ASSET UPDATED : " . $asset_updated . "<br>";
+        $toecho .= "ASSET OMITTED : n/a<br>";
+        $toecho .= "ASSET NOT INSERTED : " . $not_inserted . "<br>";
+        $toecho .= "ASSET THAT HAS EXACT SAME : " . $exactsamecount . "<br>";
+
+      $guessExtension = $upload_CSVFILE->getClientOriginalExtension();
+      $origname = $upload_CSVFILE->getClientOriginalName();
+      $NewFileName = str_replace(" ", "",session("user_school")) . "--" . date("F_d_Y-g_i_a") . "." . $guessExtension;
+
+      $ResourceFileUpload = $this->send(["tag"=>"index_upload_asset_csv",
+                                              "file_name"=>$this->sdmenc($NewFileName),
+                                              "st_id"=>$this->sdmenc(session("user_school")),
+                                              "empid"=>$this->sdmenc(session("user_eid")),
+                                              "realname"=>$this->sdmenc($origname),
+                                              "file_format"=>$this->sdmenc($guessExtension)],true);
+
+      $upload_CSVFILE->move(public_path() . "/uploads/",   $NewFileName);
+
+      return redirect()->route("goto_semi_expendable_validationpage",[
+        "overallassets"=>$overall_assets,
+        "perfectdata"=>$perfect_data,
+        "missingcolumns"=>$miss_col,
+        "insertedassets"=>$asset_inserted,
+        "exactsame"=>$exactsamecount,
+        "notinserted"=>$not_inserted,
+        "ass_withdesc"=>$tbl_discrepancies,
+        "ass_nofount"=>$tbl_assetnofound,
+        "ass_omitted"=> $omittedass,
+        "ass_updated"=> $asset_updated]);
+    }
+
+    public function fire_preview_csv_semiexpendable(Request $req){
+       $csv_file = $req->file('thecsvfile');
+      $file = fopen($csv_file, "r");
+           $toecho= "";
+          $previewcount = 0;
+          while (($getData = fgetcsv($file, 10000, ",")) !== FALSE){
+            if( $previewcount  != 0 && count($getData) <= 9){
+
+               $toecho .= "<tr>";
+
+               for($i =0; $i < 9;$i++){
+                  $toecho .= "<td>" . $getData[$i] . "</td>";
+               }
+
+               $toecho .= "</tr>";
+               
+                if( $previewcount >= 3){
+                  break;
+                }
+
+            }
+             $previewcount++;
+           }
+
+           if($toecho == ""){
+         $toecho = "
+          <tr>
+          <td>Semi Expendable CSV file is not valid.</td>
+          </tr>
+          ";
+           }else{
+            $toecho = "
+             <tr>
+              <th colspan='9' class='td_required'><small><i class='fas fa-dot-circle'></i></small> <span class='text-muted'>Required Data</span></th>
+             </tr>
+             <tr>
+              <th colspan='9' class='td_optional'><small><i class='fas fa-dot-circle'></i></small> <span class='text-muted'>Optional Data</span></th>
+             </tr>
+
+             <tr>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_optional'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_optional'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_optional'><small><i class='fas fa-dot-circle'></i></small></th>
+          </tr>
+          <tr>
+          <th>Article</th>
+          <th>Description</th>
+          <th>Stock Number</th>
+          <th>Unit of Mesure</th>
+          <th>Unit Value</th>
+          <th>Balance Per Card</th>
+          <th>On Hand Per Count</th>
+          <th>Shortage/Overage</th>
+          <th>Remarks</th>
+          </tr>
+          " . $toecho;
+           }
+
+           return $toecho;
+
+    }
+    public function fire_add_new_semi_expendable_registry(){
+      $toret = $this->send(["tag"=>"ADD_NEW_SEMI_EXPENDABLE"]);
+    }
     public function rep_all_om_ass(Request $req){
     $tag = $this->sdm_encrypt("report_all_omitted_assets",PKEY);
 
@@ -689,12 +1225,12 @@ $colval = "";
       if($output == "Ready"){
         $toecho = "
       <h2><i style='color: #009432;' class='fas fa-check-circle'></i> Ready!</h2>
-      <p>There are zero discrepancies in your Asset Registry, you're now eligible to use the <i class='fas fa-mobile-alt'></i> Innoventory App!</p>
+      <p class='text-muted mb-0'>There are zero discrepancies in your Asset Registry, you're now eligible to use the <i class='fas fa-mobile-alt'></i> Innoventory App!</p>
       ";
       }else{
         $toecho = "
       <h2><i style='color: #EA2027;' class='fas fa-times-circle'></i> Not Ready for Inventory.</h2>
-      <p>The inventory can't start yet because you still have discrepancies in your Asset Registry.</p>
+      <p class='text-muted mb-0'>The inventory can't start yet because you still have discrepancies in your Asset Registry.</p>
       ";
       }
        return $toecho;
@@ -1200,42 +1736,44 @@ $last_login = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
                   "tag"=>$tag,
                   "reminderorigineid"=>$reminderorigineid,
                   "typeofget"=>$typeofget,
+                  "userid"=>$this->sdmenc(session("user_eid"))
             ]]);
             $orig = $this->sdm_decrypt($res_2->getBody()->getContents(),PKEY);
             $output = json_decode($orig ,true);
             $toecho = "";
             for ($i=0; $i < count($output); $i++) { 
 
+
+              $remtype = $output[$i]["viewtype"];
+              switch ( $remtype) {
+                 case '0':
+                 $remtype = "Admin";
+                  break;
+                case '1':
+                 $remtype = "Property Supply Officer";
+                  break;
+                case '2':
+                 $remtype = "Principals";
+                  break;
+                  case '3':
+                 $remtype = "Property Custodians";
+                  break;
+                  case '4':
+                 $remtype = "Center Managers";
+                  break;
+              }
                 $toecho .= "
-                  <div class='card mb-3'>
+                  <div class='card mb-3 announcement_card'>
                     <div class='card-body'>
-                    <p class='float-right'><small style='color:#007DFF;'><i class='fas fa-globe-asia'></i> " .strtoupper( $output[$i]["viewtype"]) ."</small></p>
+                    <p class='float-right'><small style='color:#007DFF;'><i class='fas fa-globe-asia'></i> " .strtoupper( $remtype) ."</small></p>
                       <p><strong><i class='fas fa-user-circle'></i> " . $output[$i]["username"] ."</strong>
-                        <br><span class='text-muted'>" . date("m/d/y g:i a",strtotime($output[$i]["dateposted"] )) . " <i class='far fa-clock'></i></span>
+                        <br><span class='text-muted' title='" . date("m/d/y g:i a",strtotime($output[$i]["dateposted"] ))  . "'>" . $this->DateExplainder($output[$i]["dateposted"]) . "</span>
                       </p>
                       <h5>" . $output[$i]["title"] . "</h5>
                      <pre style='font-family:segoe ui;' class='card-subtitle'>" . $output[$i]["description"] . " </pre>
                     </div>
                   </div>
                 ";
-             // $toecho .= "
-             // <tr>
-             //  <td><span class='text-muted'>" . date("m/d/y g:i a",strtotime($output[$i]["dateposted"] )) . "</span></td>
-             //  <td>
-             //  <small class='float-right'><i class='fas fa-user-circle'></i> " . $output[$i]["username"] ."</small>
-             //  <h5 class='card-title'>" . $output[$i]["title"] . "</h5>
-             //  <pre class='card-subtitle'>" . $output[$i]["description"] . "</pre>
-             //  </td>
-             //  <td>";
-
-             //  if($output[$i]["deadline"] != ""){
-             //    $toecho .= date("F d, Y g:i a",strtotime($output[$i]["deadline"]));
-             //  }else{
-             //    $toecho .= "N/A";
-             //  }
-
-             //  $toecho .= "</td>
-             // </tr>";
             }
            return $toecho;
    }
@@ -1366,7 +1904,7 @@ $last_login = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
         <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
 
 
-        <form action='asset_deeplook' method='GET' target='_blank'>
+        <form action='" . route('asset_view') . "' method='GET' target='_blank'>
         <input type='hidden' value='" . $output[$i]["id"] . "' name='asset_id'>
         <button class='dropdown-item' type='submit' target='_blank'><i class='fas fa-binoculars'></i> View</button>
         </form>
@@ -1877,8 +2415,8 @@ $this->RecordLog("a02");
       $x_selectedschool = $this->sdm_encrypt($req["x_selectedschool"],PKEY);
       $x_empid = $this->sdm_encrypt($req["x_empid"],PKEY);
       $x_usertype = $this->sdm_encrypt($req["x_usertype"],PKEY);
-      $x_pass = $this->sdm_encrypt($req["x_pass"],PKEY);
-      $x_repass = $this->sdm_encrypt($req["x_repass"],PKEY);
+      $x_pass = $this->sdm_encrypt($req["x_empid"],PKEY);
+      $x_repass = $this->sdm_encrypt($req["x_empid"],PKEY);
   $x_depedemail= $this->sdm_encrypt($depedemail,PKEY);
       if($x_pass == $x_repass){
          $client = new \GuzzleHttp\Client();
@@ -2176,9 +2714,12 @@ $toecho .="
     Action
   </a>
 
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-    <a class="dropdown-item" data-empid="' . $output[$i]["acc_id"] . '" onclick="lod_editacc(this)" data-toggle="modal" data-target="#m_edit" href="#">Edit Account</a>
-    <a class="dropdown-item" data-empid="' . $output[$i]["acc_id"] . '" onclick="lod_deleteacc(this)" data-toggle="modal" data-target="#m_delete" href="#">Delete</a>
+  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" data-empid="' . $output[$i]["acc_id"] . '" onclick="lod_editacc(this)" data-toggle="modal" data-target="#m_edit" href="#"><i class="fas fa-edit"></i> Edit Account</a>
+
+     <a class="dropdown-item" data-empnumber="' . $output[$i]["employee_id"] . '" data-empid="' . $output[$i]["acc_id"] . '" onclick="lod_resetpass(this)" data-toggle="modal" data-target="#m_resetpass" href="#"><i class="fas fa-sync"></i> Reset Password</a>
+
+    <a class="dropdown-item" data-empid="' . $output[$i]["acc_id"] . '" onclick="lod_deleteacc(this)" data-toggle="modal" data-target="#m_delete" href="#"><i class="fas fa-trash"></i> Delete</a>
   </div>
 </div>
  '
@@ -2236,7 +2777,7 @@ $toecho .="
                 Action
                 </a>
 
-                <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+                <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
 
                 <form action='" . route("asset_view") . "' method='GET'>
                 <input type='hidden' value='" . $output[$i]["id"] . "' name='asset_id'>
@@ -2322,6 +2863,7 @@ $toecho .="
       ]]);
 
       $output = json_decode($this->sdm_decrypt($result->getBody()->getContents() ,PKEY),true);
+        $output[0]["cost_of_acquisition"] = number_format($output[0]["cost_of_acquisition"],2);
       return $output;
     }
     public function display_all_encoded_assets(Request $req){
@@ -2362,7 +2904,7 @@ if( $isown){
         Action
         </a>
 
-        <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+        <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
 
 
         <form action='" . route("asset_view") . "' method='GET' >
@@ -2386,7 +2928,7 @@ if( $isown){
         Action
         </a>
 
-        <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+        <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
 
 
         <form action='" . route("asset_view") . "' method='GET'>
@@ -2701,7 +3243,7 @@ $omitted_tbl = "";
           </a>
 
           <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
-          <form action='asset_deeplook' method='GET' target='_blank'>
+          <form action='" . route('asset_view') . "' method='GET' target='_blank'>
           <input type='hidden' value='" . $out_res[0]["id"] . "' name='asset_id'>
           <button class='dropdown-item' type='submit' target='_blank'><i class='fas fa-binoculars'></i> View</button>
           </form>
@@ -2737,7 +3279,7 @@ $omitted_tbl = "";
 
               // return $outx;
             Alert::success("Asset Uploaded.");
-            return view("assetuploadresult",["i_newly"=>$inserted_new,"i_existing"=>$inserted_alreadyexisting,"i_not"=>$inserted_not,"i_logs"=>$mylogs,"i_incomplete"=>$blankcols,"total_assets"=>$tots,"nothere"=>$nothere,"omcount"=>$omitted_count,"om_logs"=>$omitted_tbl]);
+            return redirect()->route("assetuploadresult",["i_newly"=>$inserted_new,"i_existing"=>$inserted_alreadyexisting,"i_not"=>$inserted_not,"i_logs"=>$mylogs,"i_incomplete"=>$blankcols,"total_assets"=>$tots,"nothere"=>$nothere,"omcount"=>$omitted_count,"om_logs"=>$omitted_tbl]);
     }
      public function load_res_all_bylatest(){
 
@@ -2786,7 +3328,7 @@ $omitted_tbl = "";
            }
 
            $toecho .= "</td>
-            <td>" . date("F d, Y g:i a",strtotime($output[$i]["dateuploaded"])) . "</td>
+            <td><small class='float-right text-muted'>" . $this->DateExplainder($output[$i]["dateuploaded"]) ."</small>" . date("F d, Y g:i a",strtotime($output[$i]["dateuploaded"])) . "</td>
      
         </tr>";
       }
@@ -2831,11 +3373,10 @@ $omitted_tbl = "";
 
             }
 
-
             $toecho .= "</td><td>  <a download='" . $output[$i]["realname"] . "' href='" . asset( '/uploads/' . $output[$i]["filename"]) . "'>" .  $output[$i]["realname"];
             $toecho .= "</a></td>
            <td>" . $output[$i]["username"] . "</td>
-            <td>" . date("F d, Y g:i a",strtotime($output[$i]["dateuploaded"])) . "</td>
+            <td><small class='float-right text-muted'>" . $this->DateExplainder($output[$i]["dateuploaded"]) . "</small>" . date("F d, Y g:i a",strtotime($output[$i]["dateuploaded"])) . " </td>
              <td>
         
      <a class='btn btn-danger btn-sm' onclick='opendeleteresource(this)' data-rid='" . $output[$i]["assetidres"] . "' data-toggle='modal' data-target='#modal_delnow' href='#'><i class='far fa-trash-alt'></i> Delete</a>
@@ -2998,7 +3539,6 @@ $overall = $per_year * $dt_cout[0];
 }
 
 
-
 public function count_years($d1,$d2){
 $date1 = $d1;
 $date2 = $d2;
@@ -3029,6 +3569,150 @@ return $years . ",".  $months;
         $decryptData = openssl_decrypt($utfData, "DES-EDE3", $string, OPENSSL_RAW_DATA,'');
         // $base64Data = base64_decode($decryptData);
         return $decryptData;
+    }
+
+       // FLASH CODE TECHNOLOGIES
+    // FLASH CODE TECHNOLOGIES
+    // FLASH CODE TECHNOLOGIES
+
+   public function ShowOutput($out,$need_decryption = false){
+
+    if($need_decryption == true){
+      $out = $this->sdmdec($out,true);
+    }
+
+    return json_encode($out);
+   }
+    public function quick_result($output,$page,$passed_array = [],$custom_message = ""){
+      if($output[0] == "true"){
+
+        if($custom_message != ""){
+         Alert::success($custom_message);
+        }else{
+           Alert::success("Success!");
+        }
+      
+       return redirect()->route($page,$passed_array);
+      }else{
+        if($custom_message != ""){
+         Alert::error($custom_message);
+        }else{
+          Alert::error("Error!");
+        }
+        
+        return redirect()->route($page,$passed_array);
+      }
+    }
+    public function quick_error($page){
+       Alert::error("Please check your given information!");
+       return redirect()->route($page);
+    }
+    public function quick_success($page){
+       Alert::success("You got it!");
+       return redirect()->route($page);
+    }
+    public function send($contents){
+      $contents["tag"] = $this->sdmenc($contents["tag"]);
+      $client = new \GuzzleHttp\Client();
+      $res = $client->request("POST",WEBSERVICE_URL,["form_params"=>$contents]);
+      return json_decode($this->sdmdec($res->getBody()->getContents()),true);
+    }
+    public function tblform_dropdown($name,$contents){
+      return ' <div class="dropdown">
+      <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-cog"></i> ' . $name . '
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+      ' . $contents . ' 
+      </div>
+      </div>';
+    }
+    public function form_select($value,$name){
+    return "<option value='" . $value . "'>" . $name . "</option>";
+    }
+    public function form_tbl($cols){
+      $structure = "<tr>";
+      for ($i=0; $i < count($cols); $i++) { 
+      $content = $cols[$i];
+      // CHECK IF DATE
+      if(date("Y",strtotime($content)) != "1970" && strlen($content) != 1){
+      $content = date("F d, Y g:i a",strtotime($content));
+      }else{
+       //IF RICH TEXT
+        if(strpos($content,"<a ") == false && strpos($content,"<button ") == false && strpos($content,"<img ") == false && strpos($content,"<p>") == false){
+       $content = "<pre>" . $content . " </pre>";
+      }
+
+      }
+      $structure .= "<td>" . $content . "</td>";
+      }
+
+      $structure .= "</tr>";
+      return $structure;
+    }
+  
+    public function DateExplainder($starting_time){
+      date_default_timezone_set('asia/manila');
+            $now = time(); // or your date as well
+            $your_date = strtotime($starting_time);
+            $datediff = $now - $your_date;
+
+            $result =  round($datediff / (60 * 60 * 24));
+
+            $months = number_format((round($datediff / (60 * 60 * 24))) / 30);
+            if($result == 0){
+
+            $time1 = date("H:i",strtotime($starting_time));
+            $time2 = date("H:i");
+
+            $diff = abs(strtotime($time1) - strtotime($time2));
+
+            $tmins = $diff/60;
+
+            $hours = floor($tmins/60);
+
+            $mins = $tmins%60;
+            if($mins == "0" && $hours =="0"){
+            return "Just now"; 
+            }else if($mins == "1" && $hours =="0"){
+            return "1 min ago"; 
+            } else{
+            if($hours == "0"){
+            return "$mins mins ago";  
+            }else if($hours == "1"){
+            return "an hour ago";  
+            }else{
+            return "$hours hours ago";  
+            }
+
+            }
+
+            }else{
+            if($result == "1"){
+            return "yesterday";
+            }else if($result > 30){
+             return $months . " months ago.";
+            }else{
+            return round($datediff / (60 * 60 * 24)) . " days ago.";
+            }
+            }
+        }
+
+    public function sdmenc($data){
+      $keycode = openssl_digest(utf8_encode(PKEY),"sha512",true);
+      $string = substr($keycode, 10,24);
+      $utfData = utf8_encode($data);
+      $encryptData = openssl_encrypt($utfData, "DES-EDE3", $string, OPENSSL_RAW_DATA,'');
+      $base64Data = base64_encode($encryptData);
+      return $base64Data;
+    }
+
+    public function sdmdec($data){
+      $keycode = openssl_digest(utf8_encode(PKEY),"sha512",true);
+      $string = substr($keycode, 10,24);
+      $utfData = base64_decode($data);
+      $decryptData = openssl_decrypt($utfData, "DES-EDE3", $string, OPENSSL_RAW_DATA,'');
+      return $decryptData;
     }
 
 }

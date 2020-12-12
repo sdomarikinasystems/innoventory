@@ -8,82 +8,68 @@ ProcMS - Innoventory
 
 <h2>Dashboard</h2>
 
-<nav aria-label="breadcrumb">
-	<ol class="breadcrumb">
-		<li class="breadcrumb-item active" aria-current="page">Home</li>
-	</ol>
-</nav>
- 
-<div class="row" id="statbar" style="display: none;">
-	<div class="col-sm-3">
-		<div class="card">
-			<div class="card-body">
-				<div class="card-title float-left"><h5>Asset Registry</h5></div>
-				<h3 class="float-right" id="count_ass_reg"></h3>
-			</div>
-			<div class="card-footer">
-				<div class="float-left"><a href="/innoventory/asset/registry">Manage</a></div>
-				<div class="float-right"><a href="/innoventory/asset/registry"><i class="fas fa-arrow-circle-right"></i></a></div>
-			</div>
-		</div>
-    </div>
-    <div class="col-sm-3">
-		<div class="card">
-			<div class="card-body">
-				<div class="card-title float-left"><h5>Inventory Items</h5></div>
-				<h3 class="float-right" id="count_sc_assets"></h3>
-			</div>
-			<div class="card-footer">
-				<div class="float-left"><a href="/innoventory/asset/inventory">View Inventory</a></div>
-				<div class="float-right"><a href="/innoventory/asset/inventory"><i class="fas fa-arrow-circle-right"></i></a></div>
-			</div>
-		</div>		
-    </div>
-    <div class="col-sm-3">
-		<div class="card">
-			<div class="card-body">
-				<div class="card-title float-left"><h5>Disposed Items</h5></div>
-				<h3 class="float-right" id="count_ass_disposed">0</h3>
-			</div>
-			<div class="card-footer">
-				<a href="/innoventory/asset/disposal" class="float-right"><i class="fas fa-hand-point-right"></i> View</a>
-			</div>
-		</div>
-    </div>
-	<div class="col-sm-3">
-		<div class="card">
-			<div class="card-body">
-				<div class="card-title float-left"><h5>Service Centers</h5></div>
-				<h3 class="float-right" id="count_ass_disposed">0</h3>
-			</div>
-			<div class="card-footer">
-				<a href="/innoventory/manage/service_centers" class="float-right"><i class="fas fa-hand-point-right"></i> View</a>
-			</div>
-		</div>
-    </div>
-	
-</div>
+<!--REMINDERS-->
+<div class="row">
+	<div class="col-sm-7">
 <div id="lod_bar">
 	<center><img src="{{ asset('images/loading.gif') }}" style="width: 80px;">
 		<h5>Loading Summary...</h5>
 	</center>
 </div>
-<div>&nbsp;</div>
+<div class="card-deck mb-3 mobiletext" id="statbar" style="display: none;">
 
-<!--REMINDERS-->
-<div class="row">
-	<div class="col-sm-7">
+
 		<div class="card">
+			<div class="card-body">
+				<p class="mb-0 mt-0">Asset Registry</p>
+				<h3 class="mb-0 mt-0" id="count_ass_reg"></h3>
+			</div>
+			<div class="card-footer">
+				<div class="float-left"><a href="/innoventory/asset/registry"><span class="hideinmobile">Manage</span></a></div>
+				<div class="float-right"><a href="/innoventory/asset/registry"><i class="fas fa-arrow-circle-right"></i></a></div>
+			</div>
+		</div>
+
+		<div class="card">
+			<div class="card-body">
+				<p class="mb-0 mt-0">Inventory Items</p>
+				<h3 class="mb-0 mt-0" id="count_sc_assets"></h3>
+			</div>
+			<div class="card-footer">
+				<div class="float-left"><a href="/innoventory/asset/inventory"><span class="hideinmobile">Show All</span></a></div>
+				<div class="float-right"><a href="/innoventory/asset/inventory"><i class="fas fa-arrow-circle-right"></i></a></div>
+			</div>
+		</div>		
+<div class="w-100 d-none d-sm-block d-lg-none"></div>
+		<div class="card">
+			<div class="card-body">
+				<p class="mb-0 mt-0">Disposed Items</p>
+				<h3 class="mb-0 mt-0" id="count_ass_disposed">0</h3>
+			</div>
+			<div class="card-footer">
+				<a href="/innoventory/asset/disposal" class="float-right"><i class="fas fa-hand-point-right"></i> <span class="hideinmobile">View</span></a>
+			</div>
+		</div>
+
+		<div class="card">
+			<div class="card-body">
+				<p class="mb-0 mt-0">Service Centers</p>
+				<h3 class="mb-0 mt-0" id="count_ass_disposed">0</h3>
+			</div>
+			<div class="card-footer">
+				<a href="/innoventory/manage/service_centers" class="float-right"><i class="fas fa-hand-point-right"></i> <span class="hideinmobile">View</span></a>
+			</div>
+		</div>
+	
+</div>
+		<div class="card mobiletext">
 			<div class="card-header">
 				<h5><i class="fas fa-bullhorn"></i> Announcements</h>
 			</div>
-			<div class="card-body table-responsive" style="padding:0; background-color: #E9ECEF !important;" >
-
-				
-<div id="newann" style="background-color: #E9ECEF !important; margin: 20px;">
-	
-</div>
-						
+			<div class="card-body announcement_card_body" style="padding:0; background-color: #E9ECEF !important;" >	
+				<div id="newann" style="background-color: #E9ECEF !important; margin: 20px;">
+					
+				</div>
 			</div>
 			<div class="card-footer">
 				<a href="{{ route('manage_reminders') }}" class="float-right"><i class="fas fa-hand-point-right"></i> View All</a>
@@ -92,15 +78,17 @@ ProcMS - Innoventory
 	</div>
 
 	<div class="col-sm-5">
-		<div class="jumbotron" id="inv_status">
-		<!-- 	<center> -->
-				
-		<!-- 	</center> -->
+		<div class="card mobiletext">
+			<div class="card-body"  >
+				<center id="inv_status">
+					
+				</center>
+			</div>
 		</div>
 			<?php
 			if(session("user_type") == "0" || session("user_type") == "1"){
 			?>
-			<div class="card mt-3">
+			<div class="card mobiletext mt-3">
 				<div class="card-body">
 					<h5>Stations Inventory Status</h5>
 					<table class="table table-hover table-striped">
@@ -130,8 +118,6 @@ function DisplayAllStationsInventoryStatus(){
   		}
   	})
 }
-
-
 			</script>
 			<?php
 			}
