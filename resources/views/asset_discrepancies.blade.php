@@ -41,7 +41,7 @@ if($_GET["isown"]){
 		<div class="card">
 			<div class="card-body">
 				<h5 class="card-title mb-3">Assets with Discrepancy</h5>
-				<table class="mt-3 table table-sm">
+				<table class="mt-3 table table-sm" id="tbl_disc">
 					<thead>
 						<tr>
 							<th scope="col">Property Number</th>
@@ -103,7 +103,9 @@ if($_GET["isown"]){
     url: "get_export_his",
     data: {_token:"{{ csrf_token() }}"},
     success: function(data){
+       
        $("#tbl_trhis").html(data);
+   
     }
   })
 
@@ -142,7 +144,9 @@ if($_GET["isown"]){
     url: "{{ route('lod_dis_indetail') }}",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
     success: function(data){
+       $("#tbl_disc").DataTable().destroy();
       $("#allassdisctbl").html(data);
+       $("#tbl_disc").DataTable();
     }
   })
 

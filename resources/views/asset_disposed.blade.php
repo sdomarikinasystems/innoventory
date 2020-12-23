@@ -14,13 +14,11 @@ ProcMS - Innoventory
 	</ol>
 </nav>
 
-<div class="row mt-3">
-  <div class="col-sm-7">
-      <?php
+ <?php
       if(session("user_type") == "0" || session("user_type") == "1"){
     ?>
   <!-- FOR ADMIN ONLY -->
-    <a class="btn btn-secondary dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+    <a class="btn btn-secondary float-right dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
     <i class="fas fa-filter"></i> Filter Asset Source</a>
   
     <div class="dropdown-menu" style="width:450px; min-height: 300px;">
@@ -48,11 +46,28 @@ ProcMS - Innoventory
   }
   ?>
 
-  </div>
-  <div class="col-sm-5">
-     <h5>Legends</h5>
-        <small>
-          <table class="table table-sm table-bordered table-striped">
+<h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
+
+
+
+ <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="capout" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-box"></i> Capital Outlay</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-boxes"></i> <span >Semi-Expendable</span></a>
+  </li>
+
+</ul>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="capout">
+    
+<div class="row mt-3">
+  <div class="col-sm-7">
+ <table class="table table-bordered">
+  <tr>
+    <td rowspan="3">Legends</td>
+  </tr>
           <tr>
             <td><i style="color: #c0392b;" class="fas fa-circle"></i></td><td>Condemnation / Destruction</td>
             <td><i style="color: #27ae60;" class="fas fa-circle"></i></td><td>Transfer of Property</td>
@@ -62,18 +77,13 @@ ProcMS - Innoventory
              <td><i style="color: #8e44ad;" class="fas fa-circle"></i></td><td>Sale of Unserviceable Property</td>
           </tr>
         </table>
-        </small>
+
+
   </div>
 </div>
 <div>
-   <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-database"></i> <span id="sourcename"></span></a>
-    </li>
-  </ul>
-  <div class="tab-content" id="pills-tabContent">
-    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-      <table class="table table-hover table-bordered" id="tbl_dis">
+  
+ <table class="table table-hover table-bordered" id="tbl_dis">
   <thead>
     <tr>
       <th scope="col">Property Number</th>
@@ -88,17 +98,16 @@ ProcMS - Innoventory
   <tbody id="allmyassests">
   </tbody>
 </table>
-    </div>
-  </div>
-</div>
 
+
+</div>
 
 <form action="" method="">
   <div class="modal" tabindex="-1" id="m_view" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">ITEM INFORMATION</h5>
+          <h5 class="modal-title">Item Information</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -120,7 +129,7 @@ ProcMS - Innoventory
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">ITEM RESTORATION</h5>
+          <h5 class="modal-title">Item Restoration</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -137,6 +146,14 @@ ProcMS - Innoventory
     </div>
   </div>
 </form>
+
+  </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+    UNDER DEVELOPMENT
+  </div>
+
+</div>
+
 
   <script type="text/javascript">
  $("#sourcename").html("{{ session('user_schoolname') }}");

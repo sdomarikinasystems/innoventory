@@ -44,7 +44,11 @@ ProcMS - Innoventory
          <tbody>
             <tr>
             <td>a01</td>
-            <td>Imported asset package</td>
+            <td>Imported Asset(CO)</td>
+          </tr>
+          <tr>
+            <td>a01.1</td>
+            <td>Imported Asset(SE)</td>
           </tr>
           <tr>
             <td>a02</td>

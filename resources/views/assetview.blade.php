@@ -38,7 +38,7 @@ ProcMS - Innoventory
     
       </div>
       <div class="col-md-4">
-        <div class="alert alert-warning alert-sm" role="alert">
+        <div class="alert alert-info alert-sm" role="alert">
           <small>Estimated Total Life Years</small> : <br><h4 class="a_ely mb-0"></h4>
         </div>
         <div class="alert alert-secondary alert-sm" role="alert">

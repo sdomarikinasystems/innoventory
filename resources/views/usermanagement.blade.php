@@ -14,27 +14,21 @@ ProcMS - Innoventory
 		<li class="breadcrumb-item active" aria-current="page">Manage Users</li>
 	</ol>
 </nav>
-
 <div class="row">
 	<div class="col-sm" style="padding-left:0">
 		<ul class="nav">
-		<?php
-			if(session("user_type") < "4" && session("user_type") != "2"){
-		?>
-		<!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-			<li class="nav-item active">
-				<a class="nav-link" href="#" data-toggle="modal" data-target="#modal_newaccount" onclick="setupcreate()"><i class="fas fa-plus-square"></i> Create a new account</a>
-			</li>
-			<?php } ?>
-
-			<?php
-				if(session("user_type") == "0" || session("user_type") == "1"){
-			?>
-
-			<?php
-			}
-
-			?>
+      <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+      ?>
+        <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
+          <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#modal_newaccount" onclick="setupcreate()"><i class="fas fa-plus-square"></i> Create a new account</a>
+        <?php } ?>
+        <?php
+        if(session("user_type") == "0" || session("user_type") == "1"){
+        ?>
+      <?php
+      }
+      ?>
 		</ul>
 	</div>
 	<div class="col-sm">
@@ -43,10 +37,9 @@ ProcMS - Innoventory
 
 <div class="row mt-3">
   <div class="col-sm-12">
-    <table class="mt-3 table table-sm" id="tblu">
+    <table class="mt-3 table table-bordered" id="tblu">
   <thead>
     <tr>
-
       <th scope="col">Account Name</th>
       <th scope="col">Usertype</th>
       <th scope="col">Station</th>
@@ -128,9 +121,7 @@ ProcMS - Innoventory
           ?>
       </div>
           </div>
-
 <?php 
-
 // This function will return a random 
 // string of specified length 
 function random_strings($length_of_string) 
@@ -146,16 +137,17 @@ function random_strings($length_of_string)
 // Random string of length 10 
 $cocoa =  random_strings(10); 
 ?> 
+<script type="text/javascript">
+       function isNumber(evt) {
+        var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+        if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57))
+            return false;
+
+        return true;
+    }    
+</script>
  <input type="hidden" value="<?php echo $cocoa; ?>" minlength="6"  required="" class="form-control" autocomplete="off" name="x_pass">
 <input type="hidden" value="<?php echo $cocoa; ?>" minlength="6"  required="" class="form-control" autocomplete="off" name="x_repass">
-         <!--  <div class="col-sm-12">
-            <label>Password</label>
-           
-          </div>
-          <div class="col-sm-12">
-            <label>Retype-Password</label>
-            
-          </div> -->
       </div>
       </div>
       <div class="modal-footer">
@@ -184,7 +176,7 @@ $cocoa =  random_strings(10);
           <input type="hidden" name="_token" value="{{ csrf_token() }}">
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Delete</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </div>
@@ -224,7 +216,7 @@ $cocoa =  random_strings(10);
           <div class="col-md-6">
               <div class="form-group">
           <label>Employee ID</label>
-          <input type="text" id="edit_useremployeeid" maxlength="7" minlength="7" required="" class="form-control" autocomplete="off" name="x_empid">
+          <input type="text" id="edit_useremployeeid"  onkeypress="javascript:return isNumber(event)" maxlength="7" minlength="7" required="" class="form-control" autocomplete="off" name="x_empid">
       </div>
           </div>
           <div class="col-md-6">

@@ -142,16 +142,24 @@ Route::post("/add_new_semi_expendable",["uses"=>"functions@fire_add_semi_expendi
 Route::post("/validate_uploaded_cvs_file",["uses"=>"functions@fire_preview_csv_semiexpendable","as"=>"shoot_preview_csv_semiexpendable"]);
 Route::post("/get_all_my_service_center",["uses"=>"functions@look_all_ofmy_service_center","as"=>"shoot_all_ofmy_service_center"]);
 Route::post("/get_semi_expendablebystation",["uses"=>"functions@look_semi_expendable_bystation","as"=>"stole_semi_expendable_bystation"]);
-
 Route::post("/get_mysemi_discrepancies",["uses"=>"functions@look_my_semiexpendable_descrepancies","as"=>"stole_my_semiexpendable_descrepancies"]);
+Route::post("/get_mysemi_omitted",["uses"=>"functions@look_semi_expendable_omitted","as"=>"stole_semi_expendable_omitted"]);
 
+// ASSET SEMI EXPENDABLE DISCREPANCIES
+Route::get("/innoventory/asset_registry/semi_expendable/discrepancies",["uses"=>"functions@fly_semiexpendable_discrepancies","as"=>"goto_semiexpendable_discrepancies"]);
+
+// ASSET SEMI EXPENDIBLE OMITTED PADE
+Route::get("/innoventory/asset_registry/semi_expendable/omitted",["uses"=>"functions@fly_semiexpedable_omitted","as"=>"goto_semiexpedable_omitted"]);
 
 // USER MANAGEMENT
 Route::post("/reset_password_byadmin",["uses"=>"functions@fire_reset_account_password","as"=>"shoot_reset_account_password"]);
 
-
-
 // SEMI EXPENDIBLE VALIDATION PAGE
 Route::get("/innoventory/asset_registry/semi_expendable",["uses"=>"functions@fly_semi_expendable_validationpage","as"=>"goto_semi_expendable_validationpage"]);
 
+// ISSUANCE
+Route::get("/innoventory/issuances",["uses"=>"functions@fly_issuances","as"=>"goto_issuances"]);
+
+// UNIVERSAL
+Route::post("/get_last_logdate",["uses"=>"functions@look_last_date_ofcode","as"=>"stole_last_date_ofcode"]);
 

@@ -57,7 +57,6 @@ ProcMS - Innoventory
   <?php
   }
   ?>
-
   <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
   <!--ASSET REGISTRY-->
   <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
@@ -71,19 +70,81 @@ ProcMS - Innoventory
       <a class="nav-link"  data-toggle="pill" href="#suplliestbl" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-parachute-box"></i> <span >Supplies</span></a>
     </li>
   </ul>
-
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show" id="suplliestbl" role="tabpanel" aria-labelledby="pills-home-tab">
+      <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
+
+      <div class="modal" tabindex="-1" role="dialog" id="modal_importsupp">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Upload Supply Via CSV</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
   </div>
    <div class="tab-pane fade show" id="semiexpendable" role="tabpanel" aria-labelledby="pills-home-tab">
-
-
       <div class="row">
   <div class="col-sm mb-3">
-    <a class="btn btn-success importbutton" href="#" data-toggle="modal" data-target="#uploadsemiexpenda"><i class="fas fa-file-import"></i> Import Semi-Expendable</a>
+    <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import"></i> Import Semi-Expendable</a>
     <div class="alert alert-info importwarning" role="alert">
       Change your asset source to import Semi-Expendable Asset(s)
     </div>
+
+    <div class="modal" tabindex="-1" role="dialog" id="chooseserv">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Semi-Expendable Service Center</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group mt-3">
+                  <label>Service Center</label>
+                  <select class="form-control" required="" name="service_center_id" id="inp_servicecentersinput"></select>
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="servcentbtnchoose" data-toggle="modal" data-target="#uploadsemiexpenda">Continue</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      $("#imp_sem").click(function(){
+        $("#inp_servicecentersinput").val("");
+      })
+      setInterval(function(){
+        var selected_servcent = $("#inp_servicecentersinput").val();
+        if(selected_servcent != "" && selected_servcent != null){
+          $("#servcentbtnchoose").css("display","block");
+        }else{
+          $("#servcentbtnchoose").css("display","none");
+        }
+      })
+
+      $("#servcentbtnchoose").click(function(){
+        $("#servicecenterselected").val($("#inp_servicecentersinput").val());
+      })
+
+    </script>
 
     <form action="{{ route('shoot_add_semi_expendible') }}" enctype="multipart/form-data" method="POST" >
       {{ csrf_field() }}
@@ -118,7 +179,7 @@ ProcMS - Innoventory
                   <div class="card-body">
                     <div class="form-group">
                       <label>Upload Semi-Expendable CSV File</label>
-                      <input type="file"  id="semifile" required="" accept=".csv"  name="thecsvfile" onchange="return fileValidation_semiexpendable()">
+                      <input type="file" id="semifile" required="" accept=".csv"  name="thecsvfile" onchange="return fileValidation_semiexpendable()">
                     </div>
                   </div>
                 </div>
@@ -131,15 +192,11 @@ ProcMS - Innoventory
               <li>CSV has <span class="badge badge-success">9 columns</span></li>
             </ol>
               </div>
+             
               <div class="col-md-12">
-                <div class="form-group mt-3">
-                  <label>Service Center</label>
-                  <select class="form-control" required="" name="service_center_id" id="inp_servicecentersinput"></select>
-                </div>
-              </div>
-              <div class="col-md-12">
+                <input type="hidden" id="servicecenterselected" name="service_center_id">
                  <div class=" mt-2">
-           <div class="card ">
+           <div class="card " id="panel_semi_previewscv" style="display: none;">
              <div class="card-body card-limited">
               <small class="text-muted float-right">Limited by 3 rows</small>
             <h5>Preview <span id="issemivalid"></span></h5>
@@ -181,8 +238,8 @@ ProcMS - Innoventory
         <tr>
           <td id="semi_asscount">0</td>
           <td id="semidesccount">0</td>
-          <td>0</td>
-          <td>0</td>
+          <td id="semi_asssataomitted">0</td>
+          <td id="semi_lastuploadof">0</td>
         </tr>
       </tbody>
     </table>
@@ -411,7 +468,7 @@ ProcMS - Innoventory
          </div>
        
           <div class=" mt-2">
-           <div class="card ">
+           <div class="card " id="panel_capital_previewscv" style="display: none;">
              <div class="card-body card-limited">
               <small class="text-muted float-right">Limited by 3 rows</small>
             <h5>Preview</h5>
@@ -435,6 +492,7 @@ ProcMS - Innoventory
     </div>
   </div>
 </form>
+
   <script type="text/javascript">
     $("#tbl_ass").DataTable();
     $("#tbl_capitaloutlay").DataTable();
@@ -454,6 +512,7 @@ ProcMS - Innoventory
         $("#sub_butt").css("display","none");
       }else{
         $("#sub_butt").css("display","block");
+        $("#panel_capital_previewscv").css("display","block");
       }
 
 
@@ -463,11 +522,9 @@ ProcMS - Innoventory
 
       }else{
         $("#submitsemiexpendable").css("display","block");
-
+         $("#panel_semi_previewscv").css("display","block");
         $("#issemivalid").html("<span class='badge badge-success'>Congrats, Uploaded file is valid!</span>");
       }
-
-
       var myschool_realid = $("#myschool_realid").val();
       var detaulscid = <?php echo json_encode(session("user_school")) ?>;
 
@@ -481,11 +538,9 @@ ProcMS - Innoventory
        $(".importwarning").css("display","inline-block");
       }
     },300)
-
     $("#submitsemiexpendable").click(function(){
         $("#lod_uploadsmi").css("display","block");
     })
-
   $.ajax({
     type: "POST",
     url: "{{ route('load_all_school_names') }}",
@@ -499,37 +554,30 @@ ProcMS - Innoventory
     $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
   }
     LoadAssets();
-    function LoadAssets(){
+  function LoadAssets(){
       var school_real_id = $("#myschool_realid").val();
       $.ajax({
         type : "POST",
         url : "{{ route('display_all_encoded_assets') }}",
         data : {_token:"{{ csrf_token()}}",selected_realid: school_real_id},
          success : function(data){
-          // alert(data);
             $("#tbl_ass").DataTable().destroy();
             $("#allmyassests").html(data);
-          
             $("#tbl_ass").DataTable();
              LoadAssetRegistrySummary(school_real_id);
-
-
          }
       })
     }
-
-
-      function LoadAssetRegistrySummary(sc_id){
- $.ajax({
-    type: "POST",
-    url: "{{ route('loadassetvalsum') }}",
-    data: {_token:"{{ csrf_token() }}",selected_realid:sc_id},
-    success: function(data){
-      $("#assvalsum").html(data);
+    function LoadAssetRegistrySummary(sc_id){
+      $.ajax({
+        type: "POST",
+        url: "{{ route('loadassetvalsum') }}",
+        data: {_token:"{{ csrf_token() }}",selected_realid:sc_id},
+        success: function(data){
+        $("#assvalsum").html(data);
+        }
+      })
     }
-  })
-
-  }
     function fileValidation(){
       var fileInput = document.getElementById('file');
       var filePath = fileInput.value;
@@ -609,6 +657,24 @@ ProcMS - Innoventory
 
       }
     })
+       $.ajax({
+        type:"POST",
+        url: "{{ route('stole_semi_expendable_omitted') }}",
+        data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,layout:"count"},
+        success: function(data){
+          // alert(data);
+          $("#semi_asssataomitted").html(data);
+        }
+       })
+
+       $.ajax({
+        type:"POST",
+        url:"{{ route('stole_last_date_ofcode') }}",
+        data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,givencode: "a01.1"},
+        success: function(data){
+           $("#semi_lastuploadof").html(data);
+        }
+       })
   }
 
   function fileValidation_semiexpendable(){

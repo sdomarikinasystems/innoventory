@@ -20,7 +20,7 @@ ProcMS - Innoventory
 	<div class="col-md-4">
 		<div class="mb-3">
 			<!-- <button class="btn-warning btn" data-toggle='modal' data-target='#modal_ignoreall'><i class="fas fa-thumbs-down"></i> Ignore All</button> -->
-			<button class="btn btn-danger" data-toggle="modal" data-target="#repall"><i class="fas fa-flag"></i> Report All</button>
+			<!-- <button class="btn btn-danger" data-toggle="modal" data-target="#repall"><i class="fas fa-flag"></i> Report All</button> -->
 		</div>
 	</div>
 	<div class="col-sm-4">

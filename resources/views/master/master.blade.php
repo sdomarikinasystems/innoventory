@@ -78,7 +78,19 @@ body {
 
 </head>
 <style type="text/css">
+	.modal-header{
+		text-align: center;
+	}
+	.modal-header .modal-title{
+		/*display: inline-block !important;*/
+		margin: 0 auto  !important;
+		/*text-align: center;*/
 
+	}
+	.close { 
+  position: absolute; 
+  right: 1rem;
+}
 	.announcement_card_body{
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -288,10 +300,10 @@ background-color: #007DFF;
 		color: white;
 	}
 	.td_required{
-		color:  #FF3A30;
+		color: #FF3A30;
 	}
-.td_optional{
-		color:   #007DFF;
+	.td_optional{
+		color: #007DFF;
 	}
 	.card-limited{
 		height: 400px;
@@ -348,7 +360,6 @@ background-color: #007DFF;
 	  
 	  </div>
 	</nav>
-
 	<div class="container-fluid">
 	<div class="row mt-3">
 		<div class="col-lg-2 mb-3">
@@ -357,6 +368,7 @@ background-color: #007DFF;
 				<li class="list-group-item"><a href="/innoventory/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
 				<li class="list-group-item"><a href="{{ route('assetregistry') }}"><i class="fas fa-clipboard-check"></i> Asset Registry</a></li>
 				<li class="list-group-item"><a href="/innoventory/asset/inventory"><i class="fas fa-search"></i> Inventory</a></li>
+				<li class="list-group-item"><a href="{{ route('goto_issuances') }}"><i class="fas fa-file-alt"></i> Issuances</a></li>
 				<li class="list-group-item"><a href="/innoventory/asset/disposal"><i class="fas fa-trash"></i> Disposed Assets</a></li>
 				<li class="list-group-item"><a data-toggle="collapse" href="#collapse1"><i class="fas fa-chart-bar"></i> Reports <i class="float-right fas fa-sort-down"></i></a>
 					<div id="collapse1" class="panel-collapse collapse in">
@@ -371,10 +383,8 @@ background-color: #007DFF;
 				</li>
 				<li class="list-group-item"><a href="/innoventory/asset/resources"><i class="fas fa-folder"></i> Resources</a></li>
 			</ul>
-			
 			<h6>ADD-ON</h6>
 			<ul class="list-group mb-3">
-				
 					<?php
 					if(session("user_type") < "4" && session("user_type") != "2"){
 					?>
@@ -408,11 +418,9 @@ background-color: #007DFF;
 			@yield('contents')
 		</div>
 	</div>
-
 	</div>
-
 	<script type="text/javascript">
-		$( ".modal-dialog" ).addClass( "modal-dialog modal-dialog-centered" );
+		$( ".modal-dialog" ).addClass("modal-dialog modal-dialog-centered");
 	</script>
 </body>
 </html>

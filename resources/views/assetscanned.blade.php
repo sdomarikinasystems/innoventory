@@ -15,114 +15,128 @@ ProcMS - Innoventory
 	</ol>
 </nav>
 
+  <?php
+      if(session("user_type") == "0" || session("user_type") == "1"){
+    ?>
+    <!-- FOR ADMIN ONLY -->
+    <a class="btn btn-secondary float-right dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+    <i class="fas fa-filter"></i> Filter Inventory Source</a>
+    <div class="dropdown-menu" style="width:450px; min-height: 300px;">
+      <div class="container">
+        <div class="form-group">
+          <input type="text" class="form-control mt-3" id="searchss" placeholder="Search Station here..." name="">
+        </div>
+        <div class="form-group">
+          <div class=' mt-2'>
+            <a href='#' onclick="gotodefaultsource()" title='Switch to my own assets'>
+            <span class="float-right text-muted"><i class="fas fa-home"></i></span>
+            <small class='text-muted card-subtitle'>Switch to</small><br>
+            <strong class='card-title' ><?php echo session("user_schoolname"); ?></strong>
+            </a>
+            <hr>
+            <center id="search_narrative"><h5 class="text-muted mt-5"><i class="fas fa-search"></i> Search result will appear here...</h5></center>
+          </div>
+          <div id="school_search_cont" style=" overflow-y: auto; overflow-x: hidden; max-height: 300px;">
+          <!-- result -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <?php
+    }
+
+
+    ?>
+
+<h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
+
+ <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-box"></i> Capital Outlay</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-boxes"></i> <span >Semi-Expendable</span></a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
 <div class="row">
-	<div class="col-sm mb-3">
-		
-		<?php
-			if(session("user_type") < "4" && session("user_type") != "2"){
+  <div class="col-sm mb-3">
+    
+    <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
         ?>
         <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-		<a class="btn btn-success" href="#" data-toggle="modal" data-target="#m_generatereport" onclick="getcountofgen()"><i class="fas fa-file-pdf"></i> Generate Report</a>
-		<?php } ?>
+    <a class="btn btn-success" href="#" data-toggle="modal" data-target="#m_generatereport" onclick="getcountofgen()"><i class="fas fa-file-pdf"></i> Generate Report</a>
+    <?php } ?>
 
-        <?php
-			if(session("user_type") == "0" || session("user_type") == "1"){
-		?>
-		<!-- FOR ADMIN ONLY -->
-		<a class="btn btn-secondary dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-		<i class="fas fa-filter"></i> Filter Inventory Source</a>
-		<div class="dropdown-menu" style="width:450px; min-height: 300px;">
-			<div class="container">
-				<div class="form-group">
-					<input type="text" class="form-control mt-3" id="searchss" placeholder="Search Station here..." name="">
-				</div>
-				<div class="form-group">
-					<div class=' mt-2'>
-						<a href='#' onclick="gotodefaultsource()" title='Switch to my own assets'>
-						<span class="float-right text-muted"><i class="fas fa-home"></i></span>
-						<small class='text-muted card-subtitle'>Switch to</small><br>
-						<strong class='card-title' ><?php echo session("user_schoolname"); ?></strong>
-						</a>
-						<hr>
-						<center id="search_narrative"><h5 class="text-muted mt-5"><i class="fas fa-search"></i> Search result will appear here...</h5></center>
-					</div>
-					<div id="school_search_cont" style=" overflow-y: auto; overflow-x: hidden; max-height: 300px;">
-					<!-- result -->
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php
-		}
+      
+  </div>
+  <script type="text/javascript">
+  $("#searchss").change(function(){
+  var skey = $("#searchss").val();
+  $.ajax({
+  type: "POST",
+  url: "../../search_station_toview",
+  data: {_token: "{{ csrf_token() }}",searchkey:skey},
+  success: function(data){
+    if(data == ""){
+    $("#search_narrative").html("No result found.");
+    $("#school_search_cont").css("display","none");
+      $("#search_narrative").css("display","block");
+    }else{
+     $("#school_search_cont").css("display","block");
+      $("#search_narrative").css("display","none");
 
-
-		?>
-
-	</div>
-	<script type="text/javascript">
-	$("#searchss").change(function(){
-	var skey = $("#searchss").val();
-	$.ajax({
-	type: "POST",
-	url: "../../search_station_toview",
-	data: {_token: "{{ csrf_token() }}",searchkey:skey},
-	success: function(data){
-	  if(data == ""){
-		$("#search_narrative").html("No result found.");
-		$("#school_search_cont").css("display","none");
-		  $("#search_narrative").css("display","block");
-	  }else{
-		 $("#school_search_cont").css("display","block");
-		  $("#search_narrative").css("display","none");
-
-			 $("#school_search_cont").html(data);
-	  }
-	  $("#searchss").val("");
-	}
-	})
-	})
-	</script>
-	<div class="col-sm">
-		<table class="table table-sm table-bordered">
-			<thead>
-				<tr>
-					<th>Total Scanned</th>
-					<th>From/To</th>
-					<th>Items Not Found</th>
-				</tr>
-			</thead>
-			<tbody id="assvalsum">
-				<tr>
-					<td id="itms_total">0</td>
-					<td id="mytimeline">0</td>
-					<td>
-						<form action="../../viewallnoentryitems" method="get">
-						<input type="hidden" name="myschool_id" id="inp_sc_id" value="">
-						<button type="submit" class="btn btn-warning btn-sm" id="notextsum">View 0</button>
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>	
-	</div>
+       $("#school_search_cont").html(data);
+    }
+    $("#searchss").val("");
+  }
+  })
+  })
+  </script>
+  <div class="col-sm">
+    <table class="table table-sm table-bordered">
+      <thead>
+        <tr>
+          <th>Total Scanned</th>
+          <th>From/To</th>
+          <th>Items Not Found</th>
+        </tr>
+      </thead>
+      <tbody id="assvalsum">
+        <tr>
+          <td id="itms_total">0</td>
+          <td id="mytimeline">0</td>
+          <td>
+            <form action="../../viewallnoentryitems" method="get">
+            <input type="hidden" name="myschool_id" id="inp_sc_id" value="">
+            <button type="submit" class="btn btn-warning btn-sm" id="notextsum">View 0</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>  
+  </div>
 </div>
 <div class="row mt-3">
-	<div class="col-md-12">
-		<table class="table table-hover table-bordered" id="tbl_sc">
-			<thead>
-				<tr>
-					<th scope="col" width="150">Property Number</th>
-					<th scope="col">Asset Item</th>
-					<th scope="col">Current Condition</th>
-					<th scope="col">Service Center</th>
-					<th scope="col">Room</th>
-					<th scope="col">Inventory Date</th>
-					<th scope="col">Action</th>
-				</tr>
-			</thead>
-			<tbody id="scannedassets">
-			</tbody>
-		</table>
+  <div class="col-md-12">
+    <table class="table table-hover table-bordered" id="tbl_sc">
+      <thead>
+        <tr>
+          <th scope="col" width="150">Property Number</th>
+          <th scope="col">Asset Item</th>
+          <th scope="col">Current Condition</th>
+          <th scope="col">Service Center</th>
+          <th scope="col">Room</th>
+          <th scope="col">Inventory Date</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody id="scannedassets">
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -165,6 +179,11 @@ ProcMS - Innoventory
     </div>
   </div>
 </form>
+  </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+    <h4>UNDER DEVELOPMENT</h4></div>
+</div>
+
 <script type="text/javascript">
 
 

@@ -99,8 +99,30 @@ class functions extends Controller
     public function fly_semi_expendable_validationpage(){
       return view("asset_semivalidation");
     }
+    public function fly_semiexpendable_discrepancies(){
+       return view("asset_semidiscrepancies");
+    }
+    public function fly_semiexpedable_omitted(){
+      return view("asset_semi_omitted");
+    }
+    public function fly_issuances(){
+      return view("asset_issuances");
+    }
 
     // FUNCTIONS
+    public function look_last_date_ofcode(Request $req){
+      $out = $this->send(["tag"=>"GET_LAST_DATE_CODEOF",
+        "station_id"=>$this->sdmenc($req["station_id"]),
+        "logcode"=>$this->sdmenc($req["givencode"])]);
+
+      if(count($out) != 0){
+        // HAS DATE
+        return date("M d, Y g:i a",strtotime($out[0]["timestamp"])) . "<small class='text-muted float-right'>" . $this->DateExplainder($out[0]["timestamp"]) . "</small>";
+      }else{
+        // NO DATE
+        return "N/A";
+      }
+    }
     public function fire_reset_account_password(Request $req){
       $reset_account_password = $this->send(["tag"=>"RESET_ACCOUNT_PASSWORD_BYADMIN",
         "accid"=>$this->sdmenc($req["employeeid"]),
@@ -108,8 +130,53 @@ class functions extends Controller
       return $this->quick_result($reset_account_password,"usermanagement");
     }
 
-    public function look_my_semiexpendable_omitted(){
+    public function look_semi_expendable_omitted(Request $req){
+      $omitt = $this->send(["tag"=>"GET_OMITTED_ASSET_IN_SCHOOL","station_id"=>$this->sdmenc($req["station_id"]),true]);
 
+      $toecho = "";
+      switch($req["layout"]){
+        case 'count':
+           $omitted_count  = count($omitt);
+
+
+        if($omitted_count == "0"){
+          // NONE
+              $toecho  = $omitted_count;
+        }else{
+          // PROVIDE LINE
+              $toecho  = "<a href='" . route("goto_semiexpedable_omitted") . "?stationid=" . $req["station_id"] . "'>" . $omitted_count . "</a>";
+        }
+      
+          break;
+          case 'table':
+           for ($i=0; $i < count($omitt); $i++) {
+            $toecho .= "<tr>
+               <td>" . ($i + 1). "</td>
+                    <td>" . $omitt[$i]["article"] . "</td>
+                    <td>" . $omitt[$i]["description"] . "</td>
+                    <td>" . $omitt[$i]["stock_number"] . "</td>
+                    <td>" . $omitt[$i]["unit_of_mesure"] . "</td>
+                    <td>" . $omitt[$i]["unit_value"] . "</td>
+                    <td>" . $omitt[$i]["balance_per_card"] . "</td>
+                    <td>" . $omitt[$i]["on_hand_per_count"] . "</td>
+                    <td>" . $omitt[$i]["remarks"] . "</td>
+                    <td>" . '
+                  <div class="dropdown">
+    <a class="btn btn-link btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Action
+    </a>
+  
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+      <a class="dropdown-item" href="#"><i class="fas fa-flag"></i> Report</a>
+    </div>
+  </div>
+
+                 ' . "</td>
+            </tr>";
+           }
+            break;
+      }
+      return  $toecho;
     }
     public function look_my_semiexpendable_descrepancies(Request $req){
         $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"])]);
@@ -120,7 +187,8 @@ class functions extends Controller
         case 'count':
          for ($i=0; $i < count($semiex); $i++) {
             $has_desc = false;
-            $sem_article = htmlentities($semiex[$i]["article"]);
+        
+        $sem_article = htmlentities($semiex[$i]["article"]);
         $sem_description = htmlentities($semiex[$i]["description"]);
         $sem_stocknumber = htmlentities($semiex[$i]["stock_number"]);
         $sem_unitofmesure = htmlentities($semiex[$i]["unit_of_mesure"]);
@@ -152,13 +220,19 @@ class functions extends Controller
           $has_desc = true;
         }
         else{$existing = true;}
-         if(  $has_desc ){
-$desccount ++;
-         }
-         }
+          if($has_desc){
+            $desccount ++;
+          }
+        }
 
-        
-          $toecho  = $desccount ;
+        if($desccount == "0"){
+          // NONE
+              $toecho  = $desccount;
+        }else{
+          // PROVIDE LINE
+              $toecho  = "<a href='" . route("goto_semiexpendable_discrepancies") . "?stationid=" . $req["station_id"] . "'>" . $desccount . "</a>";
+        }
+      
           break;
         case 'table':
                 for ($i=0; $i < count($semiex); $i++) {
@@ -199,7 +273,6 @@ $desccount ++;
 
        if($discrepancyList != ""){
           $toecho .= "<tr>
-            <td>" . ($i + 1) . "</td>
             <td>";
             if($sem_article == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
             }else{ $toecho .= $sem_article; } $toecho .= "</td>
@@ -271,24 +344,20 @@ $desccount ++;
       $out = $this->send(["tag"=>"GET_ALL_SERVICE_CENTERS_MYSTATION","station_id"=>$this->sdmenc($req["station_id"])]);
       $toecho = "";
 
+      $toecho .= "<option value='' disabled selected>Choose here...</option>";
       for ($i=0; $i < count($out); $i++) { 
          $toecho .= "<option value='" . $out[$i]["id"] . "'>" . $out[$i]["office"] . "-" . $out[$i]["room_number"]  . "</option>";
       }
 
       return $toecho;
     }
-    public function fire_add_semi_expendible(Request $req){
-       
+    public function fire_add_semi_expendible(Request $req){ 
       $SchoolID = $this->sdmenc($req["sc_id"]);
       $upload_CSVFILE = $req->file('thecsvfile');
       $file = fopen($upload_CSVFILE, "r");
       $toecho = "";
-
-
       // SELECT ALL EXISTING SEMI EXPENDABLE
       $AllSemiExpendable = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
-
-      // return json_encode($AllSemiExpendable);
 
       $tbl_discrepancies = "";
       $tbl_assetnofound = "";
@@ -304,7 +373,7 @@ $desccount ++;
       $asset_updated = 0;
 
       $UploadedData = array();
-
+      $current_stocknumber = array();
 
       while (($getData = fgetcsv($file, 10000, ",")) !== false){
         if( $rot_count != 0){
@@ -330,9 +399,7 @@ $desccount ++;
         $sem_remarks = htmlentities($getData[8]);
 
         array_push($UploadedData,  $sem_article . $sem_description . $sem_stocknumber . $sem_unitofmesure .  $sem_unitval . $sem_balpercard . $sem_onhandper . $sem_shortover . $sem_remarks);
-
         // SEE IF HAS EXACT SAME
-        
         $exact_same = false;
         $data_match = 0;
 
@@ -341,11 +408,16 @@ $desccount ++;
 
           //CHECK IF HAS EXISTING STOCK NUMBER
           if($sem_stocknumber  != "" && $sem_stocknumber != null){
-              if($sem_stocknumber == $AllSemiExpendable[$ix]["stock_number"] ){
+              if($sem_stocknumber == $AllSemiExpendable[$ix]["stock_number"]){
                 $has_existing_stock_number = true;
+                if(!in_array($sem_stocknumber, $current_stocknumber)){
+                  array_push($current_stocknumber, $sem_stocknumber);
+                }else{
+                  $acceptable = false;
+                  $discrepancyList .=  "<strong>Stock Number already exist/not unique (Not Inserted)</strong>" . "<br>";
+                }
               }
           }
-          
           if($sem_article !== $AllSemiExpendable[$ix]["article"] || $sem_description !== $AllSemiExpendable[$ix]["description"] || $sem_stocknumber !== $AllSemiExpendable[$ix]["stock_number"] || $sem_unitofmesure !== $AllSemiExpendable[$ix]["unit_of_mesure"] || $sem_unitval !== $AllSemiExpendable[$ix]["unit_value"] || $sem_balpercard !== $AllSemiExpendable[$ix]["balance_per_card"] || $sem_onhandper !== $AllSemiExpendable[$ix]["on_hand_per_count"] || $sem_shortover !== $AllSemiExpendable[$ix]["shortage_overage"] || $sem_remarks !== $AllSemiExpendable[$ix]["remarks"]){
              $is_exact = false;
           }
@@ -393,10 +465,7 @@ $desccount ++;
           $discrepancyList .=  "Missing Balance per Card" . "<br>";
         }
         else{$existing = true;$datacount++;}
-
-
         // Counstruct Discrepancy
-
         if($discrepancyList != ""){
           $tbl_discrepancies .= "<tr>
             <td>" . ($rot_count +1) ."</td>
@@ -414,7 +483,6 @@ $desccount ++;
           }else{ $tbl_discrepancies .= $sem_stocknumber; }
              $tbl_discrepancies .= "</td>
             <td>";
-
             if($sem_unitofmesure == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_unitofmesure; }
              $tbl_discrepancies .= "</td>
@@ -427,8 +495,6 @@ $desccount ++;
             <td>" . $discrepancyList ."</td>
           </tr>";
         }
-        
-
         if($existing == true && $datacount >= 1){
           // Prove that there's exisiting data
            $overall_assets++;
@@ -448,10 +514,8 @@ $desccount ++;
           // has exisiting data but mussing column(s)
             $miss_col ++;
         }
-
         if($acceptable == true){
           // INSERT DATA
-        
            if($has_existing_stock_number){
             // UPDATE DATA ONLY
              $insert_assetdata = $this->send(["tag"=>"UPDATE_SEMI_EXPENDABLE_DATA",
@@ -483,10 +547,7 @@ $desccount ++;
                                               "serv_center_id"=>$this->sdmenc($req["service_center_id"])],true);
               $asset_inserted ++;
            }
-          
-
            $toecho .= json_encode($insert_assetdata);
-
         }else{
           $not_inserted ++;
         }
@@ -494,48 +555,49 @@ $desccount ++;
         $rot_count++;
       }
 
-
+      if(count($AllSemiExpendable) != 0){
+        //DELETE ALL OMITTED
+        $this->send(["tag"=>"RESET_OMITTED_ASSETS_OF_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
+      }
             for ($i=0; $i < count($AllSemiExpendable); $i++) { 
         $hmat = true;
           for($x = 0; $x < count($UploadedData);$x ++){
               $unifieds = $AllSemiExpendable[$i]["article"] . $AllSemiExpendable[$i]["description"]  .  $AllSemiExpendable[$i]["stock_number"] . $AllSemiExpendable[$i]["unit_of_mesure"]  . $AllSemiExpendable[$i]["unit_value"] . $AllSemiExpendable[$i]["balance_per_card"] . $AllSemiExpendable[$i]["on_hand_per_count"] .  $AllSemiExpendable[$i]["shortage_overage"] . $AllSemiExpendable[$i]["remarks"];
-
-
               if( $unifieds == $UploadedData[$x]){
                  $hmat = false;
               }
           }
-
           if($hmat == true){
             $omittedass ++;
              $tbl_assetnofound .= "
-              <tr>
-               <td>" .$omittedass  .  "</td>
-                <td>" . $AllSemiExpendable[$i]["article"] .  "</td>
-                 <td>" . $AllSemiExpendable[$i]["description"] . "</td>
+                <tr>
+                  <td>" .$omittedass  .  "</td>
+                  <td>" . $AllSemiExpendable[$i]["article"] .  "</td>
+                  <td>" . $AllSemiExpendable[$i]["description"] . "</td>
                   <td>" . $AllSemiExpendable[$i]["stock_number"] . "</td>
-                   <td>" . $AllSemiExpendable[$i]["unit_of_mesure"] . "</td>
-                    <td>" . $AllSemiExpendable[$i]["unit_value"] . "</td>
-                     <td>" . $AllSemiExpendable[$i]["balance_per_card"] . "</td>
-                      <td>" . $AllSemiExpendable[$i]["on_hand_per_count"] . "</td>
-                       <td>" . $AllSemiExpendable[$i]["shortage_overage"] . "</td>
-                        <td>" . $AllSemiExpendable[$i]["remarks"] . "</td>
-              </tr>
+                  <td>" . $AllSemiExpendable[$i]["unit_of_mesure"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["unit_value"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["balance_per_card"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["on_hand_per_count"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["shortage_overage"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["remarks"] . "</td>
+                </tr>
              ";
+             // INSERT OMITTED ASSETS TO DATABASE
+              $omission_insert = $this->send(["tag"=>"INSERT_SEMI_OMITTED_ASSET",
+              "sem_article"=>$this->sdmenc($AllSemiExpendable[$i]["article"] ),
+              "sem_description"=>$this->sdmenc($AllSemiExpendable[$i]["description"]),
+              "sem_stocknumber"=>$this->sdmenc($AllSemiExpendable[$i]["stock_number"]),
+              "sem_unitofmesure"=>$this->sdmenc($AllSemiExpendable[$i]["unit_of_mesure"] ),
+              "sem_unitval"=>$this->sdmenc($AllSemiExpendable[$i]["unit_value"]),
+              "sem_balpercard"=>$this->sdmenc($AllSemiExpendable[$i]["balance_per_card"]),
+              "sem_onhandper"=>$this->sdmenc($AllSemiExpendable[$i]["on_hand_per_count"]),
+              "sem_shortover"=>$this->sdmenc($AllSemiExpendable[$i]["shortage_overage"]),
+              "sem_remarks"=>$this->sdmenc($AllSemiExpendable[$i]["remarks"]),
+              "station_id"=>$this->sdmenc(session("user_school")),
+              "serv_center_id"=>$this->sdmenc($req["service_center_id"])],true);
           }
       }
-
-
-      $toecho .= "<br>-------------<br>";
-        $toecho .= "OVERALL ASSETS : " .  $overall_assets . "<br>";
-        $toecho .= "PERFECT DATA : " . $perfect_data . "<br>";
-        $toecho .= "ASSET WITH COLUMNS : " . $miss_col . "<br>";
-        $toecho .= "ASSET INSERTED : " . $asset_inserted . "/" . $overall_assets . "<br>";
-        $toecho .= "ASSET UPDATED : " . $asset_updated . "<br>";
-        $toecho .= "ASSET OMITTED : n/a<br>";
-        $toecho .= "ASSET NOT INSERTED : " . $not_inserted . "<br>";
-        $toecho .= "ASSET THAT HAS EXACT SAME : " . $exactsamecount . "<br>";
-
       $guessExtension = $upload_CSVFILE->getClientOriginalExtension();
       $origname = $upload_CSVFILE->getClientOriginalName();
       $NewFileName = str_replace(" ", "",session("user_school")) . "--" . date("F_d_Y-g_i_a") . "." . $guessExtension;
@@ -548,6 +610,8 @@ $desccount ++;
                                               "file_format"=>$this->sdmenc($guessExtension)],true);
 
       $upload_CSVFILE->move(public_path() . "/uploads/",   $NewFileName);
+
+      $this->RecordLog("a01.1");
 
       return redirect()->route("goto_semi_expendable_validationpage",[
         "overallassets"=>$overall_assets,
@@ -1192,7 +1256,7 @@ $colval = "";
       for($i = 0 ; $i < count($output);$i++){
         $toecho .= "<tr>
         
-         <td>" . date("F d, Y g:i a",strtotime( $output[$i]["timestamp"])) . "</td>
+         <td><span style='display:none;'>"  . date("Y-m-d H:i:s",strtotime( $output[$i]["timestamp"])) . "</span>" . date("F d, Y g:i a",strtotime( $output[$i]["timestamp"])) . "</td>
          <td>" . $output[$i]["action_taken"] . "</td>
          <td>" . $output[$i]["username"] . "</td>
         </tr>";
@@ -1266,18 +1330,20 @@ $colval = "";
       // GET LAST LOGIN TO THE SYSTEM 
 
       if($re["selected_realid"]  == session("user_school")){
- $tag = $this->sdm_encrypt("get_last_login",PKEY);
-      $user_eid = $this->sdm_encrypt(session("user_eid"),PKEY);
-      $client = new \GuzzleHttp\Client();
-      $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
-      "employee_id"=>$user_eid,
-      ]]);
-$last_login = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+
+        $out = $this->send(["tag"=>"GET_LAST_DATE_CODEOF",
+        "station_id"=>$this->sdmenc(session("user_school")),
+        "logcode"=>$this->sdmenc("a01")]);
+
+        if(count($out) != 0){
+          $last_login = date("M d, Y g:i a",strtotime($out[0]["timestamp"])) . "<small class='text-muted float-right'>" . $this->DateExplainder($out[0]["timestamp"]) . "</small>";
+        }else{
+          $last_login = "N/A";
+        }
+        
       }else{
         $last_login = "Private";
       }
-      
        if($re["selected_realid"]  == session("user_school")){
 //GET LAST TRANSACTION DATE
       $tag = $this->sdm_encrypt("get_last_act_log",PKEY);
@@ -1310,8 +1376,7 @@ $last_login = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
     }else{
     $is_own = false;
     }
-
- if($last_login == ""){
+      if($last_login == ""){
           $last_login = "No Record";
       }
       if($last_trans == ""){
@@ -1320,14 +1385,14 @@ $last_login = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
        $toecho = "<tr>
             <td>" . $total_assets . "</td>
             <td>
-              <form action='../../lod_disc_indetail' method='get'>
+              <form action='" . route("lod_discrep_indetail") . "' method='get'>
               <input type='hidden' value='" . $is_own . "' name='isown'>
                <input type='hidden' value='" . $re["selected_realid"] . "' name='stationid'>
               <button type='submit' class='btn btn-link btn-sm' title='Click to view discrepancies in detail.'>" . $discrepancies . "</button>
               </form>
             </td>
             <td><a href='" . route('gotoomitted') . "'>" . $omittedcount . "</a></td>
-            <td>" . $last_login . "</td>
+            <td>" . $last_login ."</td>
              
             
           </tr>";
@@ -2676,16 +2741,16 @@ $this->RecordLog("a02");
   }
   $toecho .= "<tr>
 
-    <td>"  . $output[$i]["username"] . "<br><small class='text-muted'>#" . $output[$i]["employee_id"] . "</small></td>
+    <td><small class='text-muted float-right'>#" . $output[$i]["employee_id"] . "</small>"  . $output[$i]["username"] . "</td>
     <td>"  . $usertype . "</td>
 <td>"  . $output[$i]["schoolname"] . "</td>
 
 ";
 
 if($output[$i]["scanned_date"] != ""){
-  $toecho .= "<td>" . date("F d, Y g:i",strtotime($output[$i]["scanned_date"])) . "</td>";
+  $toecho .= "<td><small class='float-right text-muted'>" . $this->DateExplainder($output[$i]["scanned_date"]) . "</small>" . date("F d, Y g:i",strtotime($output[$i]["scanned_date"])) . "</td>";
 }else{
-   $toecho .= "<td>No transaction</td>";
+   $toecho .= "<td class='text-muted'>No transaction</td>";
 }
 
 
@@ -3202,7 +3267,7 @@ if( $isown){
             "lg_origin"=>$this->sdm_encrypt(session("user_eid"),PKEY),
           ]]);
            // return $result->getBody()->getContents();
-$this->RecordLog("a01");
+          $this->RecordLog("a01");
 
 
 // ANALYZE WHATS NOT HERE COMPARED TO LAST TIME
@@ -3691,9 +3756,9 @@ return $years . ",".  $months;
             if($result == "1"){
             return "yesterday";
             }else if($result > 30){
-             return $months . " months ago.";
+             return $months . " months ago";
             }else{
-            return round($datediff / (60 * 60 * 24)) . " days ago.";
+            return round($datediff / (60 * 60 * 24)) . " days ago";
             }
             }
         }
