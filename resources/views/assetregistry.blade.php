@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Innoventory - Asset Registry
 @endsection
 
 @section('contents')
@@ -67,15 +67,64 @@ ProcMS - Innoventory
       <a class="nav-link"  data-toggle="pill" id="btn_gotosemiexpendable" href="#semiexpendable" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-boxes"></i> <span >Semi-Expendable</span></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  data-toggle="pill" href="#suplliestbl" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-parachute-box"></i> <span >Supplies</span></a>
+      <a class="nav-link"  data-toggle="pill" id="btn_gotosuppytable" href="#suplliestbl" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-parachute-box"></i> <span >Supplies</span></a>
     </li>
   </ul>
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show" id="suplliestbl" role="tabpanel" aria-labelledby="pills-home-tab">
-      <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
 
-      <div class="modal" tabindex="-1" role="dialog" id="modal_importsupp">
-        <div class="modal-dialog" role="document">
+    <div class="row">
+      <div class="col-sm-6">
+          <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
+      </div>
+      <div class="col-sm-6">
+        <table class="table table-sm table-bordered">
+      <thead>
+        <tr>
+          <th>Total Assets</th>
+          <th>Discrepancies</th>
+          <th>Omitted</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="supp_asscount">0</td>
+          <td id="supp_desccount">0</td>
+          <td id="supp_asssataomitted">0</td>
+          <td id="supp_lastuploadof">0</td>
+        </tr>
+      </tbody>
+    </table>
+      </div>
+      <div class="col-sm-12">
+
+          <table class="table table-hover table-bordered" id="tbl_supply">
+              <thead>
+              <tr>
+              <th scope="col" width="150">Article</th>
+              <th scope="col">Description</th>
+              <th scope="col">Stock Number</th>
+              <th scope="col">Unit of Measure</th>
+              <th scope="col">Unit Value</th>
+              <th scope="col">Balance Per Card</th>
+              <th scope="col">On Hand Per Count</th>
+              <th scope="col">Remarks</th>
+              <th scope="col">Action</th>
+              </tr>
+              </thead>
+              <tbody id="tbl_importedsupplies">
+                
+              </tbody>
+          </table>
+
+      </div>
+    </div>
+
+    <form action="{{ route('shoot_add_supply') }}" enctype="multipart/form-data" method="POST" >
+      {{ csrf_field() }}
+    <div class="modal" tabindex="-1" role="dialog" id="modal_importsupp">
+        <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Upload Supply Via CSV</h5>
@@ -84,15 +133,85 @@ ProcMS - Innoventory
               </button>
             </div>
             <div class="modal-body">
-              <p>Modal body text goes here.</p>
+
+               <div id="lod_uploadsupp" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: white; display:none;">
+    <center>
+<img class="mt-5" src="https://icon-library.net/images/ajax-loading-icon/ajax-loading-icon-2.jpg" style="width: 40px; padding-top: 100px;">
+     <div class="container">
+        <h5 class="mt-3 card-title">Validating Records</h5>
+      <h6 class="card-subtitle text-muted">Please standby for a moment, this may take some time depending on your asset count.</h6></center>
+     </div>
+              <div class="row">
+                 <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label>Upload Supply CSV File</label>
+                      <input type="file" id="supplyfile" required="" accept=".csv"  name="thecsvfile" onchange="return fileValidation_supplyfile()">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                 <h6 class="card-title"><i class="fas fa-tasks"></i> Requirements</h6>
+            <ol>
+              <li>File format needs to be <span class="badge badge-success">.CSV</span></li>
+              <li>File size must be below <span class="badge badge-success">5 MB</span></li>
+              <li>CSV has <span class="badge badge-success">9 columns</span></li>
+            </ol>
+              </div>
+                <div class="col-sm-12">
+                  
+                  <input type="hidden" class="servicecenterselected" name="service_center_id">
+                  <div class="mt-2">
+                    <div class="card " id="panel_semi_previewscv_supply" style="display: none;">
+                      <div class="card-body card-limited">
+                        <small class="text-muted float-right">Limited by 3 rows</small>
+                        <h5>Preview <span id="issupplyvalid"></span></h5>
+                        <table class="table table-bordered table-responsive">
+                        <tbody id="thetable_semiexpendible_supply">
+                        <tr>
+                        <td>Please upload a valid Asset Registry CSV file for the preview.</td>
+                        </tr>
+                        </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="submit" class="btn btn-primary" id="submitsupplycsvbtn"><i class="fas fa-upload"></i> Import</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
       </div>
+  </form>
+
+<form>
+      <div class="modal" tabindex="-1" role="dialog" id="supplydispose">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Dispose Supply</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to dispose this supply asset?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger">Dispose</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</form>
 
 
   </div>
@@ -141,7 +260,7 @@ ProcMS - Innoventory
       })
 
       $("#servcentbtnchoose").click(function(){
-        $("#servicecenterselected").val($("#inp_servicecentersinput").val());
+        $(".servicecenterselected").val($("#inp_servicecentersinput").val());
       })
 
     </script>
@@ -194,7 +313,7 @@ ProcMS - Innoventory
               </div>
              
               <div class="col-md-12">
-                <input type="hidden" id="servicecenterselected" name="service_center_id">
+                <input type="hidden" name="service_center_id" class="servicecenterselected">
                  <div class=" mt-2">
            <div class="card " id="panel_semi_previewscv" style="display: none;">
              <div class="card-body card-limited">
@@ -260,8 +379,6 @@ ProcMS - Innoventory
       </tr>
     </thead>
     <tbody id="tbl_allsemiexpends">
-
-
     </tbody>
   </table>
 
@@ -341,6 +458,7 @@ ProcMS - Innoventory
     $("#lod_change_ass_source").css("display","block");
     LoadAssets();
     LoadSemiExpendable();
+    getallofmysuppydata();
     setTimeout(function(){
     $("#lod_change_ass_source").css("display","none");
     },1000)
@@ -352,6 +470,7 @@ ProcMS - Innoventory
      $("#lod_change_ass_source").css("display","block");
     LoadAssets();
     LoadSemiExpendable();
+    getallofmysuppydata();
     setTimeout(function(){
     $("#lod_change_ass_source").css("display","none");
      $("#sourcename").html(<?php echo json_encode(session("user_schoolname")); ?>);
@@ -496,14 +615,21 @@ ProcMS - Innoventory
   <script type="text/javascript">
     $("#tbl_ass").DataTable();
     $("#tbl_capitaloutlay").DataTable();
+    $("#tbl_supply").DataTable();
     var isokcsv = false;
     var hasclickedsemi = false;
-
+    var hasclickedsupply = false;
 
     $("#btn_gotosemiexpendable").click(function(){
       if(hasclickedsemi == false){
         hasclickedsemi = true;
           LoadSemiExpendable();
+      }
+    })
+    $("#btn_gotosuppytable").click(function(){
+      if(hasclickedsupply == false){
+        hasclickedsupply = true;
+          getallofmysuppydata();
       }
     })
     var isokcsv_semiexpendable = false
@@ -518,13 +644,25 @@ ProcMS - Innoventory
 
        if($("#semifile").val() == "" || isokcsv_semiexpendable == false){
         $("#submitsemiexpendable").css("display","none");
-
-
       }else{
         $("#submitsemiexpendable").css("display","block");
          $("#panel_semi_previewscv").css("display","block");
         $("#issemivalid").html("<span class='badge badge-success'>Congrats, Uploaded file is valid!</span>");
       }
+
+
+
+
+       if($("#supplyfile").val() == "" || isokcsv_semiexpendable == false){
+        $("#submitsupplycsvbtn").css("display","none");
+      }else{
+        $("#submitsupplycsvbtn").css("display","block");
+         $("#panel_semi_previewscv_supply").css("display","block");
+        $("#issupplyvalid").html("<span class='badge badge-success'>Congrats, Uploaded file is valid!</span>");
+      }
+
+
+
       var myschool_realid = $("#myschool_realid").val();
       var detaulscid = <?php echo json_encode(session("user_school")) ?>;
 
@@ -627,7 +765,6 @@ ProcMS - Innoventory
       }
     })
   }
-  // LoadSemiExpendable();
   function LoadSemiExpendable(){
 
      var stationidassigned =  $("#myschool_realid").val();
@@ -645,6 +782,8 @@ ProcMS - Innoventory
         $("#semi_asscount").html(semiasscount);
 
          $("#tbl_capitaloutlay").DataTable();
+
+        
       }
     })
 
@@ -675,7 +814,64 @@ ProcMS - Innoventory
            $("#semi_lastuploadof").html(data);
         }
        })
-  }
+       
+    }
+
+      function getallofmysuppydata(){
+        var stationidassigned = $("#myschool_realid").val();
+
+        $.ajax({
+          type: "POST",
+          url: "{{ route('stole_all_of_my_supply_data') }}",
+          data: {_token: "{{ csrf_token() }}",station_id: stationidassigned},
+          success: function(data){
+              $("#tbl_supply").DataTable().destroy();
+             $("#tbl_importedsupplies").html(data);
+             $("#tbl_supply").DataTable();
+          }
+        })
+      }
+
+      function fileValidation_supplyfile(){
+         var fileInput = document.getElementById('supplyfile');
+      var filePath = fileInput.value;
+      var allowedExtensions = /(\.csv)$/i;
+      var fd = new FormData();
+      var files = $('#supplyfile')[0].files[0];
+      fd.append('thecsvfile',files);
+      fd.append('_token',"{{ csrf_token() }}");
+
+      if(!allowedExtensions.exec(filePath)){
+      alert("Only .csv file is allowed.");
+      fileInput.value = '';
+      $("#thetable_semiexpendible_supply").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
+      return false;
+      }else{
+      // alert(filevalue);
+      // Display CSV Preview
+      $.ajax({
+      type : "POST",
+      url : "{{ route('stole_preview_of_uploaded_supplyfile') }}",
+      contentType: false,
+      processData: false,
+      enctype: 'multipart/form-data',
+      data:fd,
+      success: function(data){
+        if(data.includes("Supply CSV file is not valid") == true){
+          isokcsv_semiexpendable = false;
+            // alert(data);
+           $("#thetable_semiexpendible_supply").html(data);
+           $("#panel_semi_previewscv_supply").css("display","block");
+            $("#issupplyvalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
+        }else{
+          isokcsv_semiexpendable = true;
+    $("#panel_semi_previewscv_supply").css("display","block");
+           $("#thetable_semiexpendible_supply").html(data);
+        }
+      }
+      })
+      }
+      }
 
   function fileValidation_semiexpendable(){
       var fileInput = document.getElementById('semifile');
@@ -704,10 +900,13 @@ ProcMS - Innoventory
       success: function(data){
         if(data.includes("Semi Expendable CSV file is not valid") == true){
           isokcsv_semiexpendable = false;
+            // alert(data);
            $("#thetable_semiexpendible").html(data);
+           $("#panel_semi_previewscv").css("display","block");
             $("#issemivalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
         }else{
           isokcsv_semiexpendable = true;
+    $("#panel_semi_previewscv").css("display","block");
            $("#thetable_semiexpendible").html(data);
         }
       }

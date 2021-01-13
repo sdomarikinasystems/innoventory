@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Inno... - Transaction History
 @endsection
 
 @section('contents')
@@ -50,6 +50,11 @@ ProcMS - Innoventory
             <td>a01.1</td>
             <td>Imported Asset(SE)</td>
           </tr>
+          <tr>
+            <td>a01.2</td>
+            <td>Imported Asset(SU)</td>
+          </tr>
+
           <tr>
             <td>a02</td>
             <td>Generated Report</td>

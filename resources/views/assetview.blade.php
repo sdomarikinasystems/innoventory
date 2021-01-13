@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Innoventory (Loading....)
 @endsection
 
 @section('contents')
@@ -34,7 +34,7 @@ ProcMS - Innoventory
     <p class="mb-0 mt-3"><span class="text-muted">Asset Sub Class</span>: <span class="a_subclass"></span></p>
     <p class="mb-0"><span class="text-muted">Manufacturer</span>: <span class="a_manu"></span></p>
     <p class="mb-0"><span class="text-muted ">Model</span>: <span class="a_model"></span></p>
-     <p class="mb-0"><span class="text-muted ">Accountable Office</span>: <span class="a_noaccoff"></span></p>
+     <p class="mb-0"><span class="text-muted ">Accountable Officer</span>: <span class="a_noaccoff"></span></p>
     
       </div>
       <div class="col-md-4">
@@ -159,9 +159,13 @@ ProcMS - Innoventory
     data: {_token: "{{ csrf_token() }}",asset_id:<?php echo json_encode($_GET["asset_id"]); ?>},
     success: function(data){
       // alert(data);
+
+      $("title").html("CO : "+ data[0]["asset_item"]);
+
       $(".a_navname").html(data[0]["asset_item"]);
       $(".a_prn").html(data[0]["property_number"]);
       $(".a_itemname").html(data[0]["asset_item"]);
+
       $(".a_offtype").html(data[0]["office_type"]);
       $(".a_offname").html(data[0]["office_name"]);
       $(".a_assclass").html(data[0]["asset_classification"]);

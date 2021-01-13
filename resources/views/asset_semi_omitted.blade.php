@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Innoventory - Omitted Semi Expendables
 @endsection
 
 @section('contents')

@@ -108,8 +108,631 @@ class functions extends Controller
     public function fly_issuances(){
       return view("asset_issuances");
     }
+    public function fly_supply_validationpage(){
+       return view("asset_supply_validation");
+    }
+    public function fly_missing_scanned_semi(){
+       return view("assets_missing_semi_scanned");
+    }
+    public function fly_semi_expendable_item_view(){
+       return view("asset_view_semi_single");
+    }
 
     // FUNCTIONS
+    public function look_all_years_with_inventory_semiexpendable(Request $req){
+     $out = $this->send(["tag"=>"GET_INVENTORY_YEARS_SEMI_EXPENDABLE","station_id"=>$this->sdmenc($req["station_id"])]);
+      $toecho = "";
+      for ($i=0; $i < count($out); $i++) { 
+        $toecho .= "<option>" . date("Y",strtotime($out[$i]["scanned_date"])) . "</option>";
+      }
+       if( $toecho == ""){
+         $toecho .= "<option value='" . date("Y") . "' disabled selected>No Record</option>";
+       }
+      return   $toecho;
+    }
+    public function look_inventory_month_semiexpendable(Request $req){
+     $out = $this->send(["tag"=>"GET_INVENTORY_MONTH_SEMI_EXPENDABLE_BYYEAR",
+                          "station_id"=>$this->sdmenc($req["station_id"]),
+                          "year_promised"=>$this->sdmenc($req["date_year"])]);
+      $toecho = "";
+      for ($i=0; $i < count($out); $i++) { 
+        $toecho .= "<option value='" . date("m",strtotime($out[$i]["scanned_date"])) . "'>" . date("F",strtotime($out[$i]["scanned_date"])) . "</option>";
+      }
+       if( $toecho == ""){
+         $toecho .= "<option value='" . date("m") . "' disabled selected>No Record</option>";
+       }
+      return   $toecho;
+    }
+    public function look_inventory_month_capital_outlay(Request $req){
+      $out = $this->send(["tag"=>"GET_INVENTORY_MONTH_CAP_OUTLAY_BYYEAR",
+                          "station_id"=>$this->sdmenc($req["station_id"]),
+                          "year_promised"=>$this->sdmenc($req["date_year"])]);
+      $toecho = "";
+      for ($i=0; $i < count($out); $i++) { 
+        $toecho .= "<option value='" . date("m",strtotime($out[$i]["scanned_date"])) . "'>" . date("F",strtotime($out[$i]["scanned_date"])) . "</option>";
+      }
+       if( $toecho == ""){
+         $toecho .= "<option value='" . date("m") . "' disabled selected>No Record</option>";
+       }
+      return   $toecho;
+    }
+    public function look_all_years_with_inventory_capitaloutlay(Request $req){
+      $out = $this->send(["tag"=>"GET_INVENTORY_YEARS_CAPITAL_OUTLAY","station_id"=>$this->sdmenc($req["station_id"])]);
+      $toecho = "";
+      for ($i=0; $i < count($out); $i++) { 
+        $toecho .= "<option>" . date("Y",strtotime($out[$i]["scanned_date"])) . "</option>";
+      }
+       if( $toecho == ""){
+         $toecho .= "<option value='" . date("Y") . "' disabled selected>No Record</option>";
+       }
+      return   $toecho;
+    }
+    public function look_single_semi_expenable(Request $req){
+      $out = $this->send(["tag"=>"GET_SINGLE_SEMI_EXPENDABLE","data_id"=>$this->sdmenc($req["d_id"])]);
+      if(count( $out) != 0){
+         $out[0]["unit_value"] = number_format($out[0]["unit_value"]);
+      }
+      return json_encode( $out);
+    }
+    public function look_get_semi_expendable_not_scanned(Request $req){
+     $output = $this->send(["tag"=>"GET_MISSING_SCANNED_SEMI_DATA","station_id"=>$this->sdmenc($req["station_info"])]);
+     $toecho = "";
+     for ($i=0; $i < count($output); $i++) { 
+        if($output[$i]["stock_number"] != "none" && $output[$i]["stock_number"] != ""){
+            $toecho .= "
+        <tr>
+        <td>
+        <form action='" . route('goto_semi_expendable_item_view') . "' method='GET' target='_blank'>
+        <input type='hidden' value='" . $output[$i]["item_id"] . "' name='asset_id'>
+        <button class='btn btn-link' type='submit' target='_blank'>" . $output[$i]["stock_number"] . "</button>
+        </form>
+        </td>
+        <td>" . $output[$i]["article"] . "</td>
+        <td>" . $output[$i]["description"] . "</td>
+        <td>" . $output[$i]["office"] . "</td>
+        <td>" . $output[$i]["room_number"] . "</td>
+        </tr>
+        ";
+
+        }
+          
+      
+     }
+     return $toecho;
+    }
+    public function look_getsemisum_totalscanned(Request $req){
+      $output = $this->send(["tag"=>"GET_TOTAL_SCANNED_SEMIEXPENDABLE",
+        "station_id"=>$this->sdmenc($req["sd_id"]),
+        "yy"=>$this->sdmenc($req["selyear"]),
+        "mm"=>$this->sdmenc($req["selmonth"])
+      ]);
+      return $output[0];
+    }
+    public function look_getsemisum_fromto(Request $req){
+      $output = $this->send(["tag"=>"GET_SEMI_FROM_TO_DATES",
+        "station_id"=>$this->sdmenc($req["sd_id"]),
+        "yy"=>$this->sdmenc($req["selyear"]),
+        "mm"=>$this->sdmenc($req["selmonth"])
+      ]);
+      $toecho = "";
+      if(count($output) != 0){
+        $output = explode("|", $output[0]);
+
+        if($output[0] == $output[0]){
+          //same date
+          $toecho =  date("F d, Y",strtotime($output[0])) . "<br>" . 
+          "<span class='text-muted'>" . $this->DateExplainder($output[0]) . "</span>";
+        }else{
+          //different data
+          $toecho =  date("F d",strtotime($output[0])) .  " to " .  date("F d, Y",strtotime($output[1])) . "<br>" . 
+          "<span class='text-muted'>" . $this->DateExplainder($output[1]) . "</span>";
+        }
+        
+      }else{
+        $toecho = "No inventory date available.";
+      }
+      return  $toecho;
+    }
+    public function look_getsemisum_itemsnotfound(Request $req){
+      $output = $this->send(["tag"=>"GET_SEMI_ITEMS_NOT_FOUND",
+        "station_id"=>$this->sdmenc($req["sd_id"]),
+        "yy"=>$this->sdmenc($req["selyear"]),
+        "mm"=>$this->sdmenc($req["selmonth"])
+      ]);
+      return $output[0];
+    }
+    public function fire_uploadscannedcapitaloutlay(Request $req){
+      $SchoolID = $this->sdmenc($req["sc_id"]);
+      $upload_CSVFILE = $req->file('thecsvfile');
+      $file = fopen($upload_CSVFILE, "r");
+
+      $toecho = "";
+       while (($getData = fgetcsv($file, 10000, ",")) !== false){
+        if(count($getData) == 4){
+          $dt_date = htmlentities($getData[0]);
+          $dt_time = htmlentities($getData[1]);
+          $dt_datatype = htmlentities($getData[2]);
+          $dt_datacode = htmlentities($getData[3]);
+          if($dt_date != "" && $dt_time != "" && $dt_datatype != "" && $dt_datacode != ""){
+
+             $AllSemiExpendable = $this->send(["tag"=>"IS_EXISITING_PROPNUMB",
+                                "stocknumb"=>$this->sdmenc($dt_datacode)]);
+             if(count($AllSemiExpendable) == "1"){
+              // return "is_existing";
+              //INSERT DATA BACAUSE STOCK NUMBER IS EXISTING
+
+              //ADD COMPILED DATE TIME
+              $scanned_date_and_time = date("Y-m-d H:i:s",strtotime($dt_date . " " . $dt_time));
+              
+               $SemiExFullInfo = $this->send(["tag"=>"GET_CAPITALOUTLAY_FULLINFO_SINGLE",
+                                  "stock_number"=>$this->sdmenc($dt_datacode)]);
+
+              $property_num = $dt_datacode;
+              $location = $SemiExFullInfo[0]["service_center"];
+              $roomnumber = $SemiExFullInfo[0]["room_number"];
+              $school_id = session("user_school");
+              $origin_id = session("user_eid");
+
+              $send_semi_ex_scanneddata = $this->send(["tag"=>"UPLOAD_CAPITAL_OUTLAY_SCANNED_DATA",
+                                  "property_number"=>$this->sdmenc($property_num),
+                                  "scanned_date"=>$this->sdmenc($scanned_date_and_time),
+                                  "location"=>$this->sdmenc($location),
+                                  "room_number"=>$this->sdmenc($roomnumber),
+                                  "school_id"=>$this->sdmenc($school_id),
+                                  "origin_id"=>$this->sdmenc($origin_id)]);
+             }
+            } 
+          }
+        }
+      return $this->quick_result([true],"asset_scanned");
+    }
+    public function look_show_uploaded_semi_expendable_scanneddata(Request $req){
+      $out = $this->send(["tag"=>"GET_SEMI_SCANNED_DATA",
+        "stationid"=>$this->sdmenc($req["sd_id"]),
+        "yy"=>$this->sdmenc($req["selyear"]),
+        "mm"=>$this->sdmenc($req["selmonth"])
+      ]);
+      $toecho = "";
+
+      for ($i=0; $i < count($out); $i++) { 
+           $toecho .= "<tr>
+            <td>
+ <form action='" . route('goto_semi_expendable_item_view') . "' method='GET' target='_blank'>
+        <input type='hidden' value='" . $out[$i]["item_id_semi"] . "' name='asset_id'>
+        <button class='btn btn-link' type='submit' target='_blank'>" .  $out[$i]["stock_number"] . "</button>
+        </form>
+            </td>
+            <td>" . $out[$i]["article"] . "</td>
+            <td>" . $out[$i]["description"] . "</td>
+            <td>" . $out[$i]["office"] . "</td>
+            <td>" . $out[$i]["room_number"] . "</td>
+            <td>" .  date("F d, Y g:i a",strtotime($out[$i]["scanned_date"])) . "<br><span class='text-muted'>" . $this->DateExplainder( $out[$i]["scanned_date"]) . "</span>" . "</td>
+           </tr>";
+      }
+      return $toecho;
+    }
+    public function fire_uploadsemiexpendabledatascanned(Request $req){
+        $SchoolID = $this->sdmenc($req["sc_id"]);
+      $upload_CSVFILE = $req->file('thecsvfile');
+      $file = fopen($upload_CSVFILE, "r");
+
+      $toecho = "";
+       while (($getData = fgetcsv($file, 10000, ",")) !== false){
+        if(count($getData) == 4){
+          $dt_date = htmlentities($getData[0]);
+          $dt_time = htmlentities($getData[1]);
+          $dt_datatype = htmlentities($getData[2]);
+          $dt_datacode = htmlentities($getData[3]);
+          if($dt_date != "" && $dt_time != "" && $dt_datatype != "" && $dt_datacode != ""){
+
+             $AllSemiExpendable = $this->send(["tag"=>"IS_EXISITING_STOCKNUM",
+              "stocknumb"=>$this->sdmenc($dt_datacode)]);
+
+             if(count($AllSemiExpendable) == "1"){
+              //INSERT DATA BACAUSE STOCK NUMBER IS EXISTING
+
+              //ADD COMPILED DATE TIME
+              $scanned_date_and_time = date("Y-m-d H:i:s",strtotime($dt_date . " " . $dt_time));
+              
+
+               $SemiExFullInfo = $this->send(["tag"=>"GET_SEMI_EXPEN_FULLINFO_SINGLE",
+              "stock_number"=>$this->sdmenc($dt_datacode)]);
+
+              $stock_number = $dt_datacode;
+              $location = $SemiExFullInfo[0]["office"];
+              $roomnumber = $SemiExFullInfo[0]["room_number"];
+              $school_id = session("user_school");
+              $origin_id = session("user_eid");
+
+              $send_semi_ex_scanneddata = $this->send(["tag"=>"ADD_ASSET_SEMI_SCANNEDDATA",
+                                  "stock_number"=>$this->sdmenc($stock_number),
+                                  "scanned_date"=>$this->sdmenc($scanned_date_and_time),
+                                  "location"=>$this->sdmenc($location),
+                                  "room_number"=>$this->sdmenc($roomnumber),
+                                  "school_id"=>$this->sdmenc($school_id),
+                                  "origin_id"=>$this->sdmenc($origin_id)]);
+             }
+            } 
+          }
+        }
+      return $this->quick_result([true],"asset_scanned");
+    }
+    public function fire_add_supply(Request $req){
+      $SchoolID = $this->sdmenc($req["sc_id"]);
+      $upload_CSVFILE = $req->file('thecsvfile');
+      $file = fopen($upload_CSVFILE, "r");
+      $toecho = "";
+      // SELECT ALL EXISTING SEMI EXPENDABLE
+      $AllSemiExpendable = $this->send(["tag"=>"GET_ALL_SUPPLY_BY_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
+
+      $tbl_discrepancies = "";
+      $tbl_assetnofound = "";
+
+      $miss_col = 0;
+      $overall_assets = 0;
+      $perfect_data = 0;
+      $asset_inserted = 0;
+      $not_inserted = 0;
+      $exactsamecount = 0;
+      $rot_count = 0;
+      $omittedass = 0;
+      $asset_updated = 0;
+
+      $UploadedData = array();
+      $current_stocknumber = array();
+
+      while (($getData = fgetcsv($file, 10000, ",")) !== false){
+        if( $rot_count != 0){
+          // BLANKER 
+          $getData[7] = "";
+
+        $existing = false;
+        $datacount = 0;
+        $hasmiss = false;
+        $is_perfect = true;
+        $acceptable = true;
+        $has_existing_stock_number = false;
+        $discrepancyList = "";
+
+        $sem_article = htmlentities($getData[0]);
+        $sem_description = htmlentities($getData[1]);
+        $sem_stocknumber = htmlentities($getData[2]);
+        $sem_unitofmesure = htmlentities($getData[3]);
+        $sem_unitval = htmlentities($getData[4]);
+        $sem_balpercard = htmlentities($getData[5]);
+        $sem_onhandper = htmlentities($getData[6]);
+        $sem_shortover = htmlentities($getData[7]);
+        $sem_remarks = htmlentities($getData[8]);
+
+        array_push($UploadedData, $sem_article . $sem_description . $sem_stocknumber . $sem_unitofmesure .  $sem_unitval . $sem_balpercard . $sem_onhandper . $sem_shortover . $sem_remarks);
+
+        // SEE IF HAS EXACT SAME
+        $exact_same = false;
+        $data_match = 0;
+
+          for ($ix=0; $ix < count($AllSemiExpendable); $ix++) { 
+          $is_exact = true; 
+
+          //CHECK IF HAS EXISTING STOCK NUMBER
+          if($sem_stocknumber  != "" && $sem_stocknumber != null){
+              if($sem_stocknumber == $AllSemiExpendable[$ix]["stock_number"]){
+                $has_existing_stock_number = true;
+                if(!in_array($sem_stocknumber, $current_stocknumber)){
+                  array_push($current_stocknumber, $sem_stocknumber);
+                }else{
+                  $acceptable = false;
+                  $discrepancyList .=  "<strong>Stock Number already exist/not unique (Not Inserted)</strong>" . "<br>";
+                }
+              }
+          }
+          if($sem_article !== $AllSemiExpendable[$ix]["article"] || $sem_description !== $AllSemiExpendable[$ix]["description"] || $sem_stocknumber !== $AllSemiExpendable[$ix]["stock_number"] || $sem_unitofmesure !== $AllSemiExpendable[$ix]["unit_of_mesure"] || $sem_unitval !== $AllSemiExpendable[$ix]["unit_value"] || $sem_balpercard !== $AllSemiExpendable[$ix]["balance_per_card"] || $sem_onhandper !== $AllSemiExpendable[$ix]["on_hand_per_count"] || $sem_shortover !== $AllSemiExpendable[$ix]["shortage_overage"] || $sem_remarks !== $AllSemiExpendable[$ix]["remarks"]){
+             $is_exact = false;
+          }
+
+          if($is_exact == true){
+            // THE DATA HAS MATCH
+            $exact_same = true;
+            $data_match ++;
+          }
+        }
+
+        if($data_match ==0){
+          // DATA IS NEW AND FRESH
+
+        }
+
+        
+        if($sem_article == "" || $sem_article == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Article" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_description == "" || $sem_description == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Description" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_stocknumber == "" || $sem_stocknumber == null){
+          $hasmiss = true;
+          $discrepancyList .=  "<strong>Missing Stock Number (Not Inserted)</strong>" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Unit of Mesure" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_unitval == "" || $sem_unitval == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Unit value" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        if($sem_balpercard == "" || $sem_balpercard == null){
+          $hasmiss = true;
+          $discrepancyList .=  "Missing Balance per Card" . "<br>";
+        }
+        else{$existing = true;$datacount++;}
+        // Counstruct Discrepancy
+        if($discrepancyList != ""){
+          $tbl_discrepancies .= "<tr>
+            <td>" . ($rot_count +1) ."</td>
+            <td>";
+            if($sem_article == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            }else{ $tbl_discrepancies .= $sem_article; } $tbl_discrepancies .= "</td>
+            <td>";
+            if($sem_description == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_description; }
+             $tbl_discrepancies .= "</td>
+            <td>";
+            if($sem_stocknumber == ""){ 
+               $acceptable = false;
+               $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_stocknumber; }
+             $tbl_discrepancies .= "</td>
+            <td>";
+            if($sem_unitofmesure == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_unitofmesure; }
+             $tbl_discrepancies .= "</td>
+            <td>";
+            if($sem_unitval == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_unitval; }
+            $tbl_discrepancies .= "</td>
+             <td>"; if($sem_balpercard == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+          }else{ $tbl_discrepancies .= $sem_balpercard; }$tbl_discrepancies .= "</td>
+            <td>" . $discrepancyList ."</td>
+          </tr>";
+        }
+        if($existing == true && $datacount >= 1){
+          // Prove that there's exisiting data
+           $overall_assets++;
+        }else{
+          // NO EXISTING DATA
+          $acceptable = false;
+        }
+        if($exact_same == true){
+          //HAS EXACT SAME
+          $acceptable = false;
+          $exactsamecount++;
+        }
+        if($datacount == 6){
+           $perfect_data++;
+        }
+        if($existing == true && $hasmiss == true){
+          // has exisiting data but mussing column(s)
+            $miss_col ++;
+        }
+        if($acceptable == true){
+          // INSERT DATA
+           if($has_existing_stock_number){
+            // UPDATE DATA ONLY
+             $insert_assetdata = $this->send(["tag"=>"UPDATE_SUPPLY_DATA",
+                                              "sem_article"=>$this->sdmenc($sem_article),
+                                              "sem_description"=>$this->sdmenc($sem_description),
+                                              "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
+                                              "sem_unitofmesure"=>$this->sdmenc($sem_unitofmesure),
+                                              "sem_unitval"=>$this->sdmenc($sem_unitval),
+                                              "sem_balpercard"=>$this->sdmenc($sem_balpercard),
+                                              "sem_onhandper"=>$this->sdmenc($sem_onhandper),
+                                              "sem_shortover"=>$this->sdmenc($sem_shortover),
+                                              "sem_remarks"=>$this->sdmenc($sem_remarks),
+                                              "station_id"=>$this->sdmenc(session("user_school")),
+                                              "serv_center_id"=>$this->sdmenc($req["service_center_id"])],true);
+             $asset_updated++;
+           }else{
+            // ADD NEW DATA TO SEMI EXPENDABLE
+             $insert_assetdata = $this->send(["tag"=>"ADD_NEW_SUPPLY_DATA",
+                                              "sem_article"=>$this->sdmenc($sem_article),
+                                              "sem_description"=>$this->sdmenc($sem_description),
+                                              "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
+                                              "sem_unitofmesure"=>$this->sdmenc($sem_unitofmesure),
+                                              "sem_unitval"=>$this->sdmenc($sem_unitval),
+                                              "sem_balpercard"=>$this->sdmenc($sem_balpercard),
+                                              "sem_onhandper"=>$this->sdmenc($sem_onhandper),
+                                              "sem_shortover"=>$this->sdmenc($sem_shortover),
+                                              "sem_remarks"=>$this->sdmenc($sem_remarks),
+                                              "station_id"=>$this->sdmenc(session("user_school")),
+                                              "serv_center_id"=>$this->sdmenc($req["service_center_id"])],true);
+              $asset_inserted ++;
+           }
+           $toecho .= json_encode($insert_assetdata);
+        }else{
+          $not_inserted ++;
+        }
+        }
+        $rot_count++;
+      }
+
+      if(count($AllSemiExpendable) != 0){
+        //DELETE ALL OMITTED
+        $this->send(["tag"=>"RESET_OMITTED_SUPPLY","station_id"=>$this->sdmenc(session("user_school"))]);
+      }
+            for ($i=0; $i < count($AllSemiExpendable); $i++) { 
+        $hmat = true;
+          for($x = 0; $x < count($UploadedData);$x ++){
+              $unifieds = $AllSemiExpendable[$i]["article"] . $AllSemiExpendable[$i]["description"]  .  $AllSemiExpendable[$i]["stock_number"] . $AllSemiExpendable[$i]["unit_of_mesure"]  . $AllSemiExpendable[$i]["unit_value"] . $AllSemiExpendable[$i]["balance_per_card"] . $AllSemiExpendable[$i]["on_hand_per_count"] .  $AllSemiExpendable[$i]["shortage_overage"] . $AllSemiExpendable[$i]["remarks"];
+              if( $unifieds == $UploadedData[$x]){
+                 $hmat = false;
+              }
+          }
+          if($hmat == true){
+            $omittedass ++;
+             $tbl_assetnofound .= "
+                <tr>
+                  <td>" .$omittedass  .  "</td>
+                  <td>" . $AllSemiExpendable[$i]["article"] .  "</td>
+                  <td>" . $AllSemiExpendable[$i]["description"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["stock_number"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["unit_of_mesure"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["unit_value"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["balance_per_card"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["on_hand_per_count"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["shortage_overage"] . "</td>
+                  <td>" . $AllSemiExpendable[$i]["remarks"] . "</td>
+                </tr>
+             ";
+             // INSERT OMITTED ASSETS TO DATABASE
+              $omission_insert = $this->send(["tag"=>"INSERT_SUPPLY_ASSET_OMITTED",
+              "sem_article"=>$this->sdmenc($AllSemiExpendable[$i]["article"] ),
+              "sem_description"=>$this->sdmenc($AllSemiExpendable[$i]["description"]),
+              "sem_stocknumber"=>$this->sdmenc($AllSemiExpendable[$i]["stock_number"]),
+              "sem_unitofmesure"=>$this->sdmenc($AllSemiExpendable[$i]["unit_of_mesure"] ),
+              "sem_unitval"=>$this->sdmenc($AllSemiExpendable[$i]["unit_value"]),
+              "sem_balpercard"=>$this->sdmenc($AllSemiExpendable[$i]["balance_per_card"]),
+              "sem_onhandper"=>$this->sdmenc($AllSemiExpendable[$i]["on_hand_per_count"]),
+              "sem_shortover"=>$this->sdmenc($AllSemiExpendable[$i]["shortage_overage"]),
+              "sem_remarks"=>$this->sdmenc($AllSemiExpendable[$i]["remarks"]),
+              "station_id"=>$this->sdmenc(session("user_school")),
+              "serv_center_id"=>$this->sdmenc($req["service_center_id"])],true);
+          }
+      }
+      $guessExtension = $upload_CSVFILE->getClientOriginalExtension();
+      $origname = $upload_CSVFILE->getClientOriginalName();
+      $NewFileName = str_replace(" ", "",session("user_school")) . "--" . date("F_d_Y-g_i_a") . "." . $guessExtension;
+
+      $ResourceFileUpload = $this->send(["tag"=>"index_upload_asset_csv",
+                                              "file_name"=>$this->sdmenc($NewFileName),
+                                              "st_id"=>$this->sdmenc(session("user_school")),
+                                              "empid"=>$this->sdmenc(session("user_eid")),
+                                              "realname"=>$this->sdmenc($origname),
+                                              "file_format"=>$this->sdmenc($guessExtension)],true);
+
+      $upload_CSVFILE->move(public_path() . "/uploads/",   $NewFileName);
+      $this->RecordLog("a01.2");
+
+      return redirect()->route("goto_supply_validationpage",[
+        "overallassets"=>$overall_assets,
+        "perfectdata"=>$perfect_data,
+        "missingcolumns"=>$miss_col,
+        "insertedassets"=>$asset_inserted,
+        "exactsame"=>$exactsamecount,
+        "notinserted"=>$not_inserted,
+        "ass_withdesc"=>$tbl_discrepancies,
+        "ass_nofount"=>$tbl_assetnofound,
+        "ass_omitted"=> $omittedass,
+        "ass_updated"=> $asset_updated]);
+    }
+    public function look_preview_of_uploaded_supplyfile(Request $req){
+         $csv_file = $req->file('thecsvfile');
+      $file = fopen($csv_file, "r");
+           $toecho= "";
+          $previewcount = 0;
+          while (($getData = fgetcsv($file, 10000, ",")) !== FALSE){
+            if( $previewcount  != 0 && count($getData) <= 9){
+
+               $toecho .= "<tr>";
+
+               for($i =0; $i < 9;$i++){
+                  $toecho .= "<td>" . $getData[$i] . "</td>";
+               }
+
+               $toecho .= "</tr>";
+               
+                if( $previewcount >= 3){
+                  break;
+                }
+
+            }
+             $previewcount++;
+           }
+
+           if($toecho == ""){
+         $toecho = "
+          <tr>
+          <td>Supply CSV file is not valid.</td>
+          </tr>
+          ";
+           }else{
+            $toecho = "
+             <tr>
+              <th colspan='9' class='td_required'><small><i class='fas fa-dot-circle'></i></small> <span class='text-muted'>Required Data</span></th>
+             </tr>
+             <tr>
+              <th colspan='9' class='td_optional'><small><i class='fas fa-dot-circle'></i></small> <span class='text-muted'>Optional Data</span></th>
+             </tr>
+
+             <tr>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_required'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_optional'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_optional'><small><i class='fas fa-dot-circle'></i></small></th>
+          <th class='td_optional'><small><i class='fas fa-dot-circle'></i></small></th>
+          </tr>
+          <tr>
+          <th>Article</th>
+          <th>Description</th>
+          <th>Stock Number</th>
+          <th>Unit of Mesure</th>
+          <th>Unit Value</th>
+          <th>Balance Per Card</th>
+          <th>On Hand Per Count</th>
+          <th>Shortage/Overage</th>
+          <th>Remarks</th>
+          </tr>
+          " . $toecho;
+           }
+
+           return $toecho;
+    }
+    public function look_all_of_my_supply_data(Request $req){
+        $semiex = $this->send(["tag"=>"GET_ALL_OFMY_SUPPLYDATA",
+        "station_id"=>$this->sdmenc($req["station_id"])]);
+        $toecho = "";
+
+        for ($i=0; $i < count( $semiex ); $i++) { 
+          $toecho .= "
+        <tr>
+        <td>" . $semiex[$i]["article"] .  "</td>
+        <td>" . $semiex[$i]["description"] . "</td>
+        <td>" . $semiex[$i]["stock_number"] . "</td>
+        <td>" . $semiex[$i]["unit_of_mesure"] . "</td>
+        <td>" . $semiex[$i]["unit_value"] . "</td>
+        <td>" . $semiex[$i]["balance_per_card"] . "</td>
+        <td>" . $semiex[$i]["on_hand_per_count"] . "</td>
+        <td>" . $semiex[$i]["remarks"] . "</td>
+        <td>" . '
+                    <div class="dropdown ">
+              <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Action
+              </a>
+            
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#supplydispose"><i class="fas fa-trash"></i> Dispose</a>
+
+              </div>
+            </div>
+
+        '. "</td>
+        </tr>
+        ";
+        }
+
+        
+        return $toecho;
+    }
     public function look_last_date_ofcode(Request $req){
       $out = $this->send(["tag"=>"GET_LAST_DATE_CODEOF",
         "station_id"=>$this->sdmenc($req["station_id"]),
@@ -329,6 +952,16 @@ class functions extends Controller
               </a>
             
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+
+              ';
+
+              $toecho .= "
+              <form action='" . route('goto_semi_expendable_item_view') . "' method='GET' target='_blank'>
+              <input type='hidden' value='" . $semiex[$i]["item_id"] . "' name='asset_id'>
+              <button class='dropdown-item' type='submit' target='_blank'><i class='fas fa-binoculars'></i> View</button>
+              </form>";
+
+              $toecho .='
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#semidispose"><i class="fas fa-trash"></i> Dispose</a>
               </div>
             </div>
@@ -697,20 +1330,20 @@ class functions extends Controller
       $toret = $this->send(["tag"=>"ADD_NEW_SEMI_EXPENDABLE"]);
     }
     public function rep_all_om_ass(Request $req){
-    $tag = $this->sdm_encrypt("report_all_omitted_assets",PKEY);
+    $tag = $this->sdmenc("report_all_omitted_assets");
 
-      $reason = $this->sdm_encrypt("2",PKEY);
+      $reason = $this->sdmenc("2");
 
-     $propertynumber = $this->sdm_encrypt("",PKEY);
+     $propertynumber = $this->sdmenc("");
       if(isset($req["propertynumber"])){
-         $propertynumber = $this->sdm_encrypt($req["propertynumber"],PKEY);
+         $propertynumber = $this->sdmenc($req["propertynumber"]);
       }
-     $remarks = $this->sdm_encrypt($req["remarks"],PKEY);
+     $remarks = $this->sdmenc($req["remarks"]);
 
      
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $station_id = $this->sdmenc(session("user_school"));
 
-      $user_eid = $this->sdm_encrypt(session("user_eid"),PKEY);
+      $user_eid = $this->sdmenc(session("user_eid"));
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -721,23 +1354,23 @@ class functions extends Controller
           "user_eid"=>$user_eid,
            "station_id"=>$station_id,
       ]]);
-      $output =$this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+      $output =$this->sdmdec($xresult->getBody()->getContents());
       
         Alert::success("All Asset Reported!");
      return redirect()->route("gotoomitted");
     }
       public function display_omitted_of_station(Request $req){
-      $tag = $this->sdm_encrypt("disp_om_ass_rebysta",PKEY);
+      $tag = $this->sdmenc("disp_om_ass_rebysta");
 
-      $mystation = $this->sdm_encrypt($req["selected_realid"],PKEY);
-      $usertype = $this->sdm_encrypt(session("user_type"),PKEY);
+      $mystation = $this->sdmenc($req["selected_realid"]);
+      $usertype = $this->sdmenc(session("user_type"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
             "mystation"=>$mystation,
             "usertype"=>$usertype,
         ]]);
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents() ,PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents() ),true);
       $toecho = "";
 
       for ($i=0; $i < count($output); $i++) { 
@@ -793,24 +1426,24 @@ switch ($output[$i]["om_reason"]) {
     }
 
     public function rep_om_sing(Request $req){
-      $tag = $this->sdm_encrypt("report_omitted_now_singleton",PKEY);
+      $tag = $this->sdmenc("report_omitted_now_singleton");
 
-      $idofassetinregistry = $this->sdm_encrypt($req["idofassetinregistry"],PKEY);
-      $reason = $this->sdm_encrypt($req["reason"],PKEY);
+      $idofassetinregistry = $this->sdmenc($req["idofassetinregistry"]);
+      $reason = $this->sdmenc($req["reason"]);
 
-     $propertynumber = $this->sdm_encrypt("",PKEY);
+     $propertynumber = $this->sdmenc("");
       if(isset($req["propertynumber"])){
-         $propertynumber = $this->sdm_encrypt($req["propertynumber"],PKEY);
+         $propertynumber = $this->sdmenc($req["propertynumber"]);
       }
 
-      $remarks = $this->sdm_encrypt("",PKEY);
+      $remarks = $this->sdmenc("");
       if(isset($req["remarks"])){
-         $remarks = $this->sdm_encrypt($req["remarks"],PKEY);
+         $remarks = $this->sdmenc($req["remarks"]);
       }
      
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $station_id = $this->sdmenc(session("user_school"));
 
-      $user_eid = $this->sdm_encrypt(session("user_eid"),PKEY);
+      $user_eid = $this->sdmenc(session("user_eid"));
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -822,18 +1455,18 @@ switch ($output[$i]["om_reason"]) {
           "user_eid"=>$user_eid,
            "station_id"=>$station_id,
       ]]);
-      $output =$this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+      $output =$this->sdmdec($xresult->getBody()->getContents());
       
         Alert::success("Asset Reported!");
      return redirect()->route("gotoomitted");
     }
     public function get_station_in_statuses(){
-       $tag = $this->sdm_encrypt("getstastatus",PKEY);
+       $tag = $this->sdmenc("getstastatus");
    $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       ]]);
-      $output = json_decode($this->sdm_decrypt($xresult->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
  $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
 
@@ -851,13 +1484,13 @@ switch ($output[$i]["om_reason"]) {
       return $toecho;
     }
     public function get_ser_fqrs(Request $req){
-  $tag = $this->sdm_encrypt("get_ser_fqrs",PKEY);
+  $tag = $this->sdmenc("get_ser_fqrs");
    $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
-      "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+      "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
-      $output = json_decode($this->sdm_decrypt($xresult->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
 
       $toecho = "<option selected value='all|all'>Show All</option>";
 
@@ -867,20 +1500,20 @@ switch ($output[$i]["om_reason"]) {
       return $toecho;
     }
     public function get_qr_as_sbyer(Request $req){
-     $tag = $this->sdm_encrypt("getassqrbyroomfilter",PKEY);
+     $tag = $this->sdmenc("getassqrbyroomfilter");
 
-      $service_center = $this->sdm_encrypt($req["service_center"],PKEY);
-      $room_number = $this->sdm_encrypt($req["room_number"],PKEY);
+      $service_center = $this->sdmenc($req["service_center"]);
+      $room_number = $this->sdmenc($req["room_number"]);
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
-      "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+      "station_id"=>$this->sdmenc(session("user_school")),
       "service_center"=>$service_center,
       "room_number"=>$room_number,
       ]]);
 
-      $out_res = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+      $out_res = $this->sdmdec($xresult->getBody()->getContents());
       $output = json_decode($out_res,true);
 
       $toecho = "";
@@ -906,15 +1539,15 @@ switch ($output[$i]["om_reason"]) {
       return $toecho;
     }
     public function get_report(Request $req){
-      $tag = $this->sdm_encrypt("grep_bygroup",PKEY);
-      $columnname = $this->sdm_encrypt($req["columnname"],PKEY);
+      $tag = $this->sdmenc("grep_bygroup");
+      $columnname = $this->sdmenc($req["columnname"]);
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "colname"=>$columnname,
-      "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+      "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
-      $output = json_decode($this->sdm_decrypt($xresult->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
       $toecho = "";
 
 
@@ -957,17 +1590,17 @@ $colval = "";
       return $toecho ;
     }
     public function extgroupedconts(Request $req){
-      $tag = $this->sdm_encrypt("getextractedgrouprep",PKEY);
-      $column_name = $this->sdm_encrypt($req["column_name"],PKEY);
-      $column_value = $this->sdm_encrypt($req["column_value"],PKEY);
+      $tag = $this->sdmenc("getextractedgrouprep");
+      $column_name = $this->sdmenc($req["column_name"]);
+      $column_value = $this->sdmenc($req["column_value"]);
          $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
-      "school_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+      "school_id"=>$this->sdmenc(session("user_school")),
       "column_name"=>$column_name,
       "column_value"=>$column_value,
       ]]);
-      $output = json_decode($this->sdm_decrypt($xresult->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
      $toecho = "";
 
 
@@ -1033,12 +1666,12 @@ $colval = "";
      return  $toecho;
     }
     public function get_tobegen_repcount(Request $req){
-      $tag = $this->sdm_encrypt("get_tobegenCount",PKEY);
+      $tag = $this->sdmenc("get_tobegenCount");
 
-      $rn = $this->sdm_encrypt($req["rn"],PKEY);
-      $cc = $this->sdm_encrypt($req["cc"],PKEY);
+      $rn = $this->sdmenc($req["rn"]);
+      $cc = $this->sdmenc($req["cc"]);
       
-      $station_id = $this->sdm_encrypt($req["station_id"],PKEY);
+      $station_id = $this->sdmenc($req["station_id"]);
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -1048,19 +1681,19 @@ $colval = "";
       "cc"=>$cc,
       ]]);
 
-      $output = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($xresult->getBody()->getContents());
 
       return $output;
     }
     public function findnewservcen(){
-       $tag = $this->sdm_encrypt("findservicecenternew",PKEY);
+       $tag = $this->sdmenc("findservicecenternew");
          $client = new \GuzzleHttp\Client();
         $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-        "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+        "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
 
-        $output = json_decode($this->sdm_decrypt($xresult->getBody()->getContents(),PKEY),true);
+        $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
         $toecho = "";
         for ($i=0; $i < count($output); $i++) { 
 
@@ -1076,13 +1709,13 @@ $colval = "";
         return $toecho;
     }
     public function impallfoundsercen(){
-       $tag = $this->sdm_encrypt("importallservice_centers",PKEY);
+       $tag = $this->sdmenc("importallservice_centers");
          $client = new \GuzzleHttp\Client();
           $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-        "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+        "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
-        $output = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+        $output = $this->sdmdec($xresult->getBody()->getContents());
         // return $output;
         if($output == "true"){
           Alert::success("All Service Centers has been imported!");
@@ -1093,21 +1726,21 @@ $colval = "";
         }
     }
     public function passchange(Request $req){
-        $tag = $this->sdm_encrypt("passchangenow",PKEY);
+        $tag = $this->sdmenc("passchangenow");
 
-        $olpas = $this->sdm_encrypt($req["olpas"],PKEY);
-        $newpas = $this->sdm_encrypt($req["newpas"],PKEY);
-        $renewpas = $this->sdm_encrypt($req["renewpas"],PKEY);
+        $olpas = $this->sdmenc($req["olpas"]);
+        $newpas = $this->sdmenc($req["newpas"]);
+        $renewpas = $this->sdmenc($req["renewpas"]);
 
       if($newpas == $renewpas){
         $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-        "empid"=>$this->sdm_encrypt(session("user_eid"),PKEY),
+        "empid"=>$this->sdmenc(session("user_eid")),
         "olpas"=>$olpas,
          "newpas"=>$newpas,
       ]]);
-        $mynameschool = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+        $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
 
         if($mynameschool == "true"){
           Alert::success("Password Updated!");
@@ -1122,55 +1755,55 @@ $colval = "";
       }
     }
     public function count_all_created_asset_loc(){
-      $tag = $this->sdm_encrypt("count_allcreated_assloc",PKEY);
+      $tag = $this->sdmenc("count_allcreated_assloc");
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-         "school_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+         "school_id"=>$this->sdmenc(session("user_school")),
       ]]);
-     $output = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+     $output = $this->sdmdec($xresult->getBody()->getContents());
      return $output;
     }
     public function edit_sc_info(Request $req){
-      $tag = $this->sdm_encrypt("editscinf",PKEY);
+      $tag = $this->sdmenc("editscinf");
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-        "st_id"=>$this->sdm_encrypt($req["st_id"],PKEY),
-         "school_id"=>$this->sdm_encrypt($req["school_id"],PKEY),
-          "st_name"=>$this->sdm_encrypt($req["st_name"],PKEY),
+        "st_id"=>$this->sdmenc($req["st_id"]),
+         "school_id"=>$this->sdmenc($req["school_id"]),
+          "st_name"=>$this->sdmenc($req["st_name"]),
       ]]);
-     $mynameschool = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+     $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
       Alert::success("Station Updated!");
      return redirect()->route("sta_amanagement");
     }
     public function delstationnow(Request $req){
-      $tag = $this->sdm_encrypt("del_st_now",PKEY);
+      $tag = $this->sdmenc("del_st_now");
 
-      $st_id =  $this->sdm_encrypt($req["st_id"],PKEY);
+      $st_id =  $this->sdmenc($req["st_id"]);
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "st_id"=>$st_id,
       ]]);
-     $mynameschool = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+     $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
       Alert::success("Station Deleted!");
      return redirect()->route("sta_amanagement");
     }
     public function view_all_st_names(Request $req){
-      $tag = $this->sdm_encrypt("view_all_station_names",PKEY);
+      $tag = $this->sdmenc("view_all_station_names");
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
       ]]);
-     $mynameschool = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+     $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
       return $mynameschool;
     }
 
     public function addnewsta_xnow(Request $req){
-      $tag = $this->sdm_encrypt("station_new_add",PKEY);
-      $st_name =  $this->sdm_encrypt($req["st_name"],PKEY);
-      $st_id =  $this->sdm_encrypt($req["st_id"],PKEY);
+      $tag = $this->sdmenc("station_new_add");
+      $st_name =  $this->sdmenc($req["st_name"]);
+      $st_id =  $this->sdmenc($req["st_id"]);
 
             $client = new \GuzzleHttp\Client();
             $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -1178,7 +1811,7 @@ $colval = "";
         "st_name"=>$st_name,
         "st_id"=>$st_id,
       ]]);
-      $mynameschool = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+      $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
       if($mynameschool  == "true"){
         Alert::success("Station added!");
       }else if($mynameschool == "exist"){
@@ -1191,38 +1824,38 @@ $colval = "";
     }
     public function get_school_fullname(Request $req){
 
-      $sc_id =  $this->sdm_encrypt($req["stationid"],PKEY);
-      $tag = $this->sdm_encrypt("get_sc_name",PKEY);
+      $sc_id =  $this->sdmenc($req["stationid"]);
+      $tag = $this->sdmenc("get_sc_name");
             $client = new \GuzzleHttp\Client();
             $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "sc_id"=>$sc_id,
       ]]);
-      $mynameschool = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+      $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
 
       return $mynameschool;
     }
     public function search_asstov(Request $req){
-     $tag = $this->sdm_encrypt("search_histo",PKEY);
-     $search_keyword = $this->sdm_encrypt($req["searchkey"],PKEY);
+     $tag = $this->sdmenc("search_histo");
+     $search_keyword = $this->sdmenc($req["searchkey"]);
      $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "search_keyword"=> $search_keyword,
       ]]);
-      $result = $this->sdm_decrypt( $result->getBody()->getContents(),PKEY);
+      $result = $this->sdmdec( $result->getBody()->getContents());
       return  $result;
     }
  public function get_export_history(){
-      $tag = $this->sdm_encrypt("get_exporthist",PKEY);
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $tag = $this->sdmenc("get_exporthist");
+      $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
-      "employee_id"=>$this->sdm_encrypt(session("user_eid"),PKEY),
+      "employee_id"=>$this->sdmenc(session("user_eid")),
       ]]);
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
       $toecho = "";
       for($i = 0 ; $i < count($output);$i++){
@@ -1242,15 +1875,15 @@ $colval = "";
        return $toecho;
     }
     public function get_trhisto(){
-      $tag = $this->sdm_encrypt("gettrahistory",PKEY);
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $tag = $this->sdmenc("gettrahistory");
+      $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
-      "employee_id"=>$this->sdm_encrypt(session("user_eid"),PKEY),
+      "employee_id"=>$this->sdmenc(session("user_eid")),
       ]]);
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
       $toecho = "";
       for($i = 0 ; $i < count($output);$i++){
@@ -1264,25 +1897,25 @@ $colval = "";
        return $toecho;
     }
     public function lod_dis_indetail(Request $req){
-       $tag = $this->sdm_encrypt("get_discrepancies_indetail",PKEY);
-      $station_id = $this->sdm_encrypt($req["stationid"],PKEY);
+       $tag = $this->sdmenc("get_discrepancies_indetail");
+      $station_id = $this->sdmenc($req["stationid"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
       ]]);
-      $toecho = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $toecho = $this->sdmdec($result->getBody()->getContents());
        return $toecho;
     }
     public function inventory_checkif_ready(){
-     $tag = $this->sdm_encrypt("inventory_checkif_ready",PKEY);
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+     $tag = $this->sdmenc("inventory_checkif_ready");
+      $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
       ]]);
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
 
 
     $toecho = "";
@@ -1302,7 +1935,7 @@ $colval = "";
     }
     public function loadassetvalsum(Request $re){
 
-      $station_id = $this->sdm_encrypt($re["selected_realid"],PKEY);
+      $station_id = $this->sdmenc($re["selected_realid"]);
 
       $total_assets = "0";
       $discrepancies = "0";
@@ -1310,23 +1943,23 @@ $colval = "";
       $last_trans = "0";
       $omittedcount = "0";
       // GET TOTAL ASSETS COUNT IN CLOUD
-      $tag = $this->sdm_encrypt("get_total_assets",PKEY);
-      // $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $tag = $this->sdmenc("get_total_assets");
+      // $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
       ]]);
-      $total_assets = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $total_assets = $this->sdmdec($result->getBody()->getContents());
       $total_assets = number_format(  $total_assets);
       // GET ASSET DISCREPANCY COUNT
-      $tag = $this->sdm_encrypt("read_asset_discrepancy",PKEY);
+      $tag = $this->sdmenc("read_asset_discrepancy");
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
       ]]);
-      $discrepancies = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $discrepancies = $this->sdmdec($result->getBody()->getContents());
       // GET LAST LOGIN TO THE SYSTEM 
 
       if($re["selected_realid"]  == session("user_school")){
@@ -1346,29 +1979,29 @@ $colval = "";
       }
        if($re["selected_realid"]  == session("user_school")){
 //GET LAST TRANSACTION DATE
-      $tag = $this->sdm_encrypt("get_last_act_log",PKEY);
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $tag = $this->sdmenc("get_last_act_log");
+      $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
-      "employee_id"=>$this->sdm_encrypt(session("user_eid"),PKEY),
+      "employee_id"=>$this->sdmenc(session("user_eid")),
       ]]);
       
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $last_trans = $output;
        }else{
         $last_trans = "Private";
        }
        // GET OMITTED COUNT
-        $tag = $this->sdm_encrypt("get_omitted_count",PKEY);
+        $tag = $this->sdmenc("get_omitted_count");
          $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
-      "st_id"=>$this->sdm_encrypt($re["selected_realid"],PKEY),
+      "st_id"=>$this->sdmenc($re["selected_realid"]),
       ]]);
 
-      $omittedcount = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $omittedcount = $this->sdmdec($result->getBody()->getContents());
 
           $is_own = false;
     if($re["selected_realid"]  == session("user_school")){
@@ -1399,14 +2032,14 @@ $colval = "";
           return $toecho;
     }
     public function get_om_itms_astbls(Request $req){
-      $tag = $this->sdm_encrypt("load_om_itms",PKEY);
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $tag = $this->sdmenc("load_om_itms");
+      $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
       ]]);
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
       $toecho = "";
           for($i = 0 ;$i < count($output);$i++){
               $toecho .= "<tr>
@@ -1446,16 +2079,16 @@ $colval = "";
       return $toecho;
     }
     public function ignore_single_omitted(Request $req){
-      $tag = $this->sdm_encrypt("ignore_single_omitt",PKEY);
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
-       $asset_id = $this->sdm_encrypt($req["asset_id"],PKEY);
+      $tag = $this->sdmenc("ignore_single_omitt");
+      $station_id = $this->sdmenc(session("user_school"));
+       $asset_id = $this->sdmenc($req["asset_id"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
       "asset_id"=>$asset_id,
       ]]);
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       if ($output == "true") {
         Alert::success("Successfully ignored!");
         return redirect()->route("gotoomitted");
@@ -1466,15 +2099,15 @@ $colval = "";
     }
 
     public function clearallomitted(Request $req){
-      $tag = $this->sdm_encrypt("clear_omitted_assets_now",PKEY);
-      $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $tag = $this->sdmenc("clear_omitted_assets_now");
+      $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
       "station_id"=> $station_id,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       if ($output == "true") {
         Alert::success("All omitted asset(s) ignored successfully!");
         return redirect()->route("gotoomitted");
@@ -1484,15 +2117,15 @@ $colval = "";
       }
     }
     public function lodstaprefx(Request $req){
-        $tag = $this->sdm_encrypt("lod_sta_prefx",PKEY);
-        $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
+        $tag = $this->sdmenc("lod_sta_prefx");
+        $station_id = $this->sdmenc(session("user_school"));
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "station_id"=> $station_id,
         ]]);
         
-        $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+        $output = $this->sdmdec($result->getBody()->getContents());
           $output  = json_decode($output,true);
           $toecho = "";
           for($i = 0 ;$i < count($output);$i++){
@@ -1504,15 +2137,15 @@ $colval = "";
           return $toecho;
     }
     public function removelocation(Request $req){
-              $tag = $this->sdm_encrypt("remolocnow",PKEY);
-        $loc_id = $this->sdm_encrypt($req["loc_id"],PKEY);
+              $tag = $this->sdmenc("remolocnow");
+        $loc_id = $this->sdmenc($req["loc_id"]);
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "loc_id"=>$loc_id,
         ]]);
         
-        $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+        $output = $this->sdmdec($result->getBody()->getContents());
 
         if($output == "true"){
           Alert::success("Removed!");
@@ -1524,11 +2157,11 @@ $colval = "";
     }
 
     public function addnewassloc(Request $req){
-        $tag = $this->sdm_encrypt("addnewassetlocation",PKEY);
-        $xstation = $this->sdm_encrypt($req["xstation"],PKEY);
-        $xoffice = $this->sdm_encrypt($req["xoffice"],PKEY);
-        $xroomnum = $this->sdm_encrypt($req["xroomnum"],PKEY);
-        $xincharge = $this->sdm_encrypt($req["incharge"],PKEY);
+        $tag = $this->sdmenc("addnewassetlocation");
+        $xstation = $this->sdmenc($req["xstation"]);
+        $xoffice = $this->sdmenc($req["xoffice"]);
+        $xroomnum = $this->sdmenc($req["xroomnum"]);
+        $xincharge = $this->sdmenc($req["incharge"]);
 
         $client = new \GuzzleHttp\Client();
         $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -1539,7 +2172,7 @@ $colval = "";
         "xincharge"=>$xincharge,
         ]]);
         
-        $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+        $output = $this->sdmdec($result->getBody()->getContents());
 
         if($output == "true"){
           Alert::success("Location added!");
@@ -1553,24 +2186,24 @@ $colval = "";
         }
     }
     public function get_futh_val_ass_reg(Request $req){
-        $tag = $this->sdm_encrypt("get_last_import_log",PKEY);
+        $tag = $this->sdmenc("get_last_import_log");
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "st_name"=> $st_name,
         "st_id"=> $st_id,
         ]]);
-        $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+        $output = $this->sdmdec($result->getBody()->getContents());
         return $output;
     }
     public function get_all_last_upload_log(){
-      $tag = $this->sdm_encrypt("get_last_import_log",PKEY);
+      $tag = $this->sdmenc("get_last_import_log");
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
-      "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+      "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       if($output != "false"){
          $output = json_decode( $output,true);
             $output[0]["timestamp"] = date("F d, Y g:i a",strtotime($output[0]["timestamp"]));
@@ -1580,38 +2213,38 @@ $colval = "";
     }
 
     public function new_station(Request $req){
-   $tag = $this->sdm_encrypt("add_new_station",PKEY);
-      $st_name = $this->sdm_encrypt($req["st_name"],PKEY);
-      $st_id = $this->sdm_encrypt($req["st_id"],PKEY);
+   $tag = $this->sdmenc("add_new_station");
+      $st_name = $this->sdmenc($req["st_name"]);
+      $st_id = $this->sdmenc($req["st_id"]);
        $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "st_name"=> $st_name,
         "st_id"=> $st_id,
       ]]);
-          $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+          $output = $this->sdmdec($result->getBody()->getContents());
       Alert::success("Station Added Successfully!");
       return redirect()->route("manstat");
     }
     public function stat_del_now(Request $req){
-      $tag = $this->sdm_encrypt("stat_deletion_technology",PKEY);
-      $sc_id_todelete = $this->sdm_encrypt($req["sc_id_todel"],PKEY);
+      $tag = $this->sdmenc("stat_deletion_technology");
+      $sc_id_todelete = $this->sdmenc($req["sc_id_todel"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "sc_id_todel"=> $sc_id_todelete,
       ]]);
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       Alert::success("School Removed successfully!");
       return redirect()->route("manstat");
     }
     public function load_stat_enc(){
-      $tag = $this->sdm_encrypt("lod_all_enc_station",PKEY);
+      $tag = $this->sdmenc("lod_all_enc_station");
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
       ]]);
-          $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+          $output = $this->sdmdec($result->getBody()->getContents());
           $output  = json_decode($output,true);
           $toecho = "";
           for($i = 0 ;$i < count($output);$i++){
@@ -1626,16 +2259,16 @@ $colval = "";
           return     $toecho;
     }
     public function lodasslocenc(){
-      $tag = $this->sdm_encrypt("loadallassetlocation",PKEY);
-      $station_id =  $this->sdm_encrypt(session("user_school"),PKEY);
-      $user_type =  $this->sdm_encrypt(session("user_type"),PKEY);
+      $tag = $this->sdmenc("loadallassetlocation");
+      $station_id =  $this->sdmenc(session("user_school"));
+      $user_type =  $this->sdmenc(session("user_type"));
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "user_school"=>$station_id,
         "user_type"=>$user_type,
       ]]);
-          $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+          $output = $this->sdmdec($result->getBody()->getContents());
           $output  = json_decode($output,true);
           $toecho = "";
           for($i = 0 ;$i < count($output);$i++){
@@ -1649,15 +2282,15 @@ $colval = "";
                 <td>";
 
                 // GET STATION ACCOUNT NAMES 
-                  $tag = $this->sdm_encrypt("get_employeename_byeid",PKEY);
+                  $tag = $this->sdmenc("get_employeename_byeid");
                   $client = new \GuzzleHttp\Client();
                   $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
                   "tag"=>$tag,
-                  "empid"=>$this->sdm_encrypt($output[$i]["incharge_eid"],PKEY),
+                  "empid"=>$this->sdmenc($output[$i]["incharge_eid"]),
                    "station_id"=>$station_id,
                   ]]);
 
-                  $out_2 = $this->sdm_decrypt($res_2->getBody()->getContents(),PKEY);
+                  $out_2 = $this->sdmdec($res_2->getBody()->getContents());
                   if($out_2 == ""){
                      $toecho .= "<span class='text-muted'>(none)<span>";
                   }else{
@@ -1689,12 +2322,12 @@ $colval = "";
           return $toecho;
     }
     public function chainsecnow(Request $req){
-      $tag = $this->sdm_encrypt("changeinchargenowplease",PKEY);
-       $id_of_something = $this->sdm_encrypt($req["id_of_something"],PKEY);
-       $incharge = $this->sdm_encrypt($req["incharge"],PKEY);
+      $tag = $this->sdmenc("changeinchargenowplease");
+       $id_of_something = $this->sdmenc($req["id_of_something"]);
+       $incharge = $this->sdmenc($req["incharge"]);
 
-        $edit_servicenter = $this->sdm_encrypt(htmlentities($req["edit_servicenter"]),PKEY);
-         $edit_roomnumber = $this->sdm_encrypt(htmlentities($req["edit_roomnumber"]),PKEY);
+        $edit_servicenter = $this->sdmenc(htmlentities($req["edit_servicenter"]));
+         $edit_roomnumber = $this->sdmenc(htmlentities($req["edit_roomnumber"]));
       $client = new \GuzzleHttp\Client();
       $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
@@ -1703,7 +2336,7 @@ $colval = "";
         "edit_servicenter"=>$edit_servicenter,
         "edit_roomnumber"=>$edit_roomnumber,
       ]]);
-      $output = $this->sdm_decrypt($res_2->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($res_2->getBody()->getContents());
 
       if($output == "true"){
               Alert::success("Person In-Charge Updated!");
@@ -1714,16 +2347,16 @@ $colval = "";
             }
     }
     public function addrem(Request $req){
-         $tag = $this->sdm_encrypt("addnewreminder",PKEY);
-      $title = htmlentities( $this->sdm_encrypt($req["remindertitle"],PKEY));
-      $desc =  htmlentities($this->sdm_encrypt($req["reminderdeadline"],PKEY));
-      $deadline =  $this->sdm_encrypt("none",PKEY);
+         $tag = $this->sdmenc("addnewreminder");
+      $title = htmlentities( $this->sdmenc($req["remindertitle"]));
+      $desc =  htmlentities($this->sdmenc($req["reminderdeadline"]));
+      $deadline =  $this->sdmenc("none");
       if(isset($req["reminderdescription"])){
-         $deadline =  $this->sdm_encrypt($req["reminderdescription"],PKEY);
+         $deadline =  $this->sdmenc($req["reminderdescription"]);
       }
      
-      $audiencetype =  $this->sdm_encrypt($req["remindwhocansee"],PKEY);
-      $reminderorigineid = $this->sdm_encrypt(session("user_eid"),PKEY);
+      $audiencetype =  $this->sdmenc($req["remindwhocansee"]);
+      $reminderorigineid = $this->sdmenc(session("user_eid"));
             $client = new \GuzzleHttp\Client();
             $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
                   "tag"=>$tag,
@@ -1734,7 +2367,7 @@ $colval = "";
                  "reminderorigineid"=>$reminderorigineid,
             ]]);
 
-            $output = $this->sdm_decrypt($res_2->getBody()->getContents(),PKEY);
+            $output = $this->sdmdec($res_2->getBody()->getContents());
             if($output == "true"){
               Alert::success("New Reminder Added!");
                 return redirect()->route("manage_reminders");
@@ -1744,14 +2377,14 @@ $colval = "";
             }
     }
    public function getremorgi(){
-     $tag = $this->sdm_encrypt("getallreminderbyoriginnoe",PKEY);
-      $reminderorigineid = $this->sdm_encrypt(session("user_eid"),PKEY);
+     $tag = $this->sdmenc("getallreminderbyoriginnoe");
+      $reminderorigineid = $this->sdmenc(session("user_eid"));
             $client = new \GuzzleHttp\Client();
             $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
                   "tag"=>$tag,
                   "reminderorigineid"=>$reminderorigineid,
             ]]);
-            $output = json_decode($this->sdm_decrypt($res_2->getBody()->getContents(),PKEY),true);
+            $output = json_decode($this->sdmdec($res_2->getBody()->getContents()),true);
             $toecho = "";
 
             for ($i=0; $i < count($output); $i++) { 
@@ -1782,20 +2415,20 @@ $colval = "";
            return  $toecho;
    }
    public function findservcount(Request $req){
-    $tag = $this->sdm_encrypt("getservicecentercount",PKEY);
+    $tag = $this->sdmenc("getservicecentercount");
     $client = new \GuzzleHttp\Client();
     $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-        "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+        "station_id"=>$this->sdmenc(session("user_school")),
     ]]);
-    $output = $this->sdm_decrypt($res_2->getBody()->getContents(),PKEY);
+    $output = $this->sdmdec($res_2->getBody()->getContents());
     return $output;
    }
    public function lodnewannounce(Request $req){
-   $tag = $this->sdm_encrypt("getrecentreminders",PKEY);
-      $reminderorigineid = $this->sdm_encrypt(session("user_type"),PKEY);
+   $tag = $this->sdmenc("getrecentreminders");
+      $reminderorigineid = $this->sdmenc(session("user_type"));
 
-      $typeofget = $this->sdm_encrypt($req["typeofget"],PKEY);
+      $typeofget = $this->sdmenc($req["typeofget"]);
             $client = new \GuzzleHttp\Client();
             $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
                   "tag"=>$tag,
@@ -1803,7 +2436,7 @@ $colval = "";
                   "typeofget"=>$typeofget,
                   "userid"=>$this->sdmenc(session("user_eid"))
             ]]);
-            $orig = $this->sdm_decrypt($res_2->getBody()->getContents(),PKEY);
+            $orig = $this->sdmdec($res_2->getBody()->getContents());
             $output = json_decode($orig ,true);
             $toecho = "";
             for ($i=0; $i < count($output); $i++) { 
@@ -1844,14 +2477,14 @@ $colval = "";
    }
    public function delremthis(Request $req){
 
-     $tag = $this->sdm_encrypt("deltereminderbyid",PKEY);
-      $reminderid = $this->sdm_encrypt($req["reminderidx"],PKEY);
+     $tag = $this->sdmenc("deltereminderbyid");
+      $reminderid = $this->sdmenc($req["reminderidx"]);
             $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
                   "tag"=>$tag,
                   "reminderid"=>$reminderid,
             ]]);
-           $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+           $output = $this->sdmdec($result->getBody()->getContents());
             if($output == "true"){
               Alert::success("Deleted!");
                 return redirect()->route("manage_reminders");
@@ -1862,15 +2495,15 @@ $colval = "";
    }
     public function centerman_selection(){
       $toecho = "";
-       $station_id =  $this->sdm_encrypt(session("user_school"),PKEY);
+       $station_id =  $this->sdmenc(session("user_school"));
 
-           $tag = $this->sdm_encrypt("get_station_acc_names",PKEY);
+           $tag = $this->sdmenc("get_station_acc_names");
                   $client = new \GuzzleHttp\Client();
                   $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
                   "tag"=>$tag,
                   "station_id"=>$station_id,
                   ]]);
- $out_2 = $this->sdm_decrypt($res_2->getBody()->getContents(),PKEY);
+ $out_2 = $this->sdmdec($res_2->getBody()->getContents());
                   $out_2 = json_decode($out_2,true);
   $toecho .= "<option selected disabled value=''>Select who's in-charge</option>";
         for ($xc=0; $xc < count($out_2); $xc++) { 
@@ -1887,18 +2520,18 @@ $colval = "";
           return $toecho;
     }
     public function proc_sign_protocol(Request $req){
-        $tag = $this->sdm_encrypt("proc_login",PKEY);
+        $tag = $this->sdmenc("proc_login");
         $depedemail = strtolower($req["user_employee_id"]);
         if(strripos($depedemail, "deped.gov.ph") !== false){
-          $user_employee_id = $this->sdm_encrypt( $depedemail,PKEY);
-        $user_employee_password = $this->sdm_encrypt($req["user_employee_password"],PKEY);
+          $user_employee_id = $this->sdmenc( $depedemail);
+        $user_employee_password = $this->sdmenc($req["user_employee_password"]);
          $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "empid"=> $user_employee_id,
         "emppass"=> $user_employee_password,
       ]]);
-          $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+          $output = $this->sdmdec($result->getBody()->getContents());
           // $output = json_encode($output);
           // return $output;
           if($output == "false"){
@@ -1911,13 +2544,13 @@ $colval = "";
             // return   $output;
 
             // GET MY SCHOOL NAME FULL 
-               $tag = $this->sdm_encrypt("get_sc_name",PKEY);
+               $tag = $this->sdmenc("get_sc_name");
             $client = new \GuzzleHttp\Client();
             $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-        "sc_id"=> $this->sdm_encrypt($output[0]["station_id"],PKEY),
+        "sc_id"=> $this->sdmenc($output[0]["station_id"]),
       ]]);
-            $mynameschool = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+            $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
             session(['user_uname'=>$output[0]["username"]]);
             session(['user_eid'=>$output[0]["employee_id"]]);
             session(['user_type'=>$output[0]["acc_type"]]);
@@ -1936,14 +2569,14 @@ $colval = "";
     }
 
     public function get_asc_not_included(Request $req){
-      $tag = $this->sdm_encrypt("get_asc_not_inc",PKEY);
-      $asset_station = $this->sdm_encrypt($req["station_info"],PKEY);
+      $tag = $this->sdmenc("get_asc_not_inc");
+      $asset_station = $this->sdmenc($req["station_info"]);
               $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "sn"=> $asset_station,
       ]]);
-     $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+     $output = $this->sdmdec($result->getBody()->getContents());
      $output = json_decode($output,true);
      $toecho = "";
      for ($i=0; $i < count($output); $i++) { 
@@ -1984,49 +2617,72 @@ $colval = "";
     }
 
     public function get_not_entry_scannedassets(Request $req){
-      $tag = $this->sdm_encrypt("get_no_ent_sca",PKEY);
-        $station_number = $this->sdm_encrypt($req["station_number"],PKEY);
+      $tag = $this->sdmenc("get_no_ent_sca");
+        $station_number = $this->sdmenc($req["station_number"]);
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "sn"=> $station_number,
+        "choosenYear"=> $this->sdmenc($req["selyear"]),
+        "choosenMonth"=> $this->sdmenc($req["selmonth"])
       ]]);
-     $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+     $output = $this->sdmdec($result->getBody()->getContents());
      return $output;
     }
+
      public function g_sca_ttitms(Request $req){
-      $tag = $this->sdm_encrypt("g_sca_ttitmsxx",PKEY);
-        $station_number = $this->sdm_encrypt($req["station_number"],PKEY);
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
-        "sn"=> $station_number,
+        "tag"=>$this->sdmenc("g_sca_ttitmsxx"),
+        "sn"=>$this->sdmenc($req["station_number"]),
+        "choosenYear"=> $this->sdmenc($req["selyear"]),
+        "choosenMonth"=> $this->sdmenc($req["selmonth"])
       ]]);
-     $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+     $output = $this->sdmdec($result->getBody()->getContents());
      return $output;
 
     }
     public function get_sc_occudates(Request $req){
-      $tag = $this->sdm_encrypt("get_sc_occudatesxx",PKEY);
-        $station_number = $this->sdm_encrypt($req["station_number"],PKEY);
+      $tag = $this->sdmenc("get_sc_occudatesxx");
+        $station_number = $this->sdmenc($req["station_number"]);
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "sn"=> $station_number,
+        "choosenYear"=> $this->sdmenc($req["selyear"]),
+        "choosenMonth"=> $this->sdmenc($req["selmonth"])
       ]]);
-     $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+     $output = $this->sdmdec($result->getBody()->getContents());
+
+     $output = explode("|", $output);
+
+
+     if($output[0] != ""){
+      // not empty
+       if($output[0] == $output[1]){
+          $output = date("F d, Y",strtotime( $output[0])) . "<br><span class='text-muted'>" . $this->DateExplainder($output[0]) . "</span>"; 
+     }else{
+          $output = date("F d",strtotime( $output[0])) . " to " . date("F d, Y",strtotime( $output[1])) . "<br><span class='text-muted'>" . $this->DateExplainder($output[1]) . "</span>"; 
+     }
+     }else{
+      //empty
+       $output = "No inventory date available.";
+     }
+    
      return $output;
 
     }
     public function get_ass_scanned(Request $req){
-        $tag = $this->sdm_encrypt("getallscanneditems",PKEY);
-        $station_number = $this->sdm_encrypt($req["station_number"],PKEY);
+        $tag = $this->sdmenc("getallscanneditems");
+        $station_number = $this->sdmenc($req["station_number"]);
          $client = new \GuzzleHttp\Client();
         $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "sn"=> $station_number,
+        "choosenYear"=> $this->sdmenc($req["selyear"]),
+        "choosenMonth"=> $this->sdmenc($req["selmonth"])
       ]]);
-     $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+     $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
      $toecho = "";
 
@@ -2039,43 +2695,44 @@ $colval = "";
 
 
       for ($i=0; $i < count($output); $i++) { 
-        if($output[$i]["property_number"] != "none"){
-                  $toecho .= "
-        <tr>
-        <td>" . $output[$i]["property_number"] . "</td>
-        <td>" . $output[$i]["asset_item"] . "</td>
-        <td>" . $output[$i]["current_condition"] . "</td>
-        <td>" . $output[$i]["service_center"] . "</td>
-        <td>" . $output[$i]["room_number"] . "</td>
-        <td>" . $output[$i]["scanned_date"] . "</td>
-       <td>
-        ";
+        $toecho .= "
+           <tr>
+              <td><form action='" . route("asset_view") ."' method='GET' target='_blank'>
+              <input type='hidden' value='" . $output[$i]["id"] . "' name='asset_id'>
+              <button class='btn btn-link' type='submit' target='_blank'>";
 
-   $toecho .= "
-        <div class='dropdown'>
-        <a class='btn btn-link btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        Action
-        </a>
-
-        <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+              
 
 
-        <form action='" . route("asset_view") ."' method='GET' target='_blank'>
-        <input type='hidden' value='" . $output[$i]["id"] . "' name='asset_id'>
-        <button class='dropdown-item' type='submit' target='_blank'><i class='fas fa-binoculars'></i> View</button>
-        </form>
-</td>
-        ";
+              if($output[$i]["status"] != "0"){
+                  $toecho .=  $output[$i]["property_number"] . " <span class='badge badge-danger'>Disposed</span>";
+              }else{
+                  $toecho .= $output[$i]["property_number"];
+               }
 
-        }
 
+              $toecho .= "</button>
+              </form></td>
+              <td>";
+
+            
+                  $toecho .= $output[$i]["asset_item"];
+           
+
+              $toecho .= "</td>
+              <td>" . $output[$i]["current_condition"] . "</td>
+              <td>" . $output[$i]["service_center"] . "</td>
+              <td>" . $output[$i]["room_number"] . "</td>
+              <td>" . "<span class='float-right text-muted'>" . $this->DateExplainder($output[$i]["scanned_date"]) . "</span>" . date("F d, Y",strtotime($output[$i]["scanned_date"])) . "</td>
+           </tr>
+            ";
       }
      return $toecho;
     }
      public function bionic_page_count(Request $req){
-      $rn = $this->sdm_encrypt($req["rn"],PKEY);
-      $cat = $this->sdm_encrypt($req["cat"],PKEY);
-      $tag = $this->sdm_encrypt("log_ass_filt",PKEY);
+      $rn = $this->sdmenc($req["rn"]);
+      $cat = $this->sdmenc($req["cat"]);
+      $tag = $this->sdmenc("log_ass_filt");
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
@@ -2083,7 +2740,7 @@ $colval = "";
         "fil_category"=>$cat,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
          $lc_count = 0;
          $pagecount = 0;
@@ -2095,7 +2752,7 @@ $colval = "";
         $lc_count = 0;
        }
       }
-      $tag = $this->sdm_encrypt("view_ass_grouped",PKEY);
+      $tag = $this->sdmenc("view_ass_grouped");
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
@@ -2103,7 +2760,7 @@ $colval = "";
         "fil_category"=>$cat,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
          // for ($x=0; $x < 50; $x++) { 
       for ($i=0; $i < count($output); $i++) { 
@@ -2117,12 +2774,12 @@ $pagecount++;
       return  $pagecount;
     }
     public function generate_asset_report_printout(Request $req){
-      $rn = $this->sdm_encrypt($req["rn"],PKEY);
-      $cat = $this->sdm_encrypt($req["cat"],PKEY);
+      $rn = $this->sdmenc($req["rn"]);
+      $cat = $this->sdmenc($req["cat"]);
 
 
 
-      $tag = $this->sdm_encrypt("log_ass_filt",PKEY);
+      $tag = $this->sdmenc("log_ass_filt");
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2131,7 +2788,7 @@ $pagecount++;
         "fil_category"=>$cat,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
          $lc_count = 0;
          $pagecount = 0;
@@ -2237,7 +2894,7 @@ $pagecount++;
       // }
 
 
-      $tag = $this->sdm_encrypt("view_ass_grouped",PKEY);
+      $tag = $this->sdmenc("view_ass_grouped");
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
@@ -2245,7 +2902,7 @@ $pagecount++;
         "fil_category"=>$cat,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
          // for ($x=0; $x < 50; $x++) { 
       for ($i=0; $i < count($output); $i++) { 
@@ -2356,10 +3013,10 @@ $this->RecordLog("a02");
     }
     public function ungroup_items(Request $req){
 
-      $tag = $this->sdm_encrypt("ungroup_item_now",PKEY);
-      $groupname = $this->sdm_encrypt($req["groupname"],PKEY);
-      $groupnumber = $this->sdm_encrypt($req["groupnumber"],PKEY);
-      $category = $this->sdm_encrypt($req["category"],PKEY);
+      $tag = $this->sdmenc("ungroup_item_now");
+      $groupname = $this->sdmenc($req["groupname"]);
+      $groupnumber = $this->sdmenc($req["groupnumber"]);
+      $category = $this->sdmenc($req["category"]);
 
       $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2369,14 +3026,14 @@ $this->RecordLog("a02");
         "category"=>$category,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       return  $output;
     }
     public function viewassetgrouped(Request $req){
-      $tag = $this->sdm_encrypt("view_ass_grouped",PKEY);
-       $rnum = $this->sdm_encrypt($req["rnum"],PKEY);
-       $catname = $this->sdm_encrypt($req["catname"],PKEY);
-        $station_id= $this->sdm_encrypt($req["station_id"],PKEY);
+      $tag = $this->sdmenc("view_ass_grouped");
+       $rnum = $this->sdmenc($req["rnum"]);
+       $catname = $this->sdmenc($req["catname"]);
+        $station_id= $this->sdmenc($req["station_id"]);
         
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2386,7 +3043,7 @@ $this->RecordLog("a02");
         "station_id"=>$station_id,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
@@ -2409,12 +3066,12 @@ $this->RecordLog("a02");
     }
 
     public function add_new_asset_group(Request $req){
-      $tag = $this->sdm_encrypt("add_new_group",PKEY);
-      $ass_gname = $this->sdm_encrypt(strtoupper(htmlentities($req["ass_gname"])),PKEY);
-      $ass_propnum = $this->sdm_encrypt($req["ass_propnum"],PKEY);
-      $ass_roomnum = $this->sdm_encrypt($req["ass_roomnum"],PKEY);
-      $ass_assclass = $this->sdm_encrypt($req["ass_assclass"],PKEY);
-      $ass_ass_balpercard = $this->sdm_encrypt($req["ass_balpercard"],PKEY);
+      $tag = $this->sdmenc("add_new_group");
+      $ass_gname = $this->sdmenc(strtoupper(htmlentities($req["ass_gname"])));
+      $ass_propnum = $this->sdmenc($req["ass_propnum"]);
+      $ass_roomnum = $this->sdmenc($req["ass_roomnum"]);
+      $ass_assclass = $this->sdmenc($req["ass_assclass"]);
+      $ass_ass_balpercard = $this->sdmenc($req["ass_balpercard"]);
 
       $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2425,15 +3082,15 @@ $this->RecordLog("a02");
         "ass_assclass"=>$ass_assclass,
         "ass_balpercard"=>$ass_ass_balpercard,
       ]]);
-        $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+        $output = $this->sdmdec($result->getBody()->getContents());
         return  $output;
     }
 
     public function lod_asset_filtered(Request $req){
 
-      $tag = $this->sdm_encrypt("log_ass_filt",PKEY);
-       $rnum = $this->sdm_encrypt($req["rnum"],PKEY);
-       $catname = $this->sdm_encrypt($req["catname"],PKEY);
+      $tag = $this->sdmenc("log_ass_filt");
+       $rnum = $this->sdmenc($req["rnum"]);
+       $catname = $this->sdmenc($req["catname"]);
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2442,7 +3099,7 @@ $this->RecordLog("a02");
         "fil_category"=>$catname,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
@@ -2474,15 +3131,15 @@ $this->RecordLog("a02");
 
       $depedemail = strtolower($req["x_depedemail"]);
       if(strpos($depedemail, "@deped.gov.ph") !== false){
-        $tag = $this->sdm_encrypt("a_new_account_now",PKEY);
+        $tag = $this->sdmenc("a_new_account_now");
 
-      $x_username = $this->sdm_encrypt(htmlentities($req["x_username"]),PKEY);
-      $x_selectedschool = $this->sdm_encrypt($req["x_selectedschool"],PKEY);
-      $x_empid = $this->sdm_encrypt($req["x_empid"],PKEY);
-      $x_usertype = $this->sdm_encrypt($req["x_usertype"],PKEY);
-      $x_pass = $this->sdm_encrypt($req["x_empid"],PKEY);
-      $x_repass = $this->sdm_encrypt($req["x_empid"],PKEY);
-  $x_depedemail= $this->sdm_encrypt($depedemail,PKEY);
+      $x_username = $this->sdmenc(htmlentities($req["x_username"]));
+      $x_selectedschool = $this->sdmenc($req["x_selectedschool"]);
+      $x_empid = $this->sdmenc($req["x_empid"]);
+      $x_usertype = $this->sdmenc($req["x_usertype"]);
+      $x_pass = $this->sdmenc($req["x_empid"]);
+      $x_repass = $this->sdmenc($req["x_empid"]);
+  $x_depedemail= $this->sdmenc($depedemail);
       if($x_pass == $x_repass){
          $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2494,7 +3151,7 @@ $this->RecordLog("a02");
         "x_pass"=>$x_pass, 
         "x_depedemail"=>$x_depedemail,
       ]]);
-      $output =  $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output =  $this->sdmdec($result->getBody()->getContents());
       // return $result->getBody()->getContents();
       $this->RecordLog("a04");
       switch ($output) {
@@ -2523,9 +3180,9 @@ $this->RecordLog("a02");
      
     }
     public function archive_an_asset(request $req){
-      $tag = $this->sdm_encrypt("archive_an_asset",PKEY);
-      $asset_id = $this->sdm_encrypt($req["asset_id"],PKEY);
-      $asset_archive_type = $this->sdm_encrypt($req["asset_archive_type"],PKEY);
+      $tag = $this->sdmenc("archive_an_asset");
+      $asset_id = $this->sdmenc($req["asset_id"]);
+      $asset_archive_type = $this->sdmenc($req["asset_archive_type"]);
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2534,7 +3191,7 @@ $this->RecordLog("a02");
         "asset_archive_type"=>$asset_archive_type,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $this->RecordLog("a03");
       if($output == "true"){
          Alert::success("Asset has been archived!");
@@ -2546,15 +3203,15 @@ $this->RecordLog("a02");
     }
 
     public function get_cat_gr(request $req){
-      $tag = $this->sdm_encrypt("get_categories_grouped",PKEY);
-        $school_id = $this->sdm_encrypt($req["school_id"],PKEY);
+      $tag = $this->sdmenc("get_categories_grouped");
+        $school_id = $this->sdmenc($req["school_id"]);
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "station_id"=>$school_id,
       ]]);
 
-       $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+       $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
@@ -2564,27 +3221,27 @@ $this->RecordLog("a02");
     }
 
     public function get_roo_gr(request $req){
-      $tag = $this->sdm_encrypt("get_room_grouped",PKEY);
-        $school_id = $this->sdm_encrypt($req["school_id"],PKEY);
+      $tag = $this->sdmenc("get_room_grouped");
+        $school_id = $this->sdmenc($req["school_id"]);
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "station_id"=>$school_id,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $output = json_decode($output,true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
-       $toecho .= "<option>" . $output[$i]["room_number"] ."</option>";
+       $toecho .= "<option value='" . $output[$i]["room_number"] . "'>" . $output[$i]["office"] . " - " . $output[$i]["room_number"] ."</option>";
       }
       return  $toecho;
     }
 
 
     public function restore_an_asset(request $req){
-      $tag = $this->sdm_encrypt("restore_an_asset",PKEY);
-      $asset_id = $this->sdm_encrypt($req["asset_id"],PKEY);
+      $tag = $this->sdmenc("restore_an_asset");
+      $asset_id = $this->sdmenc($req["asset_id"]);
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2592,7 +3249,7 @@ $this->RecordLog("a02");
         "asset_id"=>$asset_id,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $this->RecordLog("a07");
       if($output == "true"){
          Alert::success("Asset restored!");
@@ -2603,29 +3260,29 @@ $this->RecordLog("a02");
          }
     }
     public function get_acc_info_edit(request $req){
-    $tag = $this->sdm_encrypt("get_emp_info_for_edit",PKEY);
-    $emp_id = $this->sdm_encrypt($req["emp_id"],PKEY);
+    $tag = $this->sdmenc("get_emp_info_for_edit");
+    $emp_id = $this->sdmenc($req["emp_id"]);
          $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "emp_id"=>$emp_id,
       ]]);
 
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
 
       return $output;
     }
     public function edit_the_user_info(Request $req){
       $depedemail = strtolower($req["x_depedemail"]);
       if(strpos($depedemail, "@deped.gov.ph") !== false){
-  $tag = $this->sdm_encrypt("user_edit_info",PKEY);
+  $tag = $this->sdmenc("user_edit_info");
 
-      $x_username = $this->sdm_encrypt(htmlentities($req["x_username"]),PKEY);
-      $x_selectedschool = $this->sdm_encrypt($req["x_selectedschool"],PKEY);
-      $x_empid = $this->sdm_encrypt($req["x_empid"],PKEY);
-      $x_usertype = $this->sdm_encrypt($req["x_usertype"],PKEY);
-      $x_userid= $this->sdm_encrypt($req["empid"],PKEY);
-      $x_depedemail= $this->sdm_encrypt($depedemail,PKEY);
+      $x_username = $this->sdmenc(htmlentities($req["x_username"]));
+      $x_selectedschool = $this->sdmenc($req["x_selectedschool"]);
+      $x_empid = $this->sdmenc($req["x_empid"]);
+      $x_usertype = $this->sdmenc($req["x_usertype"]);
+      $x_userid= $this->sdmenc($req["empid"]);
+      $x_depedemail= $this->sdmenc($depedemail);
 
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2637,7 +3294,7 @@ $this->RecordLog("a02");
            "x_userid"=>$x_userid,
              "x_depedemail"=>$x_depedemail,
       ]]);
-      $output =  $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output =  $this->sdmdec($result->getBody()->getContents());
       // return json_encode( $output);
       $this->RecordLog("a06");
       switch ($output) {
@@ -2657,14 +3314,14 @@ $this->RecordLog("a02");
     
     }
     public function delete_the_user(Request $req){
-      $empid =  $this->sdm_encrypt($req["empid"],PKEY);
-      $tag = $this->sdm_encrypt("user_delete",PKEY);
+      $empid =  $this->sdmenc($req["empid"]);
+      $tag = $this->sdmenc("user_delete");
        $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "x_userid"=>$empid,
       ]]);
-      $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+      $output = $this->sdmdec($result->getBody()->getContents());
       $this->RecordLog("a05");
       Alert::success("User Account has been deleted!");
            return redirect()->route("usermanagement");
@@ -2672,12 +3329,12 @@ $this->RecordLog("a02");
 
      public function load_all_school_names(){
 
-  $tag = $this->sdm_encrypt("load_all_sc_names",PKEY);
+  $tag = $this->sdmenc("load_all_sc_names");
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
       ]]);
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
 
         $toecho = "";
  for ($i=0; $i < count($output); $i++) { 
@@ -2696,16 +3353,16 @@ $this->RecordLog("a02");
     }
 
     public function display_all_employees(){
-      $tag = $this->sdm_encrypt("get_registered_user",PKEY);
-       $user_type = $this->sdm_encrypt(session("user_type"),PKEY);
-       $school_id = $this->sdm_encrypt(session("user_school"),PKEY);
+      $tag = $this->sdmenc("get_registered_user");
+       $user_type = $this->sdmenc(session("user_type"));
+       $school_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "user_type"=>$user_type,
         "school_id"=>$school_id,
       ]]);
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
       $toecho = "";
  for ($i=0; $i < count($output); $i++) { 
   if(session("user_depedemail") == $output[$i]["depedemail"] || session("user_type") >= $output[$i]["type"]){
@@ -2798,14 +3455,14 @@ $toecho .="
  return $toecho;
     }
      public function asset_disp_disposed(Request $req){
- $tag = $this->sdm_encrypt("display_disposed_assets_reg",PKEY);
- $id_of_something = $this->sdm_encrypt($req["id_of_something"],PKEY);
+ $tag = $this->sdmenc("display_disposed_assets_reg");
+ $id_of_something = $this->sdmenc($req["id_of_something"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
             "id_of_something"=>$id_of_something,
         ]]);
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents() ,PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents() ),true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
           $toecho .= "
@@ -2919,30 +3576,30 @@ $toecho .="
 
     }
     public function my_asset_full(Request $req){
-      $tag = $this->sdm_encrypt("get_asset_all_info",PKEY);
-      $asset_id = $this->sdm_encrypt($req["asset_id"],PKEY);
+      $tag = $this->sdmenc("get_asset_all_info");
+      $asset_id = $this->sdmenc($req["asset_id"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
             "asset_id"=>$asset_id,
       ]]);
 
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents() ,PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents() ),true);
         $output[0]["cost_of_acquisition"] = number_format($output[0]["cost_of_acquisition"],2);
       return $output;
     }
     public function display_all_encoded_assets(Request $req){
-      $tag = $this->sdm_encrypt("display_all_assets",PKEY);
+      $tag = $this->sdmenc("display_all_assets");
 
-      $mystation = $this->sdm_encrypt($req["selected_realid"],PKEY);
-      $usertype = $this->sdm_encrypt(session("user_type"),PKEY);
+      $mystation = $this->sdmenc($req["selected_realid"]);
+      $usertype = $this->sdmenc(session("user_type"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
             "mystation"=>$mystation,
             "usertype"=>$usertype,
         ]]);
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents() ,PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents() ),true);
       $toecho = "";
 
       $isown = false;
@@ -3013,24 +3670,24 @@ if( $isown){
 
     public function tryprint(Request $req){
      
-   $tag = $this->sdm_encrypt("getextractedgrouprep",PKEY);
+   $tag = $this->sdmenc("getextractedgrouprep");
       // ADDING PROCESS 
      $cname = $req["colname"];
-      $columnname = $this->sdm_encrypt($cname ,PKEY);
-      $colval = $this->sdm_encrypt($req["colval"],PKEY);
+      $columnname = $this->sdmenc($cname );
+      $colval = $this->sdmenc($req["colval"]);
        $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "column_name"=>$columnname,
         "column_value"=>$colval,
-        "school_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+        "school_id"=>$this->sdmenc(session("user_school")),
       ]]);
-  $output = $this->sdm_decrypt($xresult->getBody()->getContents(),PKEY);
+  $output = $this->sdmdec($xresult->getBody()->getContents());
       // END - ADDING PROCESS
  return view("asset_reportdownload",["thedata"=>$output,"cname"=>$cname]);
     }
     public function upresnow(Request $req){
-      $tag = $this->sdm_encrypt("index_upload_asset_csv",PKEY);
+      $tag = $this->sdmenc("index_upload_asset_csv");
        $photo = $req->file('thefile');
       $guessExtension = $photo->getClientOriginalExtension();
       $origname = $photo->getClientOriginalName();
@@ -3043,11 +3700,11 @@ if( $isown){
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
               "tag"=>$tag,
-              "file_name"=>$this->sdm_encrypt($newfilename,PKEY),
-              "st_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
-              "empid"=>$this->sdm_encrypt(session("user_eid"),PKEY),
-              "realname"=>$this->sdm_encrypt($origname,PKEY),
-              "file_format"=>$this->sdm_encrypt($guessExtension,PKEY),
+              "file_name"=>$this->sdmenc($newfilename),
+              "st_id"=>$this->sdmenc(session("user_school")),
+              "empid"=>$this->sdmenc(session("user_eid")),
+              "realname"=>$this->sdmenc($origname),
+              "file_format"=>$this->sdmenc($guessExtension),
             ]]);
 
      
@@ -3058,9 +3715,9 @@ if( $isown){
 
     public function uploadassetregistrycsv(Request $req){
       $output = "";
-      $tag = $this->sdm_encrypt("get_all_assets_pr",PKEY);
+      $tag = $this->sdmenc("get_all_assets_pr");
 
-      $sc_id = $this->sdm_encrypt($req["sc_id"],PKEY);
+      $sc_id = $this->sdmenc($req["sc_id"]);
         $photo = $req->file('thecsvfile');
 
           $file = fopen($photo, "r");
@@ -3076,14 +3733,14 @@ if( $isown){
             $asset_signature_existing = array();
              $asset_signature_existing_id = array();
 
-      $tag = $this->sdm_encrypt("get_all_pn_in_ir",PKEY);
+      $tag = $this->sdmenc("get_all_pn_in_ir");
             // GET EXISITING ASSETS 
              $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
-            "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+            "station_id"=>$this->sdmenc(session("user_school")),
         ]]);
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents() ,PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents() ),true);
 
       for ($i=0; $i < count($output); $i++) { 
         if($output[$i]["property_number"] != ""){
@@ -3093,7 +3750,7 @@ if( $isown){
        
       }
 // return $asset_signature_existing;
-      $tag = $this->sdm_encrypt("add_new_item_registry",PKEY);
+      $tag = $this->sdmenc("add_new_item_registry");
             $prop_alreasyexist = array();
             $mylogs = "";
               $fieldsx = array("Office Type","Office Name","Asset Classification","Asset Sub Class","UACS Code","Asset Item Name","Manufacturer","Model Name","Serial Number","Specification","Property Number","Unit of Measure","Current Condition","Source Of Fund","Cost of Acquisition","Date of Aquisition","Estimated Total Life Years","Name of Accountable Officer","Asset Location","Service Center","Room Number","Remarks");
@@ -3143,28 +3800,28 @@ if( $isown){
           if($has_disc){
                 $blankcols++;
           }
-        $office_type = $this->sdm_encrypt(htmlentities($getData[0]),PKEY);
-        $office_name = $this->sdm_encrypt(htmlentities($getData[1]),PKEY);
-        $asset_classification = $this->sdm_encrypt(htmlentities($getData[2]),PKEY);
-        $asset_sub_class = $this->sdm_encrypt(htmlentities($getData[3]),PKEY);
-        $uacs_object_code = $this->sdm_encrypt(htmlentities($getData[4]),PKEY);
-        $asset_item = $this->sdm_encrypt(htmlentities($getData[5]),PKEY);
-        $manufacturer = $this->sdm_encrypt(htmlentities($getData[6]),PKEY);
-        $model = $this->sdm_encrypt(htmlentities($getData[7]),PKEY);
-        $serial_number = $this->sdm_encrypt(htmlentities($getData[8]),PKEY);
-        $specification = $this->sdm_encrypt(htmlentities($getData[9]),PKEY);
-        $property_number = $this->sdm_encrypt(htmlentities($getData[10]),PKEY);
-        $unit_of_measure = $this->sdm_encrypt(htmlentities($getData[11]),PKEY);
-        $current_condition = $this->sdm_encrypt(htmlentities($getData[12]),PKEY);
-        $source_of_fund = $this->sdm_encrypt(htmlentities($getData[13]),PKEY);
-        $cost_of_acquisition = $this->sdm_encrypt(htmlentities($this->parse_number($getData[14])),PKEY);
-        $date_of_acquisition = $this->sdm_encrypt(date("Y-m-d",strtotime($getData[15])),PKEY);
-        $estimated_total_life_years = $this->sdm_encrypt(htmlentities($getData[16]),PKEY);
-        $name_of_accountable_officer = $this->sdm_encrypt(htmlentities($getData[17]),PKEY);
-        $asset_location = $this->sdm_encrypt(htmlentities($getData[18]),PKEY);
-        $service_center = $this->sdm_encrypt(htmlentities($getData[19]),PKEY);
-        $room_number = $this->sdm_encrypt(htmlentities($getData[20]),PKEY);
-        $remarks = $this->sdm_encrypt(htmlentities($getData[21]),PKEY);
+        $office_type = $this->sdmenc(htmlentities($getData[0]));
+        $office_name = $this->sdmenc(htmlentities($getData[1]));
+        $asset_classification = $this->sdmenc(htmlentities($getData[2]));
+        $asset_sub_class = $this->sdmenc(htmlentities($getData[3]));
+        $uacs_object_code = $this->sdmenc(htmlentities($getData[4]));
+        $asset_item = $this->sdmenc(htmlentities($getData[5]));
+        $manufacturer = $this->sdmenc(htmlentities($getData[6]));
+        $model = $this->sdmenc(htmlentities($getData[7]));
+        $serial_number = $this->sdmenc(htmlentities($getData[8]));
+        $specification = $this->sdmenc(htmlentities($getData[9]));
+        $property_number = $this->sdmenc(htmlentities($getData[10]));
+        $unit_of_measure = $this->sdmenc(htmlentities($getData[11]));
+        $current_condition = $this->sdmenc(htmlentities($getData[12]));
+        $source_of_fund = $this->sdmenc(htmlentities($getData[13]));
+        $cost_of_acquisition = $this->sdmenc(htmlentities($this->parse_number($getData[14])));
+        $date_of_acquisition = $this->sdmenc(date("Y-m-d",strtotime($getData[15])));
+        $estimated_total_life_years = $this->sdmenc(htmlentities($getData[16]));
+        $name_of_accountable_officer = $this->sdmenc(htmlentities($getData[17]));
+        $asset_location = $this->sdmenc(htmlentities($getData[18]));
+        $service_center = $this->sdmenc(htmlentities($getData[19]));
+        $room_number = $this->sdmenc(htmlentities($getData[20]));
+        $remarks = $this->sdmenc(htmlentities($getData[21]));
 
         $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -3193,12 +3850,12 @@ if( $isown){
             "room_number"=>$room_number,
             "sc_id"=> $sc_id,
         ]]);
-                $mysignature = $this->sdm_decrypt($property_number,PKEY);
+                $mysignature = $this->sdmdec($property_number);
                if($mysignature != ""){
                  array_push($asset_signature, $mysignature);
                }
           $is_inserted = "";
-            $output = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+            $output = $this->sdmdec($result->getBody()->getContents());
         
 
         $hasinsertednew = false;
@@ -3252,19 +3909,19 @@ if( $isown){
             }
               $previewcount ++;
            }
-           $tag = $this->sdm_encrypt("add_to_historylogs",PKEY);
+           $tag = $this->sdmenc("add_to_historylogs");
 
            //ADD TO LOG HISTORY
           $client = new \GuzzleHttp\Client();
           $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
           "tag"=>$tag,
-          "lg_total_csv"=>$this->sdm_encrypt($tots,PKEY),
-          "lg_inserted"=>$this->sdm_encrypt($inserted_new,PKEY),
-          "lg_update"=>$this->sdm_encrypt($inserted_alreadyexisting,PKEY),
-          "lg_incomplete"=>$this->sdm_encrypt($blankcols,PKEY),
-          "lg_notinserted"=>$this->sdm_encrypt($inserted_not,PKEY),
-          "lg_station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
-            "lg_origin"=>$this->sdm_encrypt(session("user_eid"),PKEY),
+          "lg_total_csv"=>$this->sdmenc($tots),
+          "lg_inserted"=>$this->sdmenc($inserted_new),
+          "lg_update"=>$this->sdmenc($inserted_alreadyexisting),
+          "lg_incomplete"=>$this->sdmenc($blankcols),
+          "lg_notinserted"=>$this->sdmenc($inserted_not),
+          "lg_station_id"=>$this->sdmenc(session("user_school")),
+            "lg_origin"=>$this->sdmenc(session("user_eid")),
           ]]);
            // return $result->getBody()->getContents();
           $this->RecordLog("a01");
@@ -3282,15 +3939,15 @@ $omitted_tbl = "";
      if(!in_array($signature, $asset_signature)){
       $nothere .=  $signature . " ";
       $omitted_count++;
-         $tag = $this->sdm_encrypt("get_asset_info_singleton",PKEY);
+         $tag = $this->sdmenc("get_asset_info_singleton");
             // GET EXISITING ASSETS 
           $client = new \GuzzleHttp\Client();
           $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
           "tag"=>$tag,
-          "data_id"=>$this->sdm_encrypt($item_id,PKEY),
-          "station_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+          "data_id"=>$this->sdmenc($item_id),
+          "station_id"=>$this->sdmenc(session("user_school")),
           ]]);
-          $out_res = json_decode($this->sdm_decrypt(  $result->getBody()->getContents(),PKEY),true);
+          $out_res = json_decode($this->sdmdec(  $result->getBody()->getContents()),true);
           $omitted_tbl .="
         <tr>
         <td>" . $out_res[0]["property_number"] . "</td>
@@ -3321,26 +3978,26 @@ $omitted_tbl = "";
          $newfilename = str_replace(" ", "",session("user_school")) . "--" . date("F_d_Y-g_i_a") . "." . $guessExtension;
 
 
-  $tag = $this->sdm_encrypt("index_upload_asset_csv",PKEY);
+  $tag = $this->sdmenc("index_upload_asset_csv");
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
-            "file_name"=>$this->sdm_encrypt($newfilename,PKEY),
-            "st_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
-             "empid"=>$this->sdm_encrypt(session("user_eid"),PKEY),
-             "realname"=>$this->sdm_encrypt($origname,PKEY),
-                "file_format"=>$this->sdm_encrypt($guessExtension,PKEY),
+            "file_name"=>$this->sdmenc($newfilename),
+            "st_id"=>$this->sdmenc(session("user_school")),
+             "empid"=>$this->sdmenc(session("user_eid")),
+             "realname"=>$this->sdmenc($origname),
+                "file_format"=>$this->sdmenc($guessExtension),
         ]]);
             $photo->move(public_path() . "/uploads/",   $newfilename);
 
             // RUN PROPERTY NUMBER SEPARATION TECHNOLOGY
-            $tag = $this->sdm_encrypt("run_separation_tech",PKEY);
+            $tag = $this->sdmenc("run_separation_tech");
             $client = new \GuzzleHttp\Client();
               $resultxm = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
               "tag"=>$tag,
-              "st_id"=>$this->sdm_encrypt(session("user_school"),PKEY)
+              "st_id"=>$this->sdmenc(session("user_school"))
             ]]);
-            $outx = $this->sdm_decrypt($resultxm->getBody()->getContents(),PKEY);
+            $outx = $this->sdmdec($resultxm->getBody()->getContents());
 
               // return $outx;
             Alert::success("Asset Uploaded.");
@@ -3348,13 +4005,13 @@ $omitted_tbl = "";
     }
      public function load_res_all_bylatest(){
 
-      $tag = $this->sdm_encrypt("get_uploaded_assets_allstation_bylatest",PKEY);
+      $tag = $this->sdmenc("get_uploaded_assets_allstation_bylatest");
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
         ]]);
 
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
         $toecho .= "<tr>
@@ -3402,14 +4059,14 @@ $omitted_tbl = "";
     }
     public function lodresups(){
 
-      $tag = $this->sdm_encrypt("get_uploaded_assets",PKEY);
+      $tag = $this->sdmenc("get_uploaded_assets");
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
-            "st_id"=>$this->sdm_encrypt(session("user_school"),PKEY),
+            "st_id"=>$this->sdmenc(session("user_school")),
         ]]);
 
-      $output = json_decode($this->sdm_decrypt($result->getBody()->getContents(),PKEY),true);
+      $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
         $toecho .= "<tr>
@@ -3453,15 +4110,15 @@ $omitted_tbl = "";
       return $toecho;
     }
     public function deleresnow(Request $req){
-       $tag = $this->sdm_encrypt("deleteanewreource",PKEY);
-       $id_of_something = $this->sdm_encrypt($req["id_of_something"],PKEY);
+       $tag = $this->sdmenc("deleteanewreource");
+       $id_of_something = $this->sdmenc($req["id_of_something"]);
         $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
             "id_of_something"=>$id_of_something,
         ]]);
 
-        $result = $this->sdm_decrypt($result->getBody()->getContents(),PKEY);
+        $result = $this->sdmdec($result->getBody()->getContents());
         if($result == "true"){
           Alert::success("Asset Deleted!");
           return redirect()->route("asset_resources");
@@ -3479,30 +4136,30 @@ $omitted_tbl = "";
     }
     public function addnewregistryreocrd(Request $req){
 
-      $tag = $this->sdm_encrypt("add_new_item_registry",PKEY);
+      $tag = $this->sdmenc("add_new_item_registry");
 
-      $property_number = $this->sdm_encrypt($req["property_number"],PKEY);
-      $asset_item = $this->sdm_encrypt($req["asset_item"],PKEY);
-      $office_type = $this->sdm_encrypt($req["office_type"],PKEY);
-      $office_name = $this->sdm_encrypt($req["office_name"],PKEY);
-      $asset_classification = $this->sdm_encrypt($req["asset_classification"],PKEY);
-      $asset_sub_class = $this->sdm_encrypt($req["asset_sub_class"],PKEY);
-      $uacs_object_code = $this->sdm_encrypt($req["uacs_object_code"],PKEY);
-      $manufacturer = $this->sdm_encrypt($req["manufacturer"],PKEY);
-      $model = $this->sdm_encrypt($req["model"],PKEY);
-      $serial_number = $this->sdm_encrypt($req["serial_number"],PKEY);
-      $specification = $this->sdm_encrypt($req["specification"],PKEY);
-      $current_condition = $this->sdm_encrypt($req["current_condition"],PKEY);
-      $source_of_fund = $this->sdm_encrypt($req["source_of_fund"],PKEY);
-      $cost_of_acquisition = $this->sdm_encrypt($req["cost_of_acquisition"],PKEY);
-      $date_of_acquisition = $this->sdm_encrypt($req["date_of_acquisition"],PKEY);
-      $estimated_total_life_years = $this->sdm_encrypt($req["estimated_total_life_years"],PKEY);
-      $name_of_accountable_officer = $this->sdm_encrypt($req["name_of_accountable_officer"],PKEY);
-      $asset_location = $this->sdm_encrypt($req["asset_location"],PKEY);
-      $remarks = $this->sdm_encrypt($req["remarks"],PKEY);
-      $unit_of_measure = $this->sdm_encrypt($req["unit_of_measure"],PKEY);
-      $service_center = $this->sdm_encrypt($req["service_center"],PKEY);
-      $room_number = $this->sdm_encrypt($req["room_number"],PKEY);
+      $property_number = $this->sdmenc($req["property_number"]);
+      $asset_item = $this->sdmenc($req["asset_item"]);
+      $office_type = $this->sdmenc($req["office_type"]);
+      $office_name = $this->sdmenc($req["office_name"]);
+      $asset_classification = $this->sdmenc($req["asset_classification"]);
+      $asset_sub_class = $this->sdmenc($req["asset_sub_class"]);
+      $uacs_object_code = $this->sdmenc($req["uacs_object_code"]);
+      $manufacturer = $this->sdmenc($req["manufacturer"]);
+      $model = $this->sdmenc($req["model"]);
+      $serial_number = $this->sdmenc($req["serial_number"]);
+      $specification = $this->sdmenc($req["specification"]);
+      $current_condition = $this->sdmenc($req["current_condition"]);
+      $source_of_fund = $this->sdmenc($req["source_of_fund"]);
+      $cost_of_acquisition = $this->sdmenc($req["cost_of_acquisition"]);
+      $date_of_acquisition = $this->sdmenc($req["date_of_acquisition"]);
+      $estimated_total_life_years = $this->sdmenc($req["estimated_total_life_years"]);
+      $name_of_accountable_officer = $this->sdmenc($req["name_of_accountable_officer"]);
+      $asset_location = $this->sdmenc($req["asset_location"]);
+      $remarks = $this->sdmenc($req["remarks"]);
+      $unit_of_measure = $this->sdmenc($req["unit_of_measure"]);
+      $service_center = $this->sdmenc($req["service_center"]);
+      $room_number = $this->sdmenc($req["room_number"]);
 
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -3546,10 +4203,10 @@ $omitted_tbl = "";
 
        // SDM PROPERTIES
     public function RecordLog($logcode){
-       $station_id = $this->sdm_encrypt(session("user_school"),PKEY);
-        $account_id = $this->sdm_encrypt(session("user_eid"),PKEY);
-      $logcode = $this->sdm_encrypt($logcode,PKEY);
-       $tag = $this->sdm_encrypt("addlogs",PKEY);
+       $station_id = $this->sdmenc(session("user_school"));
+        $account_id = $this->sdmenc(session("user_eid"));
+      $logcode = $this->sdmenc($logcode);
+       $tag = $this->sdmenc("addlogs");
        $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
@@ -3756,7 +4413,13 @@ return $years . ",".  $months;
             if($result == "1"){
             return "yesterday";
             }else if($result > 30){
-             return $months . " months ago";
+
+              if($months == 1){
+                 return "last month";
+              }else{
+                 return $months . " months ago";
+              }
+            
             }else{
             return round($datediff / (60 * 60 * 24)) . " days ago";
             }

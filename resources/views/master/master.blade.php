@@ -66,7 +66,7 @@ if (session("user_uname") == "" || session("user_uname") == null) {
 <style>
 @font-face {
   font-family: regularfontnew;
-  src: url({{ asset('fonts/sanfrancisco.ttf')  }});
+  src: url({{ asset('fonts/sanfrancisco_pro.ttf')  }});
 }
 body {
 	font-family: regularfontnew;
@@ -110,7 +110,7 @@ body {
 		display: none;	
 	}
 
-	.mobiletext{
+	/*.mobiletext{
 		font-size: 13px !important;
 	
 	}
@@ -137,7 +137,7 @@ body {
 	.mobiletext h6{
 		font-size: 13px !important;
 	
-	}
+	}*/
 
 	}
 
@@ -368,11 +368,25 @@ background-color: #007DFF;
 				<li class="list-group-item"><a href="/innoventory/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
 				<li class="list-group-item"><a href="{{ route('assetregistry') }}"><i class="fas fa-clipboard-check"></i> Asset Registry</a></li>
 				<li class="list-group-item"><a href="/innoventory/asset/inventory"><i class="fas fa-search"></i> Inventory</a></li>
-				<li class="list-group-item"><a href="{{ route('goto_issuances') }}"><i class="fas fa-file-alt"></i> Issuances</a></li>
+				<li class="list-group-item" style="display: none;"><a href="{{ route('goto_issuances') }}"><i class="fas fa-file-alt"></i> Issuances</a></li>
 				<li class="list-group-item"><a href="/innoventory/asset/disposal"><i class="fas fa-trash"></i> Disposed Assets</a></li>
 				<li class="list-group-item"><a data-toggle="collapse" href="#collapse1"><i class="fas fa-chart-bar"></i> Reports <i class="float-right fas fa-sort-down"></i></a>
 					<div id="collapse1" class="panel-collapse collapse in">
 						<ul class="sub-list-group mb-3">
+
+
+    <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+        ?>
+        <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
+    <li class="sub-list"><a href="#" data-toggle="modal" data-target="#m_generatereport" onclick="getcountofgen()"><i class="fas fa-file-pdf"></i> Appendix 73</a></li>
+
+     <li class="sub-list"><a href="#" data-toggle="modal" data-target="#m_generatesemireports" onclick="getcountofgen()"><i class="fas fa-file-pdf"></i> Appendix 66</a></li>
+
+    <?php } ?>
+
+
+
 							<li class="sub-list"><a href="{{ route('manage_reports') }}"><i class="fas fa-layer-group"></i> Figures</a></li>
 							<li class="sub-list"><a href="{{ route('reg_omissions') }}"><i class="fas fa-eraser"></i> Registry Omissions</a></li>
 							<li class="sub-list"><a href=""><i class="fas fa-exchange-alt"></i> Returns to LGU</a></li>
@@ -383,6 +397,100 @@ background-color: #007DFF;
 				</li>
 				<li class="list-group-item"><a href="/innoventory/asset/resources"><i class="fas fa-folder"></i> Resources</a></li>
 			</ul>
+
+
+
+
+ <!-- REPORT GENERATION MODAL FOR APPENDIX 73 -->
+		<form action="{{ route('group_asset') }}" method="GET">
+  <div id="m_generatereport" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Generate Appendix 73</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ csrf_field() }}
+          
+          <input type='hidden' name='station_id' id='mygroupid'>
+          <div class="form-group">
+            <label>Room</label>
+            <select class="form-control" id="allroms" onchange="getcountofgen()" name="my_room">
+              <option>Sample</option>
+            </select>
+          </div>
+             <div class="form-group">
+            <label>Category</label>
+            <select class="form-control" id="allcats" onchange="getcountofgen()" name="my_category">
+              <option>Sample</option>
+            </select>
+          </div>
+        <div class="form-group">
+         <label>Number of Assets to be Generated</label>
+         <h5 id="asstobegennum">0 Item(s)</h5>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" id="continueenrep_btn" class="btn btn-primary">Continue</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- REPORT GENERATION OF APPENDIX 66 -->
+
+    <div class="modal" tabindex="-1" id="m_generatesemireports" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Generate Appendix 66</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Modal body text goes here.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+		<script type="text/javascript">
+			  function getcountofgen(){
+		    $("#continueenrep_btn").css("display","none");
+		    $("#asstobegennum").html("Getting reports, please wait...");
+		    var inp_sc_id = <?php  echo json_encode(session("user_school")); ?>;
+		    var roomnum = $("#allroms").val();
+		    var category_class = $("#allcats").val();
+		    $.ajax( {
+		      type: "POST",
+		    url: "{{ route('get_tobegen_repcount') }}",
+		    data: {_token:"{{ csrf_token() }}",rn:roomnum,cc:category_class,station_id:inp_sc_id},
+		    success: function(data){
+		     
+		      if(data == "0"){
+		          $("#continueenrep_btn").css("display","none");
+		           $("#asstobegennum").html("The're no reports in the selected room and category.");
+		      }else{
+		          $("#continueenrep_btn").css("display","block");
+		           $("#asstobegennum").html(data + " item(s) are ready to be generated.");
+		      }
+		    }})
+		  }
+
+		</script>
+
+
 			<h6>ADD-ON</h6>
 			<ul class="list-group mb-3">
 					<?php

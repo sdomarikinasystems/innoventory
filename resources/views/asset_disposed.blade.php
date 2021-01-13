@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Innoventory - Disposed Assets
 @endsection
 
 @section('contents')

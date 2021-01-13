@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Inno... - Utilities
 @endsection
 
 @section('contents')

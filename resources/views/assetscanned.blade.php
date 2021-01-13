@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Innoventory - Inventory
 @endsection
 
 @section('contents')
@@ -62,17 +62,8 @@ ProcMS - Innoventory
   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 
 <div class="row">
-  <div class="col-sm mb-3">
-    
-    <?php
-      if(session("user_type") < "4" && session("user_type") != "2"){
-        ?>
-        <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-    <a class="btn btn-success" href="#" data-toggle="modal" data-target="#m_generatereport" onclick="getcountofgen()"><i class="fas fa-file-pdf"></i> Generate Report</a>
-    <?php } ?>
+  
 
-      
-  </div>
   <script type="text/javascript">
   $("#searchss").change(function(){
   var skey = $("#searchss").val();
@@ -96,28 +87,60 @@ ProcMS - Innoventory
   })
   })
   </script>
-  <div class="col-sm">
-    <table class="table table-sm table-bordered">
-      <thead>
-        <tr>
-          <th>Total Scanned</th>
-          <th>From/To</th>
-          <th>Items Not Found</th>
-        </tr>
-      </thead>
-      <tbody id="assvalsum">
-        <tr>
-          <td id="itms_total">0</td>
-          <td id="mytimeline">0</td>
-          <td>
-            <form action="../../viewallnoentryitems" method="get">
+  <div class="col-sm-12">
+      <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+        ?>
+        <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
+
+    <button class="btn btn-primary" data-toggle="modal" data-target="#modal_upload_capitaloutlay" style="display: none;"><i class="fas fa-upload"></i> Upload Scanned Data via CSV</button>
+
+
+    <?php } ?>
+
+    <div class="card-deck">
+      <div class="card">
+        <div class="card-body">
+          <h2 id="itms_total"></h2>
+        </div>
+        <div class="card-footer">
+          Total Scanned
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h2 id="notextsum"></h2>
+        </div>
+        <div class="card-footer">
+           <form action="../../viewallnoentryitems" method="get">
             <input type="hidden" name="myschool_id" id="inp_sc_id" value="">
-            <button type="submit" class="btn btn-warning btn-sm" id="notextsum">View 0</button>
+            <button type="submit" class="btn btn-info btn-sm float-right" id="view_button_cap_out_missing">View</button>
             </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>  
+          Missing Asset(s)
+        </div>
+      </div>
+
+       <div class="card">
+        <div class="card-body">
+          <span id="mytimeline"></span>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#m_capoutdatefilter">Filter</button>
+          From - To
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <p class="mt-0 mb-0"><i class="fas fa-check-circle"></i> Ready</p>
+          <span class="text-muted">You're now ready to start the inventory</span>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-danger btn-sm float-right">Start</button>
+          Inventory
+        </div>
+      </div>
+    </div>
+   
   </div>
 </div>
 <div class="row mt-3">
@@ -131,7 +154,6 @@ ProcMS - Innoventory
           <th scope="col">Service Center</th>
           <th scope="col">Room</th>
           <th scope="col">Inventory Date</th>
-          <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody id="scannedassets">
@@ -139,128 +161,405 @@ ProcMS - Innoventory
     </table>
   </div>
 </div>
+  </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+    <div class="row">
+      <div class="col-sm-6">
 
-<form action="{{ route('group_asset') }}" method="GET">
-  <div id="m_generatereport" class="modal" tabindex="-1" role="dialog">
+         <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+        ?>
+        <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
+
+    <?php } ?>
+
+
+
+        
+      </div>
+       <div class="col-sm-12">
+
+
+         <div class="card-deck">
+      <div class="card">
+        <div class="card-body">
+          <h2 id="semisum_totalscanned"></h2>
+        </div>
+        <div class="card-footer">
+          Total Scanned
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h2 id="semisum_itemsnotfound"></h2>
+        </div>
+        <div class="card-footer">
+          <form action="{{ route('goto_missing_scanned_semi') }}" method="GET">
+            <input type="hidden" name="myschool_id" id="inp_sc_id_semi" value="">
+            <button type="submit" class="btn btn-sm btn-info float-right" id="view_butt_semi_missing">View</button>
+          </form>
+          Missing Item(s)
+        </div>
+      </div>
+       <div class="card">
+        <div class="card-body">
+          <span id="semisum_fromto"></span>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal_filterdateofsemi">Filter</button>
+          From - To
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <p class="mt-0 mb-0"><i class="fas fa-check-circle"></i> Ready</p>
+          <span class="text-muted">You're now ready to start the inventory</span>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-danger btn-sm float-right">Start</button>
+          Inventory
+        </div>
+      </div>
+    </div>
+
+      </div>
+       <div class="col-sm-12 mt-3">
+        <table class="table table-hover table-bordered" id="tbl_scannnedsemi">
+      <thead>
+        <tr>
+          <th scope="col" width="150">Stock Number</th>
+          <th scope="col">Article</th>
+          <th scope="col">Description</th>
+          <th scope="col">Service Center</th>
+          <th scope="col">Room</th>
+          <th scope="col">Inventory Date</th>
+        </tr>
+      </thead>
+      <tbody id="tbl_scanned_semiexpendableasset">
+      </tbody>
+    </table>
+
+
+
+  
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+  <div class="modal" tabindex="-1" role="dialog" id="modal_filterdateofsemi">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Report Generation</h5>
+          <h5 class="modal-title">Filter Semi-Expendable</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          {{ csrf_field() }}
-          
-          <input type='hidden' name='station_id' id='mygroupid'>
-          <div class="form-group">
-            <label>Room</label>
-            <select class="form-control" id="allroms" onchange="getcountofgen()" name="my_room">
-              <option>Sample</option>
-            </select>
+          <div class="row mt-3 mb-3">
+            <div class="col-sm-6">
+              <label>Year</label>
+              <select class="form-control" id="semiexpe_filter_year" onchange="LoadSelection_MonthWithInventory_ByYear_semi()"></select>
+            </div>
+            <div class="col-sm-6">
+              <label>Month</label>
+              <select class="form-control" id="semiexpe_filter_month"></select>
+            </div>
           </div>
-             <div class="form-group">
-            <label>Category</label>
-            <select class="form-control" id="allcats" onchange="getcountofgen()" name="my_category">
-              <option>Sample</option>
-            </select>
-          </div>
-        <div class="form-group">
-         <label>Number of Assets to be Generated</label>
-         <h5 id="asstobegennum">0 Item(s)</h5>
-        </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" id="continueenrep_btn" class="btn btn-primary">Continue</button>
+          <button type="button" class="btn btn-primary" onclick="filter_assets_semiexpendable()" data-dismiss="modal">Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" tabindex="-1" role="dialog" id="m_capoutdatefilter">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Filter Capital Outlay</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row mt-3 mb-3">
+            <div class="col-sm-6">
+              <label>Year</label>
+              <select class="form-control" id="capout_filter_year" onchange="LoadSelection_MonthWithInventory_ByYear()"></select>
+            </div>
+            <div class="col-sm-6">
+              <label>Month</label>
+              <select class="form-control" id="capout_filter_month"></select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="filter_assets_capitaloutlay()" data-dismiss="modal">Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <form action="{{ route('shoot_uploadsemiexpendabledata') }}" enctype="multipart/form-data" method="POST">
+      {{ csrf_field() }}
+      <div class="modal" tabindex="-1" role="dialog" id="modal_uploadscanneddataofsemi">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Upload Semi-Expendable CSV Scanned Data</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Choose CSV file of scanned semi-expendable data</label>
+              <input type="file" required="" accept=".csv" name="thecsvfile">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Import</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+
+
+ <form action="{{ route('shoot_uploadscannedcapitaloutlay') }}" enctype="multipart/form-data" method="POST">
+  {{ csrf_field() }}
+    <div class="modal" tabindex="-1" role="dialog" id="modal_upload_capitaloutlay">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload Capital Outlay Scanned Data</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Choose scanned capital outlay CSV</label>
+            <input type="file" required="" accept=".csv" name="thecsvfile">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Import</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
-</form>
-  </div>
-  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-    <h4>UNDER DEVELOPMENT</h4></div>
-</div>
+ </form>
 
 <script type="text/javascript">
 
 
-    function LoadGroupAssetsTools(){
-        var inp_sc_id = $("#inp_sc_id").val();
-        $("#mygroupid").val(inp_sc_id);
-          $.ajax({
-    type: "POST",
-    url: "{{ route('get_roo_gr') }}",
-    data: {_token:"{{ csrf_token() }}",school_id:inp_sc_id},
-    success: function(data){
-      $("#allroms").html(data);
-    }
-  })
-  $.ajax({
-    type: "POST",
-    url: "{{ route('get_cat_gr') }}",
-    data: {_token:"{{ csrf_token() }}",school_id:inp_sc_id},
-    success: function(data){
-      $("#allcats").html(data);
-    }
-  })
-    }
 
 
-  function getcountofgen(){
-    $("#continueenrep_btn").css("display","none");
-    $("#asstobegennum").html("Getting reports, please wait...");
-    var inp_sc_id = $("#inp_sc_id").val();
-    var roomnum = $("#allroms").val();
-    var category_class = $("#allcats").val();
-    $.ajax( {
-      type: "POST",
-    url: "{{ route('get_tobegen_repcount') }}",
-    data: {_token:"{{ csrf_token() }}",rn:roomnum,cc:category_class,station_id:inp_sc_id},
-    success: function(data){
-     
-      if(data == "0"){
-          $("#continueenrep_btn").css("display","none");
-           $("#asstobegennum").html("The're no reports in the selected room and category.");
-      }else{
-          $("#continueenrep_btn").css("display","block");
-           $("#asstobegennum").html(data + " item(s) are ready to be generated.");
-      }
-    }})
+
+var is_filter_loaded = false;
+var is_filter_loaded_semi = false;
+
+ var ref_station = "";
+function UniversalLoaderSourceChange(stationID){
+  ref_station = stationID;
+  LoadSelection_YearWithInventory(stationID);
+  LoadSelection_YearWithInventory_semi(stationID);
+  if(is_filter_loaded == true){
+    LoadAssets(stationID);
   }
+  if(is_filter_loaded_semi == true){
+    GetSemiScannedAsset(stationID);
+  }
+}
+
 
 
   $("#tbl_sc").DataTable();
   var ss = <?php echo json_encode(session("user_school")); ?>;
-  LoadAssets(ss);
+  UniversalLoaderSourceChange(ss);
+
+
+
   function gotodefaultsource(){
-    LoadAssets(ss);
+      UniversalLoaderSourceChange(ss);
   }
   function changesource(control_obj){
-    LoadAssets($(control_obj).data("sourceid"));
+
+     if($(control_obj).data("sourceid") != <?php echo session("user_school"); ?>){
+            $("#sourcename").html($(control_obj).data("sourcename"));
+          }else{
+              $("#sourcename").html($(control_obj).data("sourcename"));
+          }
+     UniversalLoaderSourceChange($(control_obj).data("sourceid"));
   }
+
+
+      function GetSemiScannedAsset(schoolid){
+
+        var yy = $("#semiexpe_filter_year").val();
+        var mm = $("#semiexpe_filter_month").val();
+
+        $.ajax({
+          type:"POST",
+          url: "{{ route('shoot_show_uploaded_semi_expendable_scanneddata') }}",
+          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
+          success: function(data){
+            $("#tbl_scanned_semiexpendableasset").html(data);
+            GetSemi_TotalScanned(schoolid,yy,mm);
+          }
+        })
+      }
+
+       function GetSemi_TotalScanned(schoolid,yy,mm){
+        $.ajax({
+          type: "POST",
+          url: "{{ route('stole_getsemisum_totalscanned') }}",
+          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
+          success: function(data){
+           $("#semisum_totalscanned").html(data);
+           GetSemi_FromTo(schoolid,yy,mm);
+          }
+        })
+      }
+      function GetSemi_FromTo(schoolid,yy,mm){
+        $.ajax({
+          type: "POST",
+          url: "{{ route('stole_getsemisum_fromto') }}",
+          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
+          success: function(data){
+            $("#semisum_fromto").html(data);
+            GetSemi_ItemsNotFound(schoolid,yy,mm);
+          }
+        })
+      }
+      function GetSemi_ItemsNotFound(schoolid,yy,mm){
+        $.ajax({
+          type: "POST",
+          url: "{{ route('stole_getsemisum_itemsnotfound') }}",
+          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
+          success: function(data){
+            if(data == "0"){
+                $("#semisum_itemsnotfound").html("No items missing");
+                 $("#view_butt_semi_missing").css("display","none");
+            }else{
+                $("#semisum_itemsnotfound").html(data);
+                $("#view_butt_semi_missing").css("display","block");
+            }
+           
+          }
+        })
+      }
+
+
+// DATE FILTER FOR CAPITAL OUTLAY
+  function LoadSelection_YearWithInventory(staID){
+    $.ajax({
+      type:"POST",
+      url: "{{ route('stole_all_years_with_inventory_capitaloutlay') }}",
+      data: {_token: "{{ csrf_token() }}",station_id:staID},
+      success: function(data){
+        $("#capout_filter_year").html(data);
+        ref_station = staID;
+        LoadSelection_MonthWithInventory_ByYear();
+      }
+    })
+  }
+
+  function LoadSelection_MonthWithInventory_ByYear(){
+      var ref_year = $("#capout_filter_year").val();
+    $.ajax({
+      type:"POST",
+      url: "{{ route('stole_inventory_month_capital_outlay') }}",
+      data: {_token: "{{ csrf_token() }}",station_id:ref_station,date_year:ref_year},
+      success: function(data){
+        $("#capout_filter_month").html(data);
+        if(is_filter_loaded == false){
+          is_filter_loaded = true;
+          LoadAssets(ref_station);
+        }
+      }
+    })
+  }
+
+  function filter_assets_capitaloutlay(){
+    LoadAssets(ref_station);
+  }
+
+
+
+  // DATE FILTER FOR SEMI EXPENDABLE
+  
+    function LoadSelection_YearWithInventory_semi(staID){
+    $.ajax({
+      type:"POST",
+      url: "{{ route('stole_all_years_with_inventory_semiexpendable') }}",
+      data: {_token: "{{ csrf_token() }}",station_id:staID},
+      success: function(data){
+        $("#semiexpe_filter_year").html(data);
+        ref_station = staID;
+        LoadSelection_MonthWithInventory_ByYear_semi();
+      }
+    })
+  }
+
+  function LoadSelection_MonthWithInventory_ByYear_semi(){
+      var ref_year = $("#semiexpe_filter_year").val();
+    $.ajax({
+      type:"POST",
+      url: "{{ route('stole_inventory_month_semiexpendable') }}",
+      data: {_token: "{{ csrf_token() }}",station_id:ref_station,date_year:ref_year},
+      success: function(data){
+        $("#semiexpe_filter_month").html(data);
+        if(is_filter_loaded_semi == false){
+          is_filter_loaded_semi = true;
+          GetSemiScannedAsset(ref_station);
+        }
+      }
+    })
+  }
+  
+  function filter_assets_semiexpendable(){
+    GetSemiScannedAsset(ref_station);
+  }
+
+
+
+
   function LoadAssets(sc_id){
     $("#lodass").css("display","block");
     $("#inp_sc_id").val(sc_id);
+    $("#inp_sc_id_semi").val(sc_id);
+
+    var choosen_year = $("#capout_filter_year").val();
+    var choosen_month = $("#capout_filter_month").val();
+
     $.ajax({
     type: "POST",
     url: "{{ route('get_ass_scanned') }}",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id},
+    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
     success: function(data){
        $("#tbl_sc").DataTable().destroy();
       $("#scannedassets").html(data);
       $("#lodass").css("display","none");
       $("#tbl_sc").DataTable();
-      LoadGroupAssetsTools();
     }
   })
 
  $.ajax({
     type: "POST",
-    url: "../../get_sca_totalitems",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id},
+    url: "{{ route('g_sca_ttitms') }}",
+    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
     success: function(data){
       $("#itms_total").html(data);
     }
@@ -269,15 +568,22 @@ ProcMS - Innoventory
 $.ajax({
     type: "POST",
     url: "{{ route('get_noscitems') }}",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id},
+    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
     success: function(data){
-      $("#notextsum").html("View " + data + " items");
+      if(data == "0"){
+ $("#notextsum").html("No items missing");
+ $("#view_button_cap_out_missing").css("display","none");
+      }else{
+         $("#notextsum").html(data);
+         $("#view_button_cap_out_missing").css("display","block");
+      }
+     
     }
   })
         $.ajax({
     type: "POST",
-    url: "../../get_sca_occupied_dates",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id},
+    url: "{{ route('get_sc_occudates') }}",
+    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
     success: function(data){
       $("#mytimeline").html(data);
     }

@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Innoventory - Issuances
 @endsection
 
 @section('contents')
@@ -14,5 +14,9 @@ ProcMS - Innoventory
 		<li class="breadcrumb-item active" aria-current="page">Issuances</li>
 	</ol>
 </nav>
-
+<div class="container">
+	<h4>Feature is under development</h4>
+	<p class="text-muted">Issuances feature is currently on the works. Please standby for further updates about this feature.</p>
+	<p class="mt-4">SDO Marikina IT Department</p>
+</div>
 @endsection

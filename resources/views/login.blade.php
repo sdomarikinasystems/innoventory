@@ -1,7 +1,7 @@
 @extends('master.master_login')
 
 @section('title')
-ProcMS Innoventory
+Innoventory  - Login
 @endsection
 
 @section('contents')

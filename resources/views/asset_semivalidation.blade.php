@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Inno... - Semi-Expendable Upload Result
 @endsection
 
 @section('contents')

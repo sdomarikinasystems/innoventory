@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Inno... - Capital Outlay Upload Result
 @endsection
 
 @section('contents')

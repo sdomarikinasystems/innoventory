@@ -1,18 +1,18 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Inno... - Capital Outlay Missing
 @endsection
 
 @section('contents')
 
-<h2>Inventory - Items Not Found</h2>
+<h2>Capital Outlay - Items Not Found</h2>
 
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('asset_scanned') }}">Inventory</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Items Not Found</li>
+		<li class="breadcrumb-item active" aria-current="page">Capital Outlay - Items Not Found</li>
 	</ol>
 </nav>
 

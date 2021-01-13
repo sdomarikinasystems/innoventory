@@ -135,7 +135,7 @@ Route::post("/report_omitted_asset_singleton",["uses"=>"functions@rep_om_sing","
 Route::post("/display_omitted_data",["uses"=>"functions@display_omitted_of_station","as"=>"disp_omm_reps"]);
 Route::post("/report_all_omitted_assets",["uses"=>"functions@rep_all_om_ass","as"=>"reportallomassets"]);
 
-// INNOVENTROY VERSION 2 
+// INNOVENTORY VERSION 2 
 
 // ASSET REGISTRY 
 Route::post("/add_new_semi_expendable",["uses"=>"functions@fire_add_semi_expendible","as"=>"shoot_add_semi_expendible"]);
@@ -144,6 +144,35 @@ Route::post("/get_all_my_service_center",["uses"=>"functions@look_all_ofmy_servi
 Route::post("/get_semi_expendablebystation",["uses"=>"functions@look_semi_expendable_bystation","as"=>"stole_semi_expendable_bystation"]);
 Route::post("/get_mysemi_discrepancies",["uses"=>"functions@look_my_semiexpendable_descrepancies","as"=>"stole_my_semiexpendable_descrepancies"]);
 Route::post("/get_mysemi_omitted",["uses"=>"functions@look_semi_expendable_omitted","as"=>"stole_semi_expendable_omitted"]);
+Route::post("/get_suppy_data",["uses"=>"functions@look_all_of_my_supply_data","as"=>"stole_all_of_my_supply_data"]);
+Route::post("/validate_uploaded_supply_file",["uses"=>"functions@look_preview_of_uploaded_supplyfile","as"=>"stole_preview_of_uploaded_supplyfile"]);
+Route::post("/add_new_supply",["uses"=>"functions@fire_add_supply","as"=>"shoot_add_supply"]);
+
+// ASSET INVENTORY PAGE
+Route::post("/upload_semi_expendable_inventory",["uses"=>"functions@fire_uploadsemiexpendabledatascanned","as"=>"shoot_uploadsemiexpendabledata"]);
+Route::post("/get_all_semi_expendable_asset_scanned",["uses"=>"functions@look_show_uploaded_semi_expendable_scanneddata","as"=>"shoot_show_uploaded_semi_expendable_scanneddata"]);
+Route::post("/upload_scanned_capital_outlay",["uses"=>"functions@fire_uploadscannedcapitaloutlay","as"=>"shoot_uploadscannedcapitaloutlay"]);
+
+Route::post("/get_total_scanned_semiassets",["uses"=>"functions@look_getsemisum_totalscanned","as"=>"stole_getsemisum_totalscanned"]);
+Route::post("/get_from_to_dates_of_semiassets",["uses"=>"functions@look_getsemisum_fromto","as"=>"stole_getsemisum_fromto"]);
+Route::post("/get_items_not_fount_of_semiassets",["uses"=>"functions@look_getsemisum_itemsnotfound","as"=>"stole_getsemisum_itemsnotfound"]);
+Route::post("/get_all_year_with_inventory",["uses"=>"functions@look_all_years_with_inventory_capitaloutlay","as"=>"stole_all_years_with_inventory_capitaloutlay"]);
+Route::post("/get_month_of_inventory_byyear_incapital_outlay",["uses"=>"functions@look_inventory_month_capital_outlay","as"=>"stole_inventory_month_capital_outlay"]);
+Route::post("/get_inventory_years_semi",["uses"=>"functions@look_all_years_with_inventory_semiexpendable","as"=>"stole_all_years_with_inventory_semiexpendable"]);
+Route::post("/get_inventory_months_semi_byyear",["uses"=>"functions@look_inventory_month_semiexpendable","as"=>"stole_inventory_month_semiexpendable"]);
+
+
+
+
+// ASSET MISSING SEMI EXPENDABLE SCANNED PAGE
+Route::get("/innoventory/inventory/semi_expendable/missing_items",["uses"=>"functions@fly_missing_scanned_semi","as"=>"goto_missing_scanned_semi"]);
+Route::post("/get_missing_semi_data",["uses"=>"functions@look_get_semi_expendable_not_scanned","as"=>"stole_get_semi_expendable_not_scanned"]);
+
+// ASSET SEMI VIEWING SINGLE
+Route::get("/innoventory/semi_expendable/item_view",["uses"=>"functions@fly_semi_expendable_item_view","as"=>"goto_semi_expendable_item_view"]);
+Route::post("/get_full_info_of_single_semi_expendable",["uses"=>"functions@look_single_semi_expenable","as"=>"stole_single_semi_expenable"]);
+
+
 
 // ASSET SEMI EXPENDABLE DISCREPANCIES
 Route::get("/innoventory/asset_registry/semi_expendable/discrepancies",["uses"=>"functions@fly_semiexpendable_discrepancies","as"=>"goto_semiexpendable_discrepancies"]);
@@ -156,6 +185,9 @@ Route::post("/reset_password_byadmin",["uses"=>"functions@fire_reset_account_pas
 
 // SEMI EXPENDIBLE VALIDATION PAGE
 Route::get("/innoventory/asset_registry/semi_expendable",["uses"=>"functions@fly_semi_expendable_validationpage","as"=>"goto_semi_expendable_validationpage"]);
+
+// SEMI EXPENDIBLE VALIDATION PAGE
+Route::get("/innoventory/asset_registry/supply",["uses"=>"functions@fly_supply_validationpage","as"=>"goto_supply_validationpage"]);
 
 // ISSUANCE
 Route::get("/innoventory/issuances",["uses"=>"functions@fly_issuances","as"=>"goto_issuances"]);

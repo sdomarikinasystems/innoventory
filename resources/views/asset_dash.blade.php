@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Innoventory - Dashboard
 @endsection
 
 @section('contents')
@@ -54,7 +54,7 @@ ProcMS - Innoventory
 		<div class="card">
 			<div class="card-body">
 				<p class="mb-0 mt-0">Service Centers</p>
-				<h3 class="mb-0 mt-0" id="count_ass_disposed">0</h3>
+				<h3 class="mb-0 mt-0" id="count_ass_servicecenters">0</h3>
 			</div>
 			<div class="card-footer">
 				<a href="/innoventory/manage/service_centers" class="float-right"><i class="fas fa-hand-point-right"></i> <span class="hideinmobile">View</span></a>
@@ -187,7 +187,7 @@ LoadDashboardInfo();
       $("#count_ass_reg").html(d_data[1]);
       $("#count_sc_assets").html(d_data[2]);
       $("#count_ass_disposed").html(d_data[3]);
-       $("#count_trans").html(d_data[4]);
+       $("#count_ass_servicecenters").html(d_data[4]);
        $("#count_accounts").html(d_data[5]);
     }
   })
