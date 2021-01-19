@@ -17,33 +17,27 @@ Innoventory - Service Centers
 </nav>
 
 <div class="row">
-	<div class="col-sm" style="padding-left:0">
-		<ul class="nav">
+	<div class="col-sm-12">
 		<?php
 			if(session("user_type") < "4" && session("user_type") != "2"){
 		?>
 		<!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-			<li class="nav-item active">
-				<a class="nav-link" href="#" data-toggle="modal" data-target="#modal_addassloc"><i class="fas fa-plus-square"></i> Add Service Center</a>
-			</li>
+				<a class="btn btn-primary" href="#" data-toggle="modal" data-target="#modal_addassloc"><i class="fas fa-plus-square"></i> Add Service Center</a>
 			<?php } ?>
-
 			<?php
 				if(session("user_type") == "0" || session("user_type") == "1"){
 			?>
-
 			<?php
 			}
-
 			?>
-		</ul>
+
 	</div>
 	<div class="col-sm">
 	</div>	
 </div>
 <div class="row mt-3">
 	<div class="col-md-12">
-		<table class="table-sm table" id="tbl_allinfolocs">
+		<table class="table table-bordered" id="tbl_allinfolocs">
 		  <thead>
 			<tr>
 				<th>Service Center</th>
@@ -167,15 +161,15 @@ Innoventory - Service Centers
             {{ csrf_field() }}
             <div class="form-group">
               <label>Service Center</label>
-              <input type="text" class="form-control" id="edit_servicenter" required="" name="edit_servicenter">
+              <input type="text" class="form-control" autocomplete="off" id="edit_servicenter" required="" name="edit_servicenter">
             </div>
             <div class="form-group">
               <label>Room Number</label>
-              <input type="text" class="form-control" id="edit_roomnumber" required="" name="edit_roomnumber">
+              <input type="text" class="form-control" autocomplete="off" id="edit_roomnumber" required="" name="edit_roomnumber">
             </div>
             <div class="form-group">
                <label>Center Manager</label>
-               <select name="incharge" class="form-control" required=""  id="mycentermanagerselection_edit">
+               <select name="incharge" autocomplete="off" class="form-control" id="mycentermanagerselection_edit">
                  
                </select>
             </div>

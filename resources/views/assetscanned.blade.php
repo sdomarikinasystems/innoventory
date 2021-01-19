@@ -15,8 +15,8 @@ Innoventory - Inventory
 	</ol>
 </nav>
 
-  <?php
-      if(session("user_type") == "0" || session("user_type") == "1"){
+    <?php
+    if(session("user_type") == "0" || session("user_type") == "1"){
     ?>
     <!-- FOR ADMIN ONLY -->
     <a class="btn btn-secondary float-right dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
@@ -44,8 +44,6 @@ Innoventory - Inventory
     </div>
     <?php
     }
-
-
     ?>
 
 <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
@@ -112,14 +110,17 @@ Innoventory - Inventory
           <h2 id="notextsum"></h2>
         </div>
         <div class="card-footer">
-           <form action="../../viewallnoentryitems" method="get">
+           <form action="{{ route('view_all_unencludedassets') }}" method="get" target="_blank">
+            <input type="hidden" name="station_name"  class="inp_filtepurpose_stationname" value="">
             <input type="hidden" name="myschool_id" id="inp_sc_id" value="">
+            <input type="hidden" name="selected_year" id="inp_co_selyear" value="">
+            <input type="hidden" name="selected_month" id="inp_co_selmonth" value="">
+            <input type="hidden" name="fromto_html" id="inp_co_htmlof_fromto" value="">
             <button type="submit" class="btn btn-info btn-sm float-right" id="view_button_cap_out_missing">View</button>
             </form>
           Missing Asset(s)
         </div>
       </div>
-
        <div class="card">
         <div class="card-body">
           <span id="mytimeline"></span>
@@ -135,7 +136,11 @@ Innoventory - Inventory
           <span class="text-muted">You're now ready to start the inventory</span>
         </div>
         <div class="card-footer">
-          <button class="btn btn-danger btn-sm float-right">Start</button>
+         <form action="{{ route('goto_inventory_co') }}" method="GET">
+            <input type="hidden" name="station_full_name" class="inp_filtepurpose_stationname">
+            <input type="hidden" name="station_id" id="inp_sc_id_inv" value="">
+            <button type="submit" class="btn btn-danger btn-sm float-right">Start</button>
+         </form>
           Inventory
         </div>
       </div>
@@ -194,11 +199,15 @@ Innoventory - Inventory
           <h2 id="semisum_itemsnotfound"></h2>
         </div>
         <div class="card-footer">
-          <form action="{{ route('goto_missing_scanned_semi') }}" method="GET">
+          <form action="{{ route('goto_missing_scanned_semi') }}" method="get" target="_blank">
+            <input type="hidden" name="station_name"  class="inp_filtepurpose_stationname" value="">
             <input type="hidden" name="myschool_id" id="inp_sc_id_semi" value="">
+             <input type="hidden" name="selected_year" id="inp_se_selyear" value="">
+              <input type="hidden" name="selected_month" id="inp_se_selmonth" value="">
+               <input type="hidden" name="fromto_html" id="inp_se_htmlof_fromto" value="">
             <button type="submit" class="btn btn-sm btn-info float-right" id="view_butt_semi_missing">View</button>
           </form>
-          Missing Item(s)
+         Missing Asset(s)
         </div>
       </div>
        <div class="card">
@@ -238,13 +247,8 @@ Innoventory - Inventory
       <tbody id="tbl_scanned_semiexpendableasset">
       </tbody>
     </table>
-
-
-
-  
       </div>
     </div>
-
   </div>
 </div>
 
@@ -305,9 +309,6 @@ Innoventory - Inventory
     </div>
   </div>
 
-
-
-
   <form action="{{ route('shoot_uploadsemiexpendabledata') }}" enctype="multipart/form-data" method="POST">
       {{ csrf_field() }}
       <div class="modal" tabindex="-1" role="dialog" id="modal_uploadscanneddataofsemi">
@@ -363,10 +364,6 @@ Innoventory - Inventory
 
 <script type="text/javascript">
 
-
-
-
-
 var is_filter_loaded = false;
 var is_filter_loaded_semi = false;
 
@@ -374,7 +371,7 @@ var is_filter_loaded_semi = false;
 function UniversalLoaderSourceChange(stationID){
   ref_station = stationID;
   LoadSelection_YearWithInventory(stationID);
-  LoadSelection_YearWithInventory_semi(stationID);
+
   if(is_filter_loaded == true){
     LoadAssets(stationID);
   }
@@ -383,33 +380,36 @@ function UniversalLoaderSourceChange(stationID){
   }
 }
 
-
-
   $("#tbl_sc").DataTable();
   var ss = <?php echo json_encode(session("user_school")); ?>;
   UniversalLoaderSourceChange(ss);
-
-
-
+  $(".inp_filtepurpose_stationname").val(<?php echo json_encode(session("user_schoolname")); ?>);
   function gotodefaultsource(){
+    is_filter_loaded = false;
+is_filter_loaded_semi = false;
       UniversalLoaderSourceChange(ss);
+      $(".inp_filtepurpose_stationname").val(<?php echo json_encode(session("user_schoolname")); ?>);
+       $("#sourcename").html(<?php echo json_encode(session("user_schoolname")); ?>);
   }
   function changesource(control_obj){
+    is_filter_loaded = false;
+is_filter_loaded_semi = false;
 
      if($(control_obj).data("sourceid") != <?php echo session("user_school"); ?>){
             $("#sourcename").html($(control_obj).data("sourcename"));
+           
           }else{
               $("#sourcename").html($(control_obj).data("sourcename"));
           }
+           $(".inp_filtepurpose_stationname").val($(control_obj).data("sourcename"));
      UniversalLoaderSourceChange($(control_obj).data("sourceid"));
   }
-
-
       function GetSemiScannedAsset(schoolid){
 
         var yy = $("#semiexpe_filter_year").val();
         var mm = $("#semiexpe_filter_month").val();
-
+         $("#inp_se_selyear").val(yy);
+        $("#inp_se_selmonth").val(mm);
         $.ajax({
           type:"POST",
           url: "{{ route('shoot_show_uploaded_semi_expendable_scanneddata') }}",
@@ -439,6 +439,7 @@ function UniversalLoaderSourceChange(stationID){
           data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
           success: function(data){
             $("#semisum_fromto").html(data);
+            $("#inp_se_htmlof_fromto").val($("#semisum_fromto").html());
             GetSemi_ItemsNotFound(schoolid,yy,mm);
           }
         })
@@ -470,6 +471,7 @@ function UniversalLoaderSourceChange(stationID){
       data: {_token: "{{ csrf_token() }}",station_id:staID},
       success: function(data){
         $("#capout_filter_year").html(data);
+       
         ref_station = staID;
         LoadSelection_MonthWithInventory_ByYear();
       }
@@ -484,6 +486,7 @@ function UniversalLoaderSourceChange(stationID){
       data: {_token: "{{ csrf_token() }}",station_id:ref_station,date_year:ref_year},
       success: function(data){
         $("#capout_filter_month").html(data);
+     
         if(is_filter_loaded == false){
           is_filter_loaded = true;
           LoadAssets(ref_station);
@@ -496,8 +499,6 @@ function UniversalLoaderSourceChange(stationID){
     LoadAssets(ref_station);
   }
 
-
-
   // DATE FILTER FOR SEMI EXPENDABLE
   
     function LoadSelection_YearWithInventory_semi(staID){
@@ -507,6 +508,7 @@ function UniversalLoaderSourceChange(stationID){
       data: {_token: "{{ csrf_token() }}",station_id:staID},
       success: function(data){
         $("#semiexpe_filter_year").html(data);
+        
         ref_station = staID;
         LoadSelection_MonthWithInventory_ByYear_semi();
       }
@@ -521,6 +523,7 @@ function UniversalLoaderSourceChange(stationID){
       data: {_token: "{{ csrf_token() }}",station_id:ref_station,date_year:ref_year},
       success: function(data){
         $("#semiexpe_filter_month").html(data);
+         
         if(is_filter_loaded_semi == false){
           is_filter_loaded_semi = true;
           GetSemiScannedAsset(ref_station);
@@ -539,12 +542,18 @@ function UniversalLoaderSourceChange(stationID){
   function LoadAssets(sc_id){
     $("#lodass").css("display","block");
     $("#inp_sc_id").val(sc_id);
+     $("#inp_sc_id_inv").val(sc_id);
+
     $("#inp_sc_id_semi").val(sc_id);
 
     var choosen_year = $("#capout_filter_year").val();
     var choosen_month = $("#capout_filter_month").val();
 
-    $.ajax({
+     $("#inp_co_selyear").val(choosen_year);
+   $("#inp_co_selmonth").val(choosen_month);
+GetScannedCapital();
+   function GetScannedCapital(){
+     $.ajax({
     type: "POST",
     url: "{{ route('get_ass_scanned') }}",
     data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
@@ -553,19 +562,25 @@ function UniversalLoaderSourceChange(stationID){
       $("#scannedassets").html(data);
       $("#lodass").css("display","none");
       $("#tbl_sc").DataTable();
+      GetScannedCapitalTotal();
     }
   })
+   }
 
- $.ajax({
+   function GetScannedCapitalTotal(){
+     $.ajax({
     type: "POST",
     url: "{{ route('g_sca_ttitms') }}",
     data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
     success: function(data){
       $("#itms_total").html(data);
+      GetNotScannedItems_Capital();
     }
   })
+   }
 
-$.ajax({
+   function GetNotScannedItems_Capital(){
+    $.ajax({
     type: "POST",
     url: "{{ route('get_noscitems') }}",
     data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
@@ -577,17 +592,22 @@ $.ajax({
          $("#notextsum").html(data);
          $("#view_button_cap_out_missing").css("display","block");
       }
-     
+     GetScannedDates_Capital();
     }
   })
-        $.ajax({
+   }
+        function GetScannedDates_Capital(){
+          $.ajax({
     type: "POST",
     url: "{{ route('get_sc_occudates') }}",
     data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
     success: function(data){
       $("#mytimeline").html(data);
+      $("#inp_co_htmlof_fromto").val($("#mytimeline").html());
+        LoadSelection_YearWithInventory_semi(sc_id);
     }
   })
+        }
 
   }
   var utype = <?php echo json_encode(session("user_type")); ?>;

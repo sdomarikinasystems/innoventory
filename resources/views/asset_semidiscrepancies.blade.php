@@ -71,11 +71,13 @@ if(session("stationid") != $_GET["stationid"]){
            $("#tbl_semiexdis").DataTable().destroy();
         $("#allsemdis").html(data);
          $("#tbl_semiexdis").DataTable();
+         getscname();
       }
     })
   }
-
-    $.ajax({
+  
+  function getscname(){
+      $.ajax({
     type: "POST",
     url: "get_sc_fn",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
@@ -83,6 +85,7 @@ if(session("stationid") != $_GET["stationid"]){
        $("#disc_sc_name").html(data);
     }
   })
+    }
 </script>
 
 

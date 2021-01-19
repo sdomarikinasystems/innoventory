@@ -32,7 +32,7 @@ class functions extends Controller
       return view("assetgrouping");
     }
     public function printapp66(){
-      return view("doc_appendix66");
+      return view("doc_appendix73");
     }
       public function asset_scanned(){
       return view("assetscanned");
@@ -117,8 +117,54 @@ class functions extends Controller
     public function fly_semi_expendable_item_view(){
        return view("asset_view_semi_single");
     }
+    public function fly_inventory_co(){
+       return view("asset_addinventory_capitaloutlay");
+    }
 
     // FUNCTIONS
+    public function fire_submit_scanned_data(Request $req){
+
+      $loc_id = $req["loc_id"];
+      $ass_cd = $req["ass_cd"];
+      $timesp = $req["timesp"];
+      $ass_type = $req["ass_type"];
+
+      $out = $this->send(["tag"=>"UNI_ADD_INVENTORY_DATA",
+                          "loc_id"=>$this->sdmenc( $loc_id),
+                          "ass_cd"=>$this->sdmenc($ass_cd),
+                          "timesp"=>$this->sdmenc($timesp),
+                          "ass_type"=>$this->sdmenc($ass_type),
+                          "sta_id"=>$this->sdmenc($req["stationid"])
+                        ]);
+
+      return json_encode($out);
+    }
+    public function look_get_max_values_of_CoSe(Request $req){
+      $out = $this->send(["tag"=>"GET_MAX_VALUES_OF_CAPITAL_X_SEMI",
+                          "station_id"=>$this->sdmenc($req["sta_id"]),
+                          "center_id"=>$this->sdmenc($req["service_centerid"])]);
+      return $out[0];
+    }
+    public function look_scanned_item_details(Request $req){
+       $out = $this->send(["tag"=>"GET_SINGLE_SCANNED_ASSET_DETAILS",
+                          "station_id"=>$this->sdmenc($req["sta_id"]),
+                          "code"=>$this->sdmenc($req["scanned_cod"])]);
+       return json_encode($out);
+    }
+    public function look_single_service_center_data_byid(Request $req){
+       $out = $this->send(["tag"=>"GET_SERVICE_CENTER_INFO_BYID","loc_id"=>$this->sdmenc($req["service_center_id"])]);
+       return json_encode($out);
+    }
+    public function look_getallservicecenters(Request $req){
+       $out = $this->send(["tag"=>"GET_ALL_SERVICE_CENTERS_MYSTATION","station_id"=>$this->sdmenc($req["station_id"])]);
+       $toecho = "";
+       for ($i=0; $i < count($out); $i++) { 
+          $toecho .= "
+            <option value='" . $out[$i]["id"] . "'>" . $out[$i]["office"] . " (room #: " . $out[$i]["room_number"] .")" . "</option>
+          ";
+       }
+       return  $toecho;
+    }
     public function look_all_years_with_inventory_semiexpendable(Request $req){
      $out = $this->send(["tag"=>"GET_INVENTORY_YEARS_SEMI_EXPENDABLE","station_id"=>$this->sdmenc($req["station_id"])]);
       $toecho = "";
@@ -170,18 +216,22 @@ class functions extends Controller
     public function look_single_semi_expenable(Request $req){
       $out = $this->send(["tag"=>"GET_SINGLE_SEMI_EXPENDABLE","data_id"=>$this->sdmenc($req["d_id"])]);
       if(count( $out) != 0){
-         $out[0]["unit_value"] = number_format($out[0]["unit_value"]);
+         $out[0]["unit_value"] = number_format($out[0]["unit_value"],2);
       }
       return json_encode( $out);
     }
     public function look_get_semi_expendable_not_scanned(Request $req){
-     $output = $this->send(["tag"=>"GET_MISSING_SCANNED_SEMI_DATA","station_id"=>$this->sdmenc($req["station_info"])]);
+     $output = $this->send(["tag"=>"GET_MISSING_SCANNED_SEMI_DATA",
+      "station_id"=>$this->sdmenc($req["station_info"]),
+      "cho_year"=>$this->sdmenc($req["selyear"]),
+      "cho_month"=>$this->sdmenc($req["selmonth"])
+    ]);
      $toecho = "";
      for ($i=0; $i < count($output); $i++) { 
         if($output[$i]["stock_number"] != "none" && $output[$i]["stock_number"] != ""){
             $toecho .= "
         <tr>
-        <td>
+        <td class='missedt'>
         <form action='" . route('goto_semi_expendable_item_view') . "' method='GET' target='_blank'>
         <input type='hidden' value='" . $output[$i]["item_id"] . "' name='asset_id'>
         <button class='btn btn-link' type='submit' target='_blank'>" . $output[$i]["stock_number"] . "</button>
@@ -193,7 +243,6 @@ class functions extends Controller
         <td>" . $output[$i]["room_number"] . "</td>
         </tr>
         ";
-
         }
           
       
@@ -944,6 +993,8 @@ class functions extends Controller
         <td>" . $semiex[$i]["unit_value"] . "</td>
         <td>" . $semiex[$i]["balance_per_card"] . "</td>
         <td>" . $semiex[$i]["on_hand_per_count"] . "</td>
+        <td><p class='m-0'>" . $semiex[$i]["office"] . "</p><span class='text-muted'>Room #: " . $semiex[$i]["room_number"] . "</span></td>
+
         <td>" . $semiex[$i]["remarks"] . "</td>
         <td>" . '
                     <div class="dropdown ">
@@ -1244,6 +1295,22 @@ class functions extends Controller
 
       $upload_CSVFILE->move(public_path() . "/uploads/",   $NewFileName);
 
+      // VALIDATE REDINESS
+      if($miss_col == "0"){
+        // READY
+        $this->send(["tag"=>"UPDATE_SEMI_EXPENDABLE_STATUS",
+        "station_id"=>$this->sdmenc(session("user_school")),
+        "status"=>$this->sdmenc("Ready"),
+        "pref_name"=>$this->sdmenc("Inventory Status Semi")]);
+      }else{
+        // NOT READY
+        $this->send(["tag"=>"UPDATE_SEMI_EXPENDABLE_STATUS",
+        "station_id"=>$this->sdmenc(session("user_school")),
+        "status"=>$this->sdmenc("Not Ready"),
+        "pref_name"=>$this->sdmenc("Inventory Status Semi")]);
+      }
+
+
       $this->RecordLog("a01.1");
 
       return redirect()->route("goto_semi_expendable_validationpage",[
@@ -1469,16 +1536,27 @@ switch ($output[$i]["om_reason"]) {
       $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
  $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
-
-        $isready = $output[$i]["pref_value"] ;
-        if ($isready == "Ready") {
-           $isready = '<span style="color: #44bd32;"><i class="far fa-check-circle"></i> Ready</span>';
+        $isready_capital  = $output[$i]["pref_value"];
+        if ($isready_capital  == "Ready") {
+           $isready_capital  = '<span style="color: #44bd32;"><i class="fas fa-check"></i></span>';
         }else{
-           $isready = '<span style="color: #c23616;"><i class="far fa-times-circle"></i> Not Ready</span>';
+           $isready_capital  = '<span style="color: #c23616;"><i class="fas fa-times"></i></span>';
         }
+
+        $outx = $this->send(["tag"=>"GET_STATUS_SEMI","station_id"=>$this->sdmenc( $output[$i]["pref_station_id"])]);
+
+        $isready_semiexpendable = "";
+
+        if(count($outx) == 0 || $outx[0]["pref_value"] != "Ready"){
+          $isready_semiexpendable ='<span style="color: #c23616;"><i class="fas fa-times"></i></span>';
+        }else{
+          $isready_semiexpendable ='<span style="color: #44bd32;"><i class="fas fa-check"></i></span>';
+        }
+
        $toecho .= "<tr>
         <td>" . $output[$i]["name"] . "</td>
-        <td><strong>" . $isready. "</strong></td>
+        <td><center>" . $isready_capital . "</center></td>
+         <td><center>" . $isready_semiexpendable . "</center></td>
        </tr>";
       }
       return $toecho;
@@ -1759,7 +1837,7 @@ $colval = "";
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-         "school_id"=>$this->sdmenc(session("user_school")),
+        "school_id"=>$this->sdmenc(session("user_school")),
       ]]);
      $output = $this->sdmdec($xresult->getBody()->getContents());
      return $output;
@@ -1889,7 +1967,9 @@ $colval = "";
       for($i = 0 ; $i < count($output);$i++){
         $toecho .= "<tr>
         
-         <td><span style='display:none;'>"  . date("Y-m-d H:i:s",strtotime( $output[$i]["timestamp"])) . "</span>" . date("F d, Y g:i a",strtotime( $output[$i]["timestamp"])) . "</td>
+         <td><span style='display:none;'>"  . date("Y-m-d H:i:s",strtotime( $output[$i]["timestamp"])) . "</span>" .
+          "<span class='float-right text-muted'>" . $this->DateExplainder($output[$i]["timestamp"]) . "</span>" 
+          . date("F d, Y g:i a",strtotime( $output[$i]["timestamp"])) . "</td>
          <td>" . $output[$i]["action_taken"] . "</td>
          <td>" . $output[$i]["username"] . "</td>
         </tr>";
@@ -1908,28 +1988,57 @@ $colval = "";
        return $toecho;
     }
     public function inventory_checkif_ready(){
-     $tag = $this->sdmenc("inventory_checkif_ready");
-      $station_id = $this->sdmenc(session("user_school"));
-      $client = new \GuzzleHttp\Client();
-      $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
-      "station_id"=> $station_id,
-      ]]);
-      $output = $this->sdmdec($result->getBody()->getContents());
+    //CHECK CAPITAL OUTLAY REDINESS
+    $tag = $this->sdmenc("inventory_checkif_ready");
+    $station_id = $this->sdmenc(session("user_school"));
+    $client = new \GuzzleHttp\Client();
+    $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
+    "tag"=>$tag,
+    "station_id"=> $station_id,
+    ]]);
 
-
+    $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
     $toecho = "";
-      if($output == "Ready"){
-        $toecho = "
-      <h2><i style='color: #009432;' class='fas fa-check-circle'></i> Ready!</h2>
-      <p class='text-muted mb-0'>There are zero discrepancies in your Asset Registry, you're now eligible to use the <i class='fas fa-mobile-alt'></i> Innoventory App!</p>
-      ";
-      }else{
-        $toecho = "
-      <h2><i style='color: #EA2027;' class='fas fa-times-circle'></i> Not Ready for Inventory.</h2>
-      <p class='text-muted mb-0'>The inventory can't start yet because you still have discrepancies in your Asset Registry.</p>
-      ";
+
+      for ($i=0; $i < count($output); $i++) { 
+        // CHECK TYPE OF ASSET
+        $asset_type_name = "";
+        $missing_cases = "";
+        if($output[$i]["pref_name"] == "Inventory Status"){
+           $asset_type_name = "Capital Outlay";
+           $missing_cases = "missing property number, location, etc.";
+        }else if($output[$i]["pref_name"] == "Inventory Status Semi"){
+           $asset_type_name = "Semi-Expendable";
+           $missing_cases = "missing stock number, balance per card, etc.";
+        }
+        
+        if( $asset_type_name != ""){
+          if($output[$i]["pref_value"] == "Ready"){
+            $toecho .= "
+            <div class='card mb-3'>
+            <div class='card-body'>
+            <span class='float-right text-muted'>READY</span>
+            <h5 class='text-success mb-3'><i class='fas fa-check'></i> " . $asset_type_name . "</h5>
+            <p class='mt-0'>Congratulations! Your " . $asset_type_name . " is now ready for inventory, click the button below to proceed to the inventory page.</p>
+            <a class='btn btn-success btn-sm mt-3' href=" .  route('asset_scanned') . ">Start Inventory</a>
+            </div>
+            </div>";
+        }
+     else{
+            $toecho .= "
+            <div class='card mb-3'>
+            <div class='card-body'>
+            <span class='float-right text-muted'>NOT READY</span>
+            <h5 class='text-danger mb-3'><i class='fas fa-times'></i> " . $asset_type_name . "</h5>
+            <p class='mt-0'>Your " . $asset_type_name . " asset still has some discrepancies left like " . $missing_cases . "</p>
+            <a class='btn btn-secondary btn-sm mt-3' href=" .  route('assetregistry') . ">Fix Issues</a>
+            </div>
+            </div>";
       }
+       }
+    }    
+  
+
        return $toecho;
      
     }
@@ -2391,7 +2500,7 @@ $colval = "";
              $toecho .= "
              <tr>
               <td><div class='dropdown'>
-                    <a class='btn btn-links  dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                    <a class='btn btn-link mt-0 mb-0 p-0 dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                      " . $output[$i]["title"] . "
                     </a>
                   
@@ -2399,17 +2508,40 @@ $colval = "";
                       <a class='dropdown-item' data-toggle='modal' data-target='#modal_delete' onclick='opendeletereminder(this)' data-oid='" . $output[$i]["id"] . "' href='#'><i class='far fa-trash-alt'></i> Delete</a>
                     </div>
                   </div></td>
-              <td>" . $output[$i]["description"] . "</td>
+              <td><pre>" . $output[$i]["description"] . "</pre></td>
+              <td>";
+                  $remtype = $output[$i]["viewtype"];
+                 switch ( $remtype) {
+                 case '0':
+                    $remtype = "Admin";
+                  break;
+                case '1':
+                    $remtype = "Property Supply Officer";
+                  break;
+                case '2':
+                    $remtype = "Principals";
+                  break;
+                  case '3':
+                    $remtype = "Property Custodians";
+                  break;
+                  case '4':
+                    $remtype = "Center Managers";
+                  break;
+              }
+        $toecho .= strtoupper($remtype);
+               $toecho .= "</td>
               <td>";
 
               if($output[$i]["deadline"] != ""){
                 $toecho .= date("F d, Y g:i a",strtotime($output[$i]["deadline"]));
               }else{
-                $toecho .= "N/A";
+                $toecho .= "<span class='text-muted'>N/A</span>";
               }
 
               $toecho .= "</td>
-              <td>" . date("F d, Y g:i a",strtotime($output[$i]["dateposted"])). "</td>
+              <td><span style='display:none;'>" . $output[$i]["dateposted"] . "</span>"  . date("F d, Y g:i a",strtotime($output[$i]["dateposted"])).  "<p class='mt-0 mb-0 text-muted'>" . 
+             $this->DateExplainder( $output[$i]["dateposted"]) 
+              ."</p>" . "</td>
              </tr>";
             }
            return  $toecho;
@@ -2427,7 +2559,6 @@ $colval = "";
    public function lodnewannounce(Request $req){
    $tag = $this->sdmenc("getrecentreminders");
       $reminderorigineid = $this->sdmenc(session("user_type"));
-
       $typeofget = $this->sdmenc($req["typeofget"]);
             $client = new \GuzzleHttp\Client();
             $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
@@ -2440,7 +2571,6 @@ $colval = "";
             $output = json_decode($orig ,true);
             $toecho = "";
             for ($i=0; $i < count($output); $i++) { 
-
 
               $remtype = $output[$i]["viewtype"];
               switch ( $remtype) {
@@ -2468,7 +2598,7 @@ $colval = "";
                         <br><span class='text-muted' title='" . date("m/d/y g:i a",strtotime($output[$i]["dateposted"] ))  . "'>" . $this->DateExplainder($output[$i]["dateposted"]) . "</span>
                       </p>
                       <h5>" . $output[$i]["title"] . "</h5>
-                     <pre style='font-family:segoe ui;' class='card-subtitle'>" . $output[$i]["description"] . " </pre>
+                     <pre class='card-subtitle'>" . $output[$i]["description"] . " </pre>
                     </div>
                   </div>
                 ";
@@ -2548,7 +2678,7 @@ $colval = "";
             $client = new \GuzzleHttp\Client();
             $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
-        "sc_id"=> $this->sdmenc($output[0]["station_id"]),
+        "sc_id"=> $this->sdmenc($output[0]["station_id"])
       ]]);
             $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
             session(['user_uname'=>$output[0]["username"]]);
@@ -2569,12 +2699,12 @@ $colval = "";
     }
 
     public function get_asc_not_included(Request $req){
-      $tag = $this->sdmenc("get_asc_not_inc");
-      $asset_station = $this->sdmenc($req["station_info"]);
               $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
-        "sn"=> $asset_station,
+        "tag"=>$this->sdmenc("get_asc_not_inc"),
+        "sn"=> $this->sdmenc($req["station_info"]),
+        "yy"=>$this->sdmenc($req["selyear"]),
+        "mm"=> $this->sdmenc($req["selmonth"])
       ]]);
      $output = $this->sdmdec($result->getBody()->getContents());
      $output = json_decode($output,true);
@@ -2583,7 +2713,7 @@ $colval = "";
         if($output[$i]["property_number"] != "none"){
             $toecho .= "
         <tr>
-        <td>" . $output[$i]["property_number"] . "</td>
+        <td class='misscadata'>" . $output[$i]["property_number"] . "</td>
         <td>" . $output[$i]["asset_item"] . "</td>
         <td>" . $output[$i]["asset_classification"] . "</td>
         <td>" . $output[$i]["current_condition"] . "</td>
@@ -2738,6 +2868,7 @@ $colval = "";
         "tag"=>$tag,
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
+        "stat_id"=>$this->sdmenc(session("user_school"))
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -2758,6 +2889,7 @@ $colval = "";
         "tag"=>$tag,
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
+        "station_id"=>$this->sdmenc(session("user_school"))
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -2778,17 +2910,33 @@ $pagecount++;
       $cat = $this->sdmenc($req["cat"]);
 
 
-
-      $tag = $this->sdmenc("log_ass_filt");
-
+      $asset_table_head = '
+  <tr>
+   <th rowspan="2">ARTICLE</th>
+    <th rowspan="2">DESCRIPTION</th>
+    <th rowspan="2">PROPERTY<br>NUMBER</th>
+    <th rowspan="2">UNIT OF<br>MEASURE</th>
+    <th rowspan="2">UNIT<br>VALUE</th>
+    <th rowspan="2">QUANTITY<br>per<br>PROPERTY CARD</th>
+    <th rowspan="2">QUANTITY<br>per<br>PHYSICAL COUNT</th>
+    <th colspan="2">SHORTAGE/OVERAGE</th>
+    <th rowspan="2">REMARKS</th>
+  </tr>
+  <tr>
+    <th><small>Quantity</small></th>
+    <th><small>Value</small></th>
+  </tr>
+      ';
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        "tag"=> $this->sdmenc("log_ass_filt"),
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
+        "stat_id"=>$this->sdmenc(session("user_school"))
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
+      // return json_encode($output);
       $output = json_decode($output,true);
          $lc_count = 0;
          $pagecount = 0;
@@ -2797,17 +2945,17 @@ $pagecount++;
 <table id="page_' .  $pagecount  . '" >
 <tr class="borderless">
 <th colspan="11">
-<div style="text-align: right;">Appendix 66</div>
+<div style="text-align: right;">Appendix 73</div>
 <div style="text-align: center; margin-top: -35px;">
-  <h4 style="margin-bottom: 0px;"><img src="' . asset('images/deped.png') . '" style="height: 80px; width: 80px;"><br>REPORT ON THE PHYSICAL COUNT OF INVENTORIES<br>OFFICE SUPPLIES/CONSUMABLES</h4>
-  <small style="margin-bottom: 50px;">(Type of Inventory Item)<br><br>
-  <strong>As at ______________________</strong></small>
+  <h4 style="margin-bottom: 0px;"><img style="display:none;" src="' . asset('images/deped.png') . '" style="height: 80px; width: 80px;"><br>REPORT ON THE PHYSICAL COUNT OF PROPERTY, PLANT AND EQUIPMENT</h4>
+  <small style="margin-bottom: 50px;"><u>' . $req["cat"] . '</u><p style="margin:0px;">(Type of Property, Plant and Equipment)</p>
+  As at <u>' . session("user_schoolname") .' - ' . $req["roomname"] . '</u></small><br><br>
 </div>
 <div style="text-align: left;">
   <small>
     <strong>
       Fund Cluster:____________________________<br>
-      For which____________________________, <u>(Official Designation)</u>, <u>(Entity Name)</u> is accountable, having assumed such accountability on <u>Date of Assumption</u>.
+      For which____________________________, <u>(Official Designation)</u>, <u>(Entity Name)</u> is accountable, having assumed such accountability on <u></u>.
     </strong>
   </small>
 </div>
@@ -2815,29 +2963,12 @@ $pagecount++;
 </th>
 </tr>
 
-  <tr>
-    <th rowspan="2">Article</th>
-    <th rowspan="2">Description</th>
-    <th rowspan="2">Stock Number</th>
-    <th rowspan="2">Unit of Measure</th>
-    <th rowspan="2">Unit Value</th>
-    <th>Balance per Card</th>
-    <th>On Hand Per Count</th>
-    <th colspan="2">Shortage/Overage</th>
-    <th rowspan="2">Remarks</th>
-  </tr>
-  <tr>
-    <th><small>(Quantity)</small></th>
-    <th><small>(Quantity)</small></th>
-    <th><small>Quantity</small></th>
-    <th><small>Value</small></th>
-  </tr>
+ ' . $asset_table_head  . '
 
 
 
       ';
-   
-      // for ($x=0; $x < 50; $x++) { 
+
         for ($i=0; $i < count($output); $i++) { 
         $lc_count++;
 
@@ -2849,23 +2980,7 @@ $pagecount++;
 <br>
 <br>
 <table id="page_' .  $pagecount  . '" >
-<tr>
-    <th rowspan="2">Article</th>
-    <th rowspan="2">Description</th>
-    <th rowspan="2">Stock Number</th>
-    <th rowspan="2">Unit of Measure</th>
-    <th rowspan="2">Unit Value</th>
-    <th>Balance per Card</th>
-    <th>On Hand Per Count</th>
-    <th colspan="2">Shortage/Overage</th>
-    <th rowspan="2">Remarks</th>
-  </tr>
-  <tr>
-    <th><small>(Quantity)</small></th>
-    <th><small>(Quantity)</small></th>
-    <th><small>Quantity</small></th>
-    <th><small>Value</small></th>
-  </tr>
+' . $asset_table_head  . '
         ';
 
 
@@ -2891,20 +3006,18 @@ $pagecount++;
     
       }
 
-      // }
 
-
-      $tag = $this->sdmenc("view_ass_grouped");
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        "tag"=>$this->sdmenc("view_ass_grouped"),
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
+        "station_id"=>$this->sdmenc(session("user_school"))
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
+      // return json_encode($output);
       $output = json_decode($output,true);
-         // for ($x=0; $x < 50; $x++) { 
       for ($i=0; $i < count($output); $i++) { 
           $lc_count++;
           if($lc_count > 16){
@@ -2915,23 +3028,7 @@ $pagecount++;
 <br>
 <br>
 <table id="page_' .  $pagecount  . '" >
-<tr>
-    <th rowspan="2">Article</th>
-    <th rowspan="2">Description</th>
-    <th rowspan="2">Stock Number</th>
-    <th rowspan="2">Unit of Measure</th>
-    <th rowspan="2">Unit Value</th>
-    <th>Balance per Card</th>
-    <th>On Hand Per Count</th>
-    <th colspan="2">Shortage/Overage</th>
-    <th rowspan="2">Remarks</th>
-  </tr>
-  <tr>
-    <th><small>(Quantity)</small></th>
-    <th><small>(Quantity)</small></th>
-    <th><small>Quantity</small></th>
-    <th><small>Value</small></th>
-  </tr>
+' . $asset_table_head  . '
         ';
      
           }
@@ -2962,36 +3059,23 @@ $pagecount++;
 
       
       }
-    // }
 
-  
       $toecho .= '
 
   <tr  class="bottom_field">
-    <td class="fronter">
-      Prepared by:
-      <br><br><br>
-      Property/School Custodian
-    </td>
-    <td>
+   
+    <td class="fronter" colspan="3">
       Certified Corrected by:
       <center>
         __________________________________<br>
-        Signature over Printed Name of<br>Inventory Committee Chair and Members
-      </center>
-    </td>
-    <td>
-      Approved by:
-      <br><br><br>
-      <center>
-        Principal/School Head
+       Signature over printed name of<br>School Inventory Committee/or<br>In-Charge of Service Center/or<br>Property Custodian
       </center>
     </td>
     <td colspan="3">
       Noted:
       <center>
         __________________________________<br>
-        Signature over Printed Name of Head of<br>Agency/Entity or Authorized Representative
+        Signature over Printed Name of School Head of<br>Agency/Entity of Authorized Representative
       </center>
     </td>
     <td></td>
@@ -3001,7 +3085,7 @@ $pagecount++;
       Verified by:
       <center>
         __________________________________<br>
-        Signature over Printed Name of COA<br>Representative
+        Signature over Printed Name of<br>Inventory Team Representative
       </center>
     </td>
   </tr>
@@ -3091,12 +3175,14 @@ $this->RecordLog("a02");
       $tag = $this->sdmenc("log_ass_filt");
        $rnum = $this->sdmenc($req["rnum"]);
        $catname = $this->sdmenc($req["catname"]);
+       $station_id = $this->sdmenc(session("user_school"));
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
         "fil_roomnum"=>$rnum,
         "fil_category"=>$catname,
+        "stat_id"=> $station_id
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3112,16 +3198,16 @@ $this->RecordLog("a02");
          data-unitofmea='" . $output[$i]["unit_of_measure"]  . "'
 
           data-itemname='" . $output[$i]["asset_item"]  . "' data-propnum='" . $output[$i]["property_number"] . "' data-assetitem='" . $output[$i]["asset_item"] . "'></td>
-          <td><small>" . $output[$i]["asset_item"] . "</small></td>
-          <td><small>" . $output[$i]["property_number"] . "</small></td>
+          <td>" . $output[$i]["asset_item"] . "</td>
+          <td>" . $output[$i]["property_number"] . "</td>
         
           <td>" . $output[$i]["unit_of_measure"] . "</td>
-          <td><small>" . date("F d, Y",strtotime($output[$i]["date_of_acquisition"])) . "</small></td>
+          <td>" . date("F d, Y",strtotime($output[$i]["date_of_acquisition"])) . "</td>
           <td>" . $output[$i]["estimated_total_life_years"] . "</td>
 
 
-            <td><small>" . $output[$i]["current_condition"] . "</small></td>
-                 <td><small>" . $output[$i]["service_center"] . "</small></td>
+            <td>" . $output[$i]["current_condition"] . "</td>
+                 <td>" . $output[$i]["service_center"] . "</td>
                  <td>1</td>
       </tr>";
       }
@@ -3480,6 +3566,9 @@ $toecho .="
                     break;
                       case '4':
                           $toecho .= "<strong style='color: #8e44ad;'>" . $output[$i]["property_number"] . "</strong>";
+                    break;
+                      case '5':
+                          $toecho .= "<strong style='color: #d35400;'>" . $output[$i]["property_number"] . "</strong>";
                     break;
                   
                   default:
@@ -4333,11 +4422,23 @@ return $years . ",".  $months;
        Alert::success("You got it!");
        return redirect()->route($page);
     }
-    public function send($contents){
-      $contents["tag"] = $this->sdmenc($contents["tag"]);
-      $client = new \GuzzleHttp\Client();
-      $res = $client->request("POST",WEBSERVICE_URL,["form_params"=>$contents]);
-      return json_decode($this->sdmdec($res->getBody()->getContents()),true);
+     public function send($contents, $free_result = false)
+    {
+        $contents["tag"] = $this->sdmenc($contents["tag"]);
+        $client = new \GuzzleHttp\Client();
+        $res = $client->request("POST", WEBSERVICE_URL, ["form_params" => $contents]);
+
+        if ($free_result == false)
+        {
+            return json_decode($this->sdmdec($res->getBody()
+                ->getContents()) , true);
+        }
+        else
+        {
+            return $this->sdmdec($res->getBody()
+                ->getContents());
+        }
+
     }
     public function tblform_dropdown($name,$contents){
       return ' <div class="dropdown">

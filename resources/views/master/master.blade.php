@@ -9,28 +9,27 @@ if (session("user_uname") == "" || session("user_uname") == null) {
   <?php
 }else{
 	$at = session("user_type");
-	// <span class="badge badge-warning">ADMIN</span>
 	switch (session("user_type")) {
-		case '0':
-		$acc_badge = '<span title="Administrator" class="badge badge-primary">ADMIN</span>';
-		break;
-		case '1':
-		$acc_badge = '<span title="Supply Officer" class="badge badge-secondary">SUPPOFF</span>';
-		break;
-		case '2':
-		$acc_badge = '<span title="Principal" class="badge badge-success">PRINC</span>';
-		break;
-		case '3':
-		$acc_badge = '<span title="Property Custodian" class="badge badge-warning">PROPCOS</span>';
-		break;
-		case '4':
-		$acc_badge = '<span title="Division or Teaching Personnel" class="badge badge-info">DOT</span>';
-		break;
+	case '0':
+	$acc_badge = '<small class="badge badge-primary" title="Administrator"><i class="fas fa-shield-alt"></i></small>';
+	break;
+	case '1':
+	$acc_badge = '<small class="badge badge-success" title="Supply Officer"><i class="fas fa-shield-alt"></i></small>';
+	break;
+	case '2':
+	$acc_badge = '<small class="badge badge-info" title="Principal"><i class="fas fa-user-shield"></i></small>';
+	break;
+	case '3':
+	$acc_badge = '<small class="badge badge-warning" title="Property Custodian"><i class="fas fa-user-lock"></i></small>';
+	break;
+	case '4':
+	$acc_badge = '<small class="badge badge-secondary" title="Division or Teaching Personnel"><i class="fas fa-user-friends"></i></small>';
+	break;
 	}
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>@yield('title')</title>
 	<link rel='icon' href='{{ asset("images/sdo.ico") }}' type='image/x-icon'/ >
@@ -38,31 +37,24 @@ if (session("user_uname") == "" || session("user_uname") == null) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<!-- BOOTSTRAP -->
-	<link rel="stylesheet" type="text/css" href="{{asset('apicore/css/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<!-- JQUERY, POPPER, BOOTSRAP JS -->
-	<script type="text/javascript" src="{{asset('apicore/jquery-3.3.1.min.js') }}"></script>
-	<script type="text/javascript" src="{{asset('apicore/popper.min.js') }}"></script>
-	<script type="text/javascript" src="{{asset('apicore/js/bootstrap.min.js') }}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<!-- THEME -->
-	<!-- 	<link rel="stylesheet" type="text/css" href="theme/sahara/style.css"> -->
-	<link href="{{asset('apicore/fontaws/css/all.css') }}" rel="stylesheet">
-	<!-- DATA TABLE -->
-
-	<link rel="stylesheet" type="text/css" href="{{asset('apicore/DataTables/datatables.min.css') }}"/>
-
-	<script type="text/javascript" src="{{asset('apicore/DataTables/datatables.min.js') }}"></script>
+	<script src="https://kit.fontawesome.com/396c986df7.js" crossorigin="anonymous"></script>
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-	<!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script> -->
-	<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+	<!-- DATA TABLE -->
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css">
+
 	<link type="text/javascript" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css"></link>
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
-	
-	<link href="https://fonts.googleapis.com/css?family=Work+Sans&display=swap" rel="stylesheet">
-	<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script> -->
-	
 <style>
 @font-face {
   font-family: regularfontnew;
@@ -71,22 +63,27 @@ if (session("user_uname") == "" || session("user_uname") == null) {
 body {
 	font-family: regularfontnew;
 }
-.navbar-brand {
-	color: #fff !important;
-}
-</style>
-
-</head>
-<style type="text/css">
 	.modal-header{
 		text-align: center;
 	}
 	.modal-header .modal-title{
-		/*display: inline-block !important;*/
 		margin: 0 auto  !important;
-		/*text-align: center;*/
 
 	}
+	.addtext_anim{
+		animation-name: drop_slide;
+		animation-duration: 0.3s;
+		display: block;
+	}
+/*	@keyframes drop_slide{
+		0%{
+			opacity: 0;
+			margin-top: -10px;
+		}
+		100%{
+
+		}
+	}*/
 	.close { 
   position: absolute; 
   right: 1rem;
@@ -100,7 +97,9 @@ body {
 		width: 565px;
 		margin:auto;
 	}
-
+	.card-shadow{
+		box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+	}
 	@media only screen and (max-width: 1366px) {
 	.announcement_card{
 		width: 100%;
@@ -110,34 +109,6 @@ body {
 		display: none;	
 	}
 
-	/*.mobiletext{
-		font-size: 13px !important;
-	
-	}
-	.mobiletext h1{
-		font-size: 23px !important;
-	
-	}
-	.mobiletext h2{
-		font-size: 20px !important;
-	
-	}
-	.mobiletext h3{
-		font-size: 18px !important;
-	
-	}
-	.mobiletext h4{
-		font-size: 17px !important;
-	
-	}
-	.mobiletext h5{
-		font-size: 15px !important;
-	
-	}
-	.mobiletext h6{
-		font-size: 13px !important;
-	
-	}*/
 
 	}
 
@@ -147,6 +118,8 @@ body {
     white-space: -pre-wrap;      /* Opera 4-6 */
     white-space: -o-pre-wrap;    /* Opera 7 */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    font-family: regularfontnew;
+    font-size: 16px;
 }
 	.btn{
 		border-radius: 50px;
@@ -158,6 +131,10 @@ body {
 
 	.alert{
 		border-radius: 10px;
+	}
+	.clickablething:hover{
+		cursor: pointer;
+		border-color: #007DFF !important;
 	}
 	.card{
 		border-radius: 10px !important;
@@ -289,7 +266,7 @@ background-color: #007DFF;
 		color: white;
 	}
 	.badge-secondary{
-			color: black !important;
+		color: black !important;
 		background-color: #DEDEDE;
 		text-shadow: 0px 0px 10px rgba(0,0,0,0.4);
 		color: white;
@@ -309,30 +286,28 @@ background-color: #007DFF;
 		height: 400px;
 		overflow: scroll;
 	}
-	@keyframes scale-in{
+	/*@keyframes scale-in{
 		0%{
 			transform: scale(0.9);
 		}
-	}
-	
+	}*/
 </style>
-
 <script type="text/javascript">
 	function urlify(text) {
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, function(url) {
-        return '<a href="' + url + '">' + url + '</a>';
+        return '<a href="' + url + '" target="_blank"><i class="fas fa-globe-africa"></i> ' + url + '</a>';
     })
-    // or alternatively
-    // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
 </script>
-<body>
-	
-	@include('sweet::alert')
+</head>
 
-	<nav class="navbar navbar-expand-lg navbar-light bg-dark" style="background-color: #2f3542 !important;">
-	  <a class="navbar-brand" href="#">INNOVENTORY <small>by SDO - Marikina City</small></a>
+
+
+<body>
+	@include('sweet::alert')
+	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+	  <a class="navbar-brand" href="#">Innoventory <small class="text-muted">by SDO - Marikina City</small></a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
@@ -345,7 +320,7 @@ background-color: #007DFF;
 
 	    </ul>
 	    <div class="dropdown">
-	      <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #fff;"><i class="far fa-user-circle"></i> <?php echo strtoupper(session("user_uname")) . " <small>" . $acc_badge . "</small>"; ?>
+	      <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i> <?php echo ucfirst(session("user_uname")) . " " . $acc_badge . ""; ?>
 	      </a>
 	    <form action="{{ route('proc_logout') }}" method="GET" class="form-inline my-2 my-lg-0">
 	      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
@@ -367,10 +342,10 @@ background-color: #007DFF;
 			<ul class="list-group mb-3">
 				<li class="list-group-item"><a href="/innoventory/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
 				<li class="list-group-item"><a href="{{ route('assetregistry') }}"><i class="fas fa-clipboard-check"></i> Asset Registry</a></li>
-				<li class="list-group-item"><a href="/innoventory/asset/inventory"><i class="fas fa-search"></i> Inventory</a></li>
+				<li class="list-group-item"><a href="{{ route('asset_scanned') }}"><i class="fas fa-search"></i> Inventory</a></li>
 				<li class="list-group-item" style="display: none;"><a href="{{ route('goto_issuances') }}"><i class="fas fa-file-alt"></i> Issuances</a></li>
 				<li class="list-group-item"><a href="/innoventory/asset/disposal"><i class="fas fa-trash"></i> Disposed Assets</a></li>
-				<li class="list-group-item"><a data-toggle="collapse" href="#collapse1"><i class="fas fa-chart-bar"></i> Reports <i class="float-right fas fa-sort-down"></i></a>
+				<li class="list-group-item"><a data-toggle="collapse" href="#collapse1" onclick="GetServiceCentersForOption()"><i class="fas fa-chart-bar"></i> Reports <i class="float-right fas fa-sort-down"></i></a>
 					<div id="collapse1" class="panel-collapse collapse in">
 						<ul class="sub-list-group mb-3">
 
@@ -418,13 +393,13 @@ background-color: #007DFF;
           <input type='hidden' name='station_id' id='mygroupid'>
           <div class="form-group">
             <label>Room</label>
-            <select class="form-control" id="allroms" onchange="getcountofgen()" name="my_room">
+            <select class="form-control allservicenterrooms" id="co_service_center" onchange="getcountofgen()" name="my_room">
               <option>Sample</option>
             </select>
           </div>
              <div class="form-group">
             <label>Category</label>
-            <select class="form-control" id="allcats" onchange="getcountofgen()" name="my_category">
+            <select class="form-control" id="allcategoriesz" onchange="getcountofgen()" name="my_category">
               <option>Sample</option>
             </select>
           </div>
@@ -443,7 +418,6 @@ background-color: #007DFF;
 </form>
 
 <!-- REPORT GENERATION OF APPENDIX 66 -->
-
     <div class="modal" tabindex="-1" id="m_generatesemireports" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -454,7 +428,18 @@ background-color: #007DFF;
             </button>
           </div>
           <div class="modal-body">
-            <p>Modal body text goes here.</p>
+           <div class="form-group">
+            <label>Room</label>
+            <select class="form-control allservicenterrooms" name="my_room">
+              <option>Sample</option>
+            </select>
+          </div>
+             <div class="form-group">
+            <label>Category</label>
+            <select class="form-control" id="allcategoriesz" name="my_category">
+              <option>Sample</option>
+            </select>
+          </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary">Save changes</button>
@@ -466,26 +451,55 @@ background-color: #007DFF;
 
 
 		<script type="text/javascript">
-			  function getcountofgen(){
-		    $("#continueenrep_btn").css("display","none");
-		    $("#asstobegennum").html("Getting reports, please wait...");
-		    var inp_sc_id = <?php  echo json_encode(session("user_school")); ?>;
-		    var roomnum = $("#allroms").val();
-		    var category_class = $("#allcats").val();
-		    $.ajax( {
-		      type: "POST",
-		    url: "{{ route('get_tobegen_repcount') }}",
-		    data: {_token:"{{ csrf_token() }}",rn:roomnum,cc:category_class,station_id:inp_sc_id},
-		    success: function(data){
-		     
-		      if(data == "0"){
-		          $("#continueenrep_btn").css("display","none");
-		           $("#asstobegennum").html("The're no reports in the selected room and category.");
-		      }else{
-		          $("#continueenrep_btn").css("display","block");
-		           $("#asstobegennum").html(data + " item(s) are ready to be generated.");
-		      }
-		    }})
+				var hasgetted = false;
+		function GetServiceCentersForOption(){
+			if(hasgetted == false){
+
+			var inp_sc_id = <?php  echo json_encode(session("user_school")); ?>;
+			$.ajax({
+				type : "POST",
+				url: "{{ route('stole_getallservicecenters') }}",
+				data: {_token:"{{ csrf_token() }}",station_id: inp_sc_id},
+				success : function(data){
+					$(".allservicenterrooms").html(data);
+					Get_p2(inp_sc_id);
+				}
+			})
+			}
+		}
+
+		function Get_p2(inp_sc_id){
+			$.ajax({
+				type:"POST",
+				url: "{{ route('get_cat_gr') }}",
+				data: {_token: "{{ csrf_token() }}",school_id: inp_sc_id},
+				success : function(data){
+					$("#allcategoriesz").html(data);
+				}
+			})
+
+			hasgetted = true;
+		}
+
+		function getcountofgen(){
+				$("#continueenrep_btn").css("display","none");
+				$("#asstobegennum").html("Getting reports, please wait...");
+				var inp_sc_id = <?php  echo json_encode(session("user_school")); ?>;
+				var roomnum = $("#co_service_center").val();
+				var category_class = $("#allcategoriesz").val();
+				$.ajax( {
+				type: "POST",
+				url: "{{ route('get_tobegen_repcount') }}",
+				data: {_token:"{{ csrf_token() }}",rn:roomnum,cc:category_class,station_id:inp_sc_id},
+				success: function(data){
+				if(data == "0"){
+				$("#continueenrep_btn").css("display","none");
+				$("#asstobegennum").html("The're no reports in the selected room and category.");
+				}else{
+				$("#continueenrep_btn").css("display","block");
+				$("#asstobegennum").html(data + " item(s) to be included.");
+				}
+				}})
 		  }
 
 		</script>
@@ -528,7 +542,7 @@ background-color: #007DFF;
 	</div>
 	</div>
 	<script type="text/javascript">
-		$( ".modal-dialog" ).addClass("modal-dialog modal-dialog-centered");
+		$(".modal-dialog").addClass("modal-dialog modal-dialog-centered");
 	</script>
 </body>
 </html>

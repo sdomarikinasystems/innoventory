@@ -71,11 +71,16 @@ Innoventory - Disposed Assets
           <tr>
             <td><i style="color: #c0392b;" class="fas fa-circle"></i></td><td>Condemnation / Destruction</td>
             <td><i style="color: #27ae60;" class="fas fa-circle"></i></td><td>Transfer of Property</td>
+             <td><i style="color:  #d35400;" class="fas fa-circle"></i></td><td>Incorrect Property Number</td>
           </tr>
            <tr>
             <td><i style="color: #2980b9;" class="fas fa-circle"></i></td><td>Donation of Property</td>
              <td><i style="color: #8e44ad;" class="fas fa-circle"></i></td><td>Sale of Unserviceable Property</td>
+
           </tr>
+
+
+         
         </table>
 
 

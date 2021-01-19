@@ -1,12 +1,12 @@
 @extends('master.master')
 
 @section('title')
-ProcMS - Innoventory
+Generate Appendix 73 Report
 @endsection
 
 @section('contents')
 
-<h2>Inventory - Generate Report</h2>
+<h2>Generate Appendix 73 Report</h2>
 
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb mb-3">
@@ -25,7 +25,7 @@ ProcMS - Innoventory
 
 <div class="row">
 	<div class="col-sm-6 mb-3">
-		<h5>Room Number: <strong><?php echo $_GET["my_room"]; ?></strong></h5>
+		<h5>Room Number: <strong id="rnumbhtml"></strong></h5>
         <h6><?php echo $_GET["my_category"]; ?></h6>
     </div>
 	<div class="col-sm-6 mb-3">
@@ -36,17 +36,17 @@ ProcMS - Innoventory
 <table class="table table-hover table-bordered">
   <thead>
     <tr>
-      <th scope="col"><small>Select</small></th>
-      <th scope="col"><small>Asset Item</small></th>
-      <th scope="col"><small>Property Number</small></th>
+      <th scope="col">Select</th>
+      <th scope="col">Asset Item</th>
+      <th scope="col">Property Number</th>
 
-      <th scope="col"><small>Unit of Mesure</small></th>
-      <th scope="col"><small>Date of Aquisition</small></th>
-      <th scope="col"><small>Estimated Total Lifeyears</small></th>
+      <th scope="col">Unit of Mesure</th>
+      <th scope="col">Date of Aquisition</th>
+      <th scope="col">Estimated Total Lifeyears</th>
 
-      <th scope="col"><small>Current Condition</small></th>
-      <th scope="col"><small>Asset Location</small></th>
-      <th scope="col"><small>Count</small></th>
+      <th scope="col">Current Condition</th>
+      <th scope="col">Asset Location</th>
+      <th scope="col">Count</th>
     </tr>
   </thead>
   <tbody id="myfiltered">
@@ -68,8 +68,18 @@ ProcMS - Innoventory
       </div>
       <div class="modal-body">
         <p>Print preview document report?</p>
-        <input type="hidden" name="roomnum" value="<?php echo $_GET['my_room']; ?>">
+
+
+
+        <input type="hidden" name="room_id" value="<?php echo $_GET['my_room']; ?>">
+        <input type="hidden" name="roomnum" id="roonumreal" value="">
         <input type="hidden" name="assetactegory" value="<?php echo $_GET['my_category']; ?>">
+
+
+        <!-- // ROOM DISPLAY INFORMATION --> 
+        <input type="hidden" name="roomname" id="room_name" value="">
+
+
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary">Continue Print</button>
@@ -146,7 +156,24 @@ ProcMS - Innoventory
   var total_items_to_group = 0 ;
   var current_togroup = 0;
   var autoname = "";
-
+  var room_numberreal = "";
+GetRealRoomNumber();
+  function GetRealRoomNumber(){
+    $.ajax({
+      type:"POST",
+      url: "{{ route('stole_single_service_center_data_byid') }}",
+      data: {_token: "{{ csrf_token() }}",service_center_id: <?php echo json_encode($_GET["my_room"]) ?>},
+      success: function(data){
+        // alert(data);
+        data = JSON.parse(data);
+        room_numberreal = data[0]["room_number"];
+        $("#rnumbhtml").html(room_numberreal);
+        $("#roonumreal").val(room_numberreal);
+        $("#room_name").val(data[0]["office"]);
+          LoadAssets();
+      }
+    })
+  }
   function UngroupItems(){
      $("#ungroup_modal").modal("hide");
     var inp_groupname = $("#inp_groupname").val();
@@ -177,8 +204,9 @@ ProcMS - Innoventory
     $.ajax({
       type : "POST",
       url : "{{ route('viewassetgrouped') }}",
-      data : {_token: "{{ csrf_token() }}",rnum:<?php echo json_encode($_GET["my_room"]) ?>,catname:<?php echo json_encode($_GET["my_category"]) ?>,station_id:<?php echo json_encode($_GET["station_id"]); ?>},
+      data : {_token: "{{ csrf_token() }}",rnum:room_numberreal,catname:<?php echo json_encode($_GET["my_category"]) ?>,station_id:<?php echo json_encode($_GET["station_id"]); ?>},
       success : function(data){
+        // alert(data);
         $("#myfiltered").append(data);
       }
     })
@@ -194,7 +222,7 @@ ProcMS - Innoventory
       $.ajax({
         type : "POST",
         url: "add_new_assgr",
-        data: {_token:"{{ csrf_token() }}",ass_gname:$("#group_name").val(),ass_propnum:$(this).data("val"),ass_roomnum:<?php echo json_encode($_GET["my_room"]); ?>,ass_assclass: <?php echo json_encode($_GET["my_category"]); ?>,ass_balpercard:$("#group_bal_per").val()},
+        data: {_token:"{{ csrf_token() }}",ass_gname:$("#group_name").val(),ass_propnum:$(this).data("val"),ass_roomnum:room_numberreal,ass_assclass: <?php echo json_encode($_GET["my_category"]); ?>,ass_balpercard:$("#group_bal_per").val()},
         success: function(data){
           current_togroup ++;
           if(total_items_to_group == current_togroup){
@@ -260,12 +288,12 @@ ProcMS - Innoventory
     }
    }
   }
-  LoadAssets();
+
   function LoadAssets(){
     $.ajax({
       type : "POST",
-      url : "load_filtered_assets",
-      data: {_token:"{{ csrf_token() }}",rnum:<?php echo json_encode($_GET["my_room"]) ?>,catname:<?php echo json_encode($_GET["my_category"]) ?>},
+      url : "{{ route('lod_asset_filtered') }}",
+      data: {_token:"{{ csrf_token() }}",rnum:room_numberreal,catname:<?php echo json_encode($_GET["my_category"]) ?>},
       success: function(data){
         $("#myfiltered").html(data);
         LoadGroupedAssets();

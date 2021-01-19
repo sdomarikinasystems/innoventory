@@ -20,44 +20,44 @@ Inno... - Semi-Expendable Upload Result
 <div class="card-deck mb-3">
   <div class="card">
     <div class="card-body">
-      <h6 class="text-muted">Total CSV Assets</h6>
-    <h2>{{ $_GET['overallassets'] }}</h2>
+      <h6 class="text-muted mt-0 mb-0">Total CSV Assets</h6>
+    <h2 class="mt-0 mb-0">{{ $_GET['overallassets'] }}</h2>
     </div>
   </div>
   <div class="card">
     <div class="card-body">
-        <h6 class="text-muted">Inserted</h6>
-    <h2>{{ $_GET['insertedassets'] }}</h2>
+        <h6 class="text-muted mt-0 mb-0">Inserted</h6>
+    <h2 class="mt-0 mb-0"> {{ $_GET['insertedassets'] }}</h2>
     </div>
   </div>
   <div class="card">
     <div class="card-body">
-       <h6 class="text-muted">Not Inserted</h6>
-    <h2>{{ $_GET['notinserted'] }}</h2>
+       <h6 class="text-muted mt-0 mb-0">Not Inserted</h6>
+    <h2 class="mt-0 mb-0">{{ $_GET['notinserted'] }}</h2>
     </div>
   </div>
 <div class="card">
     <div class="card-body">
-       <h6 class="text-muted">Updated</h6>
-    <h2>{{ $_GET['ass_updated'] }}</h2>
+       <h6 class="text-muted mt-0 mb-0">Updated</h6>
+    <h2 class="mt-0 mb-0">{{ $_GET['ass_updated'] }}</h2>
     </div>
   </div>
   <div class="card">
     <div class="card-body">
-       <h6 class="text-muted">Not Changed</h6>
-    <h2>{{ $_GET['exactsame'] }}</h2>
+       <h6 class="text-muted mt-0 mb-0">Not Changed</h6>
+    <h2 class="mt-0 mb-0">{{ $_GET['exactsame'] }}</h2>
     </div>
   </div>
   <div class="card">
     <div class="card-body">
-      <h6 class="text-muted">Incomplete</h6>
-    <h2>{{ $_GET['missingcolumns'] }}</h2>
+      <h6 class="text-muted mt-0 mb-0">Incomplete</h6>
+    <h2 class="mt-0 mb-0">{{ $_GET['missingcolumns'] }}</h2>
     </div>
   </div>
   <div class="card">
     <div class="card-body">
-      <h6 class="text-muted">Omitted</h6>
-    <h2>{{ $_GET['ass_omitted'] }}</h2>
+      <h6 class="text-muted mt-0 mb-0">Omitted</h6>
+    <h2 class="mt-0 mb-0">{{ $_GET['ass_omitted'] }}</h2>
     </div>
   </div>
 </div>
@@ -122,41 +122,4 @@ Inno... - Semi-Expendable Upload Result
 
   </div>       
 </div>
-
-<form action="{{ route('importallfoundservicecenters') }}" method="POST">
-    {{ csrf_field() }}
-    <div class="modal" tabindex="-1" id="modal_newservice_centers" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">New Service Center(s) Found</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-         <table class="table table-sm table-striped" id="todtnow">
-          <thead>
-            <tr>
-              <th>Service Centers</th>
-              <th>Room #</th>
-              <th>Items</th>
-            </tr>
-          </thead>
-          <tbody id="tbl_neesercen">
-            
-          </tbody>
-         </table>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success"><i class="fas fa-warehouse"></i> Import All New Service Centers</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Do nothing</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-
-
-
 @endsection

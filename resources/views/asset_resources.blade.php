@@ -170,14 +170,4 @@ function opendeleteresource(control_obj){
 </script>
 
 
-<!-- <div class="card mt-5">
-  <div class="card-body">
-    <h6>Find uploaded files in one place.</h6>
-      <p>When you upload an Asset Registry CSV file, the system will automatically store the uploaded data on the resources.</p>
-      <h6 class="mt-3">Easily download and manage</h6>
-      <p>View, Download and manage upload files with ease.</p>
-    </div>
-</div> -->
-
-
 @endsection

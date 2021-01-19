@@ -97,31 +97,36 @@ if($_GET["isown"]){
 
 
 <script type="text/javascript">
-  
-  $.ajax({
+  GetExportHistory();
+ function GetExportHistory(){
+   $.ajax({
     type: "POST",
     url: "get_export_his",
     data: {_token:"{{ csrf_token() }}"},
     success: function(data){
        
        $("#tbl_trhis").html(data);
-   
+      p2();
     }
   })
 
+ }
 
-
+function p2(){
   $.ajax({
     type: "POST",
     url: "get_sc_fn",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
     success: function(data){
        $("#disc_sc_name").html(data);
+       Load_Discrepancy_Sum();
     }
   })
+}
+  
 
 
-  Load_Discrepancy_Sum();
+  
   function Load_Discrepancy_Sum(){
      $.ajax({
     type: "POST",
@@ -134,12 +139,15 @@ if($_GET["isown"]){
       $("#upd").html(data[0]["updated"]);
       $("#inc").html(data[0]["incomplete"]);
       $("#notins").html(data[0]["notinserted"]);
-       $("#dtup").html(data[0]["timestamp"]);
-       // $("#uploderx").html("By: " + data[0]["username"]);
+      $("#dtup").html(data[0]["timestamp"]);
+      loadsum2();
     }
   })
+   
+  }
 
-     $.ajax({
+  function loadsum2(){
+      $.ajax({
     type: "POST",
     url: "{{ route('lod_dis_indetail') }}",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
@@ -149,7 +157,6 @@ if($_GET["isown"]){
        $("#tbl_disc").DataTable();
     }
   })
-
   }
 </script>
 

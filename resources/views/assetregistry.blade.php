@@ -16,8 +16,6 @@ Innoventory - Asset Registry
      
 </nav>
 
-
-
 <input type="hidden" value="{{ session('user_school') }}" id="myschool_realid" name="">
 
 <div class="mobiletext">
@@ -218,7 +216,7 @@ Innoventory - Asset Registry
    <div class="tab-pane fade show" id="semiexpendable" role="tabpanel" aria-labelledby="pills-home-tab">
       <div class="row">
   <div class="col-sm mb-3">
-    <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import"></i> Import Semi-Expendable</a>
+    <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import" onclick="  LoadserviceCentersMine()"></i> Import Semi-Expendable</a>
     <div class="alert alert-info importwarning" role="alert">
       Change your asset source to import Semi-Expendable Asset(s)
     </div>
@@ -364,7 +362,7 @@ Innoventory - Asset Registry
     </table>
   </div>
 </div>
-    <table class="table table-hover table-bordered" id="tbl_capitaloutlay">
+    <table class="table table-hover table-bordered" id="tbl_semiexpendable">
     <thead>
       <tr>
         <th scope="col" width="150">Article</th>
@@ -374,6 +372,7 @@ Innoventory - Asset Registry
         <th scope="col">Unit Value</th>
         <th scope="col">Balance Per Card</th>
         <th scope="col">On Hand Per Count</th>
+         <th scope="col">Service Center</th>
         <th scope="col">Remarks</th>
         <th scope="col">Action</th>
       </tr>
@@ -392,7 +391,7 @@ Innoventory - Asset Registry
       if(session("user_type") < "4" && session("user_type") != "2"){
     ?>
     <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-    <a class="btn btn-success importbutton" href="#" data-toggle="modal" data-target="#uploadnewcsv"><i class="fas fa-file-import"></i> Import Capital Outlay</a>
+    <a class="btn btn-success importbutton" href="#" data-toggle="modal" data-target="#uploadnewcsv" onclick="LoadAllSCNamesForCapOut()"><i class="fas fa-file-import"></i> Import Capital Outlay</a>
 
      <div class="alert alert-info importwarning" role="alert">
       Change your asset source to import Capital Outlay Asset(s)
@@ -457,20 +456,18 @@ Innoventory - Asset Registry
 
     $("#lod_change_ass_source").css("display","block");
     LoadAssets();
-    LoadSemiExpendable();
-    getallofmysuppydata();
+
     setTimeout(function(){
     $("#lod_change_ass_source").css("display","none");
     },1000)
     }
+
     function gotomyownassets(){
 
     var myassets = <?php echo json_encode(session("user_school")); ?>;
     $("#myschool_realid").val(myassets);
      $("#lod_change_ass_source").css("display","block");
     LoadAssets();
-    LoadSemiExpendable();
-    getallofmysuppydata();
     setTimeout(function(){
     $("#lod_change_ass_source").css("display","none");
      $("#sourcename").html(<?php echo json_encode(session("user_schoolname")); ?>);
@@ -521,6 +518,7 @@ Innoventory - Asset Registry
               <option value="2">Transfer of Property</option>
               <option value="3">Donation of Property</option>
               <option value="4">Sale of Unserviceable Property</option>
+               <option value="5">Incorrect Property Number</option>
             </select>
           </div>
         </div>
@@ -614,7 +612,7 @@ Innoventory - Asset Registry
 
   <script type="text/javascript">
     $("#tbl_ass").DataTable();
-    $("#tbl_capitaloutlay").DataTable();
+    $("#tbl_semiexpendable").DataTable();
     $("#tbl_supply").DataTable();
     var isokcsv = false;
     var hasclickedsemi = false;
@@ -679,7 +677,10 @@ Innoventory - Asset Registry
     $("#submitsemiexpendable").click(function(){
         $("#lod_uploadsmi").css("display","block");
     })
-  $.ajax({
+
+
+ function LoadAllSCNamesForCapOut(){
+   $.ajax({
     type: "POST",
     url: "{{ route('load_all_school_names') }}",
     data : {_token: "{{ csrf_token() }}"},
@@ -688,6 +689,8 @@ Innoventory - Asset Registry
       $("#st_all").val(<?php echo json_encode(session("user_school")); ?>);
     }
   })
+ }
+
   function OpenAssetToDispose(control_obj){
     $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
   }
@@ -713,6 +716,9 @@ Innoventory - Asset Registry
         data: {_token:"{{ csrf_token() }}",selected_realid:sc_id},
         success: function(data){
         $("#assvalsum").html(data);
+
+            LoadSemiExpendable();
+  
         }
       })
     }
@@ -753,7 +759,7 @@ Innoventory - Asset Registry
       })
       }
   }
-  LoadserviceCentersMine();
+
   function LoadserviceCentersMine(){
     var stationidassigned =  $("#myschool_realid").val();
     $.ajax({
@@ -766,57 +772,61 @@ Innoventory - Asset Registry
     })
   }
   function LoadSemiExpendable(){
-
      var stationidassigned =  $("#myschool_realid").val();
-     $.ajax({
+     step_1();
+     function step_1(){
+      $.ajax({
       type: "POST",
       url: "{{ route('stole_semi_expendable_bystation') }}",
       data: {_token: "{{ csrf_token() }}",station_id: stationidassigned},
       success: function(data){
-        // alert(data);
-         $("#tbl_capitaloutlay").DataTable().destroy();
-
+         $("#tbl_semiexpendable").DataTable().destroy();
         $("#tbl_allsemiexpends").html(data);
-
         var semiasscount = (data.match(/<tr>/g) || []).length;
         $("#semi_asscount").html(semiasscount);
-
-         $("#tbl_capitaloutlay").DataTable();
-
-        
+         $("#tbl_semiexpendable").DataTable();
+step_2();
       }
     })
+     }
 
-       $.ajax({
+      function step_2(){
+         $.ajax({
       type: "POST",
       url: "{{ route('stole_my_semiexpendable_descrepancies') }}",
       data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,layout:"count"},
       success: function(data){
        $("#semidesccount").html(data);
-
+step_3();
       }
     })
-       $.ajax({
+      }
+
+       function step_3(){
+        $.ajax({
         type:"POST",
         url: "{{ route('stole_semi_expendable_omitted') }}",
         data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,layout:"count"},
         success: function(data){
           // alert(data);
           $("#semi_asssataomitted").html(data);
+          step_4();
         }
        })
+       }
 
-       $.ajax({
+       function step_4(){
+        $.ajax({
         type:"POST",
         url:"{{ route('stole_last_date_ofcode') }}",
         data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,givencode: "a01.1"},
         success: function(data){
            $("#semi_lastuploadof").html(data);
+            getallofmysuppydata();
         }
        })
-       
+       }
     }
-
       function getallofmysuppydata(){
         var stationidassigned = $("#myschool_realid").val();
 
@@ -847,8 +857,6 @@ Innoventory - Asset Registry
       $("#thetable_semiexpendible_supply").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
       return false;
       }else{
-      // alert(filevalue);
-      // Display CSV Preview
       $.ajax({
       type : "POST",
       url : "{{ route('stole_preview_of_uploaded_supplyfile') }}",
@@ -859,14 +867,13 @@ Innoventory - Asset Registry
       success: function(data){
         if(data.includes("Supply CSV file is not valid") == true){
           isokcsv_semiexpendable = false;
-            // alert(data);
-           $("#thetable_semiexpendible_supply").html(data);
-           $("#panel_semi_previewscv_supply").css("display","block");
+            $("#thetable_semiexpendible_supply").html(data);
+            $("#panel_semi_previewscv_supply").css("display","block");
             $("#issupplyvalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
         }else{
-          isokcsv_semiexpendable = true;
-    $("#panel_semi_previewscv_supply").css("display","block");
-           $("#thetable_semiexpendible_supply").html(data);
+            isokcsv_semiexpendable = true;
+            $("#panel_semi_previewscv_supply").css("display","block");
+            $("#thetable_semiexpendible_supply").html(data);
         }
       }
       })
@@ -899,15 +906,14 @@ Innoventory - Asset Registry
       data:fd,
       success: function(data){
         if(data.includes("Semi Expendable CSV file is not valid") == true){
-          isokcsv_semiexpendable = false;
-            // alert(data);
-           $("#thetable_semiexpendible").html(data);
-           $("#panel_semi_previewscv").css("display","block");
+            isokcsv_semiexpendable = false;
+            $("#thetable_semiexpendible").html(data);
+            $("#panel_semi_previewscv").css("display","block");
             $("#issemivalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
         }else{
-          isokcsv_semiexpendable = true;
-    $("#panel_semi_previewscv").css("display","block");
-           $("#thetable_semiexpendible").html(data);
+            isokcsv_semiexpendable = true;
+            $("#panel_semi_previewscv").css("display","block");
+            $("#thetable_semiexpendible").html(data);
         }
       }
       })

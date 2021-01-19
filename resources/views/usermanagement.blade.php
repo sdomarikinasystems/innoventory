@@ -322,7 +322,9 @@ function lod_deleteacc(control_obj){
 $("#emp_id_del").val($(control_obj).data("empid"));
 
 }
-  $.ajax({
+LoadAllSchoolsInSelection();
+function LoadAllAccounts(){
+   $.ajax({
     type: "POST",
     url: "{{ route('display_all_employees') }}",
     data : {_token: "{{ csrf_token() }}"},
@@ -332,16 +334,21 @@ $("#emp_id_del").val($(control_obj).data("empid"));
        $("#tblu").DataTable();
     }
   })
-    $.ajax({
+
+}
+ 
+  function LoadAllSchoolsInSelection(){
+      $.ajax({
     type: "POST",
     url: "{{ route('load_all_school_names') }}",
     data : {_token: "{{ csrf_token() }}"},
     success: function(data){
       $("#all_sc_name").html(data);
       $("#all_sc_name_edit").html(data);
-
+LoadAllAccounts();
     }
   })
+  }
     function setupcreate(){
      // $("#addtype").val("4");
      $("#all_sc_name").val("{{ session('user_school') }}");

@@ -18,40 +18,50 @@ Inno... - Capital Outlay Upload Result
 
 <div class="row">
 	<div class="col-sm-12">
-		<table class="table table-bordered">
-			<tbody>
-				<tr>
-					<td>
-						<h6 class="text-muted">Total CSV Assets</h6>
-		<h2>{{ $_GET['total_assets'] }}</h2>
-					</td>
-					<td>
-						<h6 class="text-muted">Inserted</h6>
-		<h2>{{ $_GET['i_newly'] }}</h2>
-					</td>
-					<td>
-						<h6 class="text-muted">Not Inserted</h6>
-		<h2>{{ $_GET['i_not'] }}</h2>
-					</td>
-					<td>
-						<h6 class="text-muted">Updated</h6>
-		<h2>{{ $_GET['i_existing'] }}</h2>
-					</td>
-					<td>
-						<h6 class="text-muted">Incomplete</h6>
-		<h2>{{ $_GET['i_incomplete'] }}</h2>
-					</td>
-					<td>
-						<h6 class="text-muted">Omitted</h6>
-		<h2>{{ $_GET['omcount'] }}</h2>
-					</td>
-					<td>
-						<h6 class="text-muted">New Service Center(s)</h6>
-		<h2><a href="#" data-toggle="modal" data-target="#modal_newservice_centers" id="idnewfoundservicecentercount">0</a></h2>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="card-deck mb-3">
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-muted mt-0 mb-0">Total CSV Assets</h6>
+					<h2 class="mb-0 mt-0">{{ $_GET['total_assets'] }}</h2>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-muted mt-0 mb-0">Inserted</h6>
+					<h2 class="mb-0 mt-0">{{ $_GET['i_newly'] }}</h2>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-muted mt-0 mb-0">Not Inserted</h6>
+					<h2 class="mb-0 mt-0">{{ $_GET['i_not'] }}</h2>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-muted mt-0 mb-0">Updated</h6>
+					<h2 class="mb-0 mt-0">{{ $_GET['i_existing'] }}</h2>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-muted mt-0 mb-0">Incomplete</h6>
+					<h2 class="mb-0 mt-0">{{ $_GET['i_incomplete'] }}</h2>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-muted mt-0 mb-0">Omitted</h6>
+					<h2 class="mb-0 mt-0">{{ $_GET['omcount'] }}</h2>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h6 class="text-muted mt-0 mb-0">New Service Center(s)</h6>
+					<h2 class="mb-0 mt-0"><a href="#" data-toggle="modal" data-target="#modal_newservice_centers" id="idnewfoundservicecentercount">0</a></h2>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="col-sm-12 mb-4">
 
@@ -131,7 +141,7 @@ Inno... - Capital Outlay Upload Result
 	      </div>
 	      <div class="modal-footer">
 	        <button type="submit" class="btn btn-success"><i class="fas fa-warehouse"></i> Import All New Service Centers</button>
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Do nothing</button>
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 	      </div>
 	    </div>
 	  </div>

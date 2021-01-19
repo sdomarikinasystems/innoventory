@@ -41,11 +41,8 @@ Route::get("/innoventory/system/abouts",["uses"=>"functions@go_abouts","as"=>"ab
 Route::get("/innoventory/asset/transactionhistory",["uses"=>"functions@ass_transhis","as"=>"ass_transhistory"]);
 Route::get("/innoventory/reports/asset_download",["uses"=>"functions@goto_assetdl","as"=>"assetdl"]);
 Route::get("/innoventory/reports/registry_omissions",["uses"=>"functions@goto_regoms","as"=>"reg_omissions"]);
-
-
 // HOW TO 
 Route::get("/innoventory/how_to",["uses"=>"functions@goto_howto","as"=>"gohow"]);
-
 // ADD-ON
 Route::post("/innoventory/manage/service_centers/add",["uses"=>"functions@addnewassloc","as"=>"addnewassloc"]);
 Route::post("/addnewregistryreocrd",['uses'=>'functions@addnewregistryreocrd','as'=>'addnewregistryreocrd']);
@@ -135,6 +132,11 @@ Route::post("/report_omitted_asset_singleton",["uses"=>"functions@rep_om_sing","
 Route::post("/display_omitted_data",["uses"=>"functions@display_omitted_of_station","as"=>"disp_omm_reps"]);
 Route::post("/report_all_omitted_assets",["uses"=>"functions@rep_all_om_ass","as"=>"reportallomassets"]);
 
+
+
+
+
+
 // INNOVENTORY VERSION 2 
 
 // ASSET REGISTRY 
@@ -161,9 +163,6 @@ Route::post("/get_month_of_inventory_byyear_incapital_outlay",["uses"=>"function
 Route::post("/get_inventory_years_semi",["uses"=>"functions@look_all_years_with_inventory_semiexpendable","as"=>"stole_all_years_with_inventory_semiexpendable"]);
 Route::post("/get_inventory_months_semi_byyear",["uses"=>"functions@look_inventory_month_semiexpendable","as"=>"stole_inventory_month_semiexpendable"]);
 
-
-
-
 // ASSET MISSING SEMI EXPENDABLE SCANNED PAGE
 Route::get("/innoventory/inventory/semi_expendable/missing_items",["uses"=>"functions@fly_missing_scanned_semi","as"=>"goto_missing_scanned_semi"]);
 Route::post("/get_missing_semi_data",["uses"=>"functions@look_get_semi_expendable_not_scanned","as"=>"stole_get_semi_expendable_not_scanned"]);
@@ -172,6 +171,13 @@ Route::post("/get_missing_semi_data",["uses"=>"functions@look_get_semi_expendabl
 Route::get("/innoventory/semi_expendable/item_view",["uses"=>"functions@fly_semi_expendable_item_view","as"=>"goto_semi_expendable_item_view"]);
 Route::post("/get_full_info_of_single_semi_expendable",["uses"=>"functions@look_single_semi_expenable","as"=>"stole_single_semi_expenable"]);
 
+// INVENTORY GET DATA PAGE
+Route::get("/innoventory/inventory/capital_outlay_inventory",["uses"=>"functions@fly_inventory_co","as"=>"goto_inventory_co"]);
+Route::post("/get_all_service_centers",["uses"=>"functions@look_getallservicecenters","as"=>"stole_getallservicecenters"]);
+Route::post("/get_service_center_allinfo_byid",["uses"=>"functions@look_single_service_center_data_byid","as"=>"stole_single_service_center_data_byid"]);
+Route::post("/get_single_scanned_data_by_code",["uses"=>"functions@look_scanned_item_details","as"=>"stole_scanned_item_details"]);
+Route::post("/get_maxval_of_capitalo_and_semie",["uses"=>"functions@look_get_max_values_of_CoSe","as"=>"stole_get_max_values_of_CoSe"]);
+Route::post("/submit_scanned_asset_datum",["uses"=>"functions@fire_submit_scanned_data","as"=>"shoot_submit_scanned_data"]);
 
 
 // ASSET SEMI EXPENDABLE DISCREPANCIES

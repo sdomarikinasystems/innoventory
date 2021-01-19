@@ -25,11 +25,12 @@ Innoventory - Reminders
 
 <div class="row">
 	<div class="col-sm">
-		<table class="table table-sm table-bordered" id="tblmytbl">
+		<table class="table table-bordered" id="tblmytbl">
 		  <thead>
 			<tr>
 			  <th scope="col" width="200">Title</th>
 			  <th scope="col" width="250">Description</th>
+			  <th scope="col" width="250">Filter</th>
 			  <th scope="col" width="100">Deadline</th>
 			  <th scope="col" width="100">Date/Time Added</th>
 			</tr>
@@ -57,13 +58,13 @@ Innoventory - Reminders
 	       	<div class="col-sm-6">
 	       	<div class="form-group">
 	       	<label>Title</label>
-	       	<input type="text" class="form-control form-control-sm" placeholder="Add title here..." required="" name="remindertitle">
+	       	<input type="text" autocomplete="off" class="form-control" placeholder="Add title here..." required="" name="remindertitle">
 	       </div>
 	       	</div>
 	       	<div class="col-sm-6">
 	       	<div class="form-group">
 	       	<label>Deadline <span class="text-muted">Ignore if n/a</span></label>
-	       	<input type="date" class="form-control form-control-sm" name="reminderdeadline">
+	       	<input type="date" class="form-control" name="reminderdeadline">
 	       </div>
 	       	</div>
 	       	<div class="col-sm-12">
@@ -74,7 +75,7 @@ Innoventory - Reminders
 	       	</div>
 	       	<div class="col-sm-6">
 	       		<div class="form-group">
-	       			<select class="form-control form-control-sm" name="remindwhocansee" required="">
+	       			<select class="form-control" name="remindwhocansee" required="">
 	       				<option selected="" disabled="" value="">Who can see this?</option>
 	       				<option value="all">All</option>
 	       				<option value="0">Admin</option>

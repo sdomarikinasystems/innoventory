@@ -17,11 +17,9 @@ Innoventory - Dashboard
 	</center>
 </div>
 <div class="card-deck mb-3 mobiletext" id="statbar" style="display: none;">
-
-
 		<div class="card">
 			<div class="card-body">
-				<p class="mb-0 mt-0">Asset Registry</p>
+				<p class="mb-0 mt-0">Asset (CO-SE)</p>
 				<h3 class="mb-0 mt-0" id="count_ass_reg"></h3>
 			</div>
 			<div class="card-footer">
@@ -66,8 +64,8 @@ Innoventory - Dashboard
 			<div class="card-header">
 				<h5><i class="fas fa-bullhorn"></i> Announcements</h>
 			</div>
-			<div class="card-body announcement_card_body" style="padding:0; background-color: #E9ECEF !important;" >	
-				<div id="newann" style="background-color: #E9ECEF !important; margin: 20px;">
+			<div class="card-body announcement_card_body" style="padding:0; background-color: #F1F1F1 !important;" >	
+				<div id="newann" style="background-color: #F1F1F1 !important; margin: 20px;">
 					
 				</div>
 			</div>
@@ -78,59 +76,71 @@ Innoventory - Dashboard
 	</div>
 
 	<div class="col-sm-5">
-		<div class="card mobiletext">
-			<div class="card-body"  >
-				<center id="inv_status">
-					
-				</center>
-			</div>
-		</div>
-			<?php
+			 <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+			  <li class="nav-item">
+			    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-home"></i> <?php echo session("user_schoolname"); ?></a>
+			  </li>
+
+			  <?php
 			if(session("user_type") == "0" || session("user_type") == "1"){
 			?>
-			<div class="card mobiletext mt-3">
-				<div class="card-body">
-					<h5>Stations Inventory Status</h5>
-					<table class="table table-hover table-striped">
+
+			<li class="nav-item">
+			    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false" onclick="DisplayAllStationsInventoryStatus()"><i class="fas fa-clipboard-list"></i> All Inventory Status</a>
+			  </li>
+			<?php
+			}
+			?>
+
+			</ul>
+			<div class="tab-content" id="pills-tabContent">
+			  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+			  	
+			  	<div id="inv_status">
+					
+				</div>
+
+				
+			  </div>
+			  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+			  	<table class="table table-hover table-bordered" id="tbl_datastation">
 						<thead>
 							<tr>
-								<th>Station</th>
-								<th>Status</th>
+								<th style="width: 90%;">Station</th>
+								<th><center>CO</center></th>
+								<th><center>SE</center></th>
 							</tr>
 						</thead>
 						<tbody id="allstaconts">
 							
 						</tbody>
 					</table>
-				</div>
+			  </div>
 			</div>
-
-			<script type="text/javascript">
-				
-					DisplayAllStationsInventoryStatus();
-function DisplayAllStationsInventoryStatus(){
-	$.ajax({
-  		type: "POST",
-  		url: "{{ route('seestationsinvstatus') }}",
-  		data: {_token: "{{ csrf_token() }}"},
-  		success:function(data){
-  			$("#allstaconts").html(data);
-  		}
-  	})
-}
-			</script>
-			<?php
-			}
-
-			?>
 	</div>	
 </div>
 
 
 <script type="text/javascript">
 
+var isallload_station = false;
+function DisplayAllStationsInventoryStatus(){
+	if(isallload_station == false){
+	$.ajax({
+  		type: "POST",
+  		url: "{{ route('seestationsinvstatus') }}",
+  		data: {_token: "{{ csrf_token() }}"},
+  		success:function(data){
+  			$("#allstaconts").html(data);
+  			$("#tbl_datastation").DataTable();
+  			isallload_station = true;
+  		}
+  	})
+	}
+}
 
-	CheckIfReadyForInventory();
+CheckIfReadyForInventory();
+
 function CheckIfReadyForInventory(){
 	$.ajax({
   		type: "POST",
@@ -138,17 +148,14 @@ function CheckIfReadyForInventory(){
   		data: {_token: "{{ csrf_token() }}"},
   		success:function(data){
   			$("#inv_status").html(data);
+  			LoadNewAnnouncements();
   		}
   	})
 }
-LoadNewAnnouncements();
-// LoadAllAnnounce();
+
 $("#statbar").css("display","none");
   	$("#lod_bar").css("display","block");
-setInterval(function(){
 
-LoadDashboardInfo();
-},3000)
   function LoadNewAnnouncements(){
   	$.ajax({
   		type: "POST",
@@ -157,38 +164,27 @@ LoadDashboardInfo();
   		success:function(data){
   			// alert(data);
   			$("#newann").html(urlify(data));
+  			LoadDashboardInfo();
   		}
   	})
   }
-  function LoadAllAnnounce(){
-  		$.ajax({
-  		type: "POST",
-  		url: "{{ route('getmynewannouncements') }}",
-  		data: {_token: "{{ csrf_token() }}",typeofget:"1"},
-  		success:function(data){
-  			// alert(data);
-  			$("#oladann").html(data);
-  		}
-  	})
-  }
+
   function LoadDashboardInfo(){
-  	
-  	
   	  $.ajax({
     type : "POST",
     url: "{{ route('count_all_created_asset_loc') }}",
     data: {_token:"{{ csrf_token() }}"},
     success: function(data){
-	$("#lod_bar").css("display","none");
-	$("#statbar").css("display","flex");
-      var d_data  = data.split(",");
-      // alert("Done Loading!");
-      $("#count_assloc_created").html(d_data[0]);
-      $("#count_ass_reg").html(d_data[1]);
-      $("#count_sc_assets").html(d_data[2]);
-      $("#count_ass_disposed").html(d_data[3]);
-       $("#count_ass_servicecenters").html(d_data[4]);
-       $("#count_accounts").html(d_data[5]);
+		$("#lod_bar").css("display","none");
+		$("#statbar").css("display","flex");
+		var d_data  = data.split(",");
+		var asset_registry = d_data[1].split(":");
+		$("#count_assloc_created").html(d_data[0]);
+		$("#count_ass_reg").html(asset_registry[0] + " - " + asset_registry[1]);
+		$("#count_sc_assets").html(d_data[2]);
+		$("#count_ass_disposed").html(d_data[3]);
+		$("#count_ass_servicecenters").html(d_data[4]);
+		$("#count_accounts").html(d_data[5]);
     }
   })
   }
