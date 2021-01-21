@@ -117,7 +117,6 @@ Generate Appendix 73 Report
               </tr>
             </thead>
             <tbody id="tbl_assets">
-              
             </tbody>
           </table>
         </div>
@@ -295,10 +294,13 @@ GetRealRoomNumber();
       url : "{{ route('lod_asset_filtered') }}",
       data: {_token:"{{ csrf_token() }}",rnum:room_numberreal,catname:<?php echo json_encode($_GET["my_category"]) ?>},
       success: function(data){
+        // alert();
         $("#myfiltered").html(data);
         LoadGroupedAssets();
       }
     })
   }
 </script>
+
+
 @endsection

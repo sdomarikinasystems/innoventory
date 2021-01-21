@@ -56,6 +56,32 @@ if (session("user_uname") == "" || session("user_uname") == null) {
 	<link type="text/javascript" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css"></link>
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
 <style>
+
+
+
+span.deleteicon {
+    position: absolute;
+  width: 94%;
+
+
+}
+span.deleteicon span {
+    position: absolute;
+    display: block;
+    top: 11px;
+  right: 10px;
+    width: 25px;
+    height: 25px;
+    opacity: 0.5;
+    background: url('https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png') 0 -6px;
+  background-size: contain;
+  background-position:center;
+  background-repeat:no-repeat;
+    cursor: pointer;
+}
+   
+
+
 @font-face {
   font-family: regularfontnew;
   src: url({{ asset('fonts/sanfrancisco_pro.ttf')  }});
@@ -71,11 +97,11 @@ body {
 
 	}
 	.addtext_anim{
-		animation-name: drop_slide;
-		animation-duration: 0.3s;
-		display: block;
+		animation-name: drop_slide !important;
+		animation-duration: 0.3s !important;
+		display: block !important;
 	}
-/*	@keyframes drop_slide{
+	@keyframes drop_slide{
 		0%{
 			opacity: 0;
 			margin-top: -10px;
@@ -83,7 +109,28 @@ body {
 		100%{
 
 		}
-	}*/
+	}
+
+	.addcard_anim{
+		animation-name: drop_slide_shadow !important;
+		animation-duration: 1s !important;
+		display: block !important;
+	}
+	@keyframes drop_slide_shadow{
+		0%{
+			opacity: 0;
+			margin-top: -30px;
+		}
+		50%{
+			box-shadow: 0px 10px 30px rgba(0,0,0,0.4);
+		}
+		100%{
+
+		}
+	}
+
+
+
 	.close { 
   position: absolute; 
   right: 1rem;
@@ -111,6 +158,7 @@ body {
 
 
 	}
+
 
 	pre {
     white-space: pre-wrap;       /* Since CSS 2.1 */
@@ -308,7 +356,7 @@ background-color: #007DFF;
 	@include('sweet::alert')
 	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
 	  <a class="navbar-brand" href="#">Innoventory <small class="text-muted">by SDO - Marikina City</small></a>
-	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	  <button id="btn_navsdietoggle" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
 	
@@ -337,7 +385,9 @@ background-color: #007DFF;
 	</nav>
 	<div class="container-fluid">
 	<div class="row mt-3">
-		<div class="col-lg-2 mb-3">
+	
+		<div class="col-lg-2 mb-3" id="sidebarmenu">
+			<!-- START OF MENU -->
 			<h6>CORE</h6>
 			<ul class="list-group mb-3">
 				<li class="list-group-item"><a href="/innoventory/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
@@ -362,16 +412,16 @@ background-color: #007DFF;
 
 
 
-							<li class="sub-list"><a href="{{ route('manage_reports') }}"><i class="fas fa-layer-group"></i> Figures</a></li>
-							<li class="sub-list"><a href="{{ route('reg_omissions') }}"><i class="fas fa-eraser"></i> Registry Omissions</a></li>
-							<li class="sub-list"><a href=""><i class="fas fa-exchange-alt"></i> Returns to LGU</a></li>
-							<li class="sub-list"><a href=""><i class="fas fa-question-circle"></i></i> Missing Assets</a></li>
-							<li class="sub-list"><a href=""><i class="fas fa-money-bill"></i> Accountabilities</a></li>
-						</ul>
-					</div>
-				</li>
-				<li class="list-group-item"><a href="/innoventory/asset/resources"><i class="fas fa-folder"></i> Resources</a></li>
-			</ul>
+	<li class="sub-list"><a href="{{ route('manage_reports') }}"><i class="fas fa-layer-group"></i> Figures</a></li>
+	<li class="sub-list"><a href="{{ route('reg_omissions') }}"><i class="fas fa-eraser"></i> Registry Omissions</a></li>
+	<li class="sub-list"><a href=""><i class="fas fa-exchange-alt"></i> Returns to LGU</a></li>
+	<li class="sub-list"><a href=""><i class="fas fa-question-circle"></i></i> Missing Assets</a></li>
+	<li class="sub-list"><a href=""><i class="fas fa-money-bill"></i> Accountabilities</a></li>
+	</ul>
+	</div>
+	</li>
+	<li class="list-group-item"><a href="/innoventory/asset/resources"><i class="fas fa-folder"></i> Resources</a></li>
+	</ul>
 
 
 
@@ -390,7 +440,17 @@ background-color: #007DFF;
         <div class="modal-body">
           {{ csrf_field() }}
           
-          <input type='hidden' name='station_id' id='mygroupid'>
+          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+           <li class="nav-item">
+             <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#formgenapp733" role="tab" aria-controls="pills-home" aria-selected="true">Report Generation</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#assgenco_elp" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-info-circle"></i> Help</a>
+           </li>
+         </ul>
+         <div class="tab-content" id="pills-tabContent">
+           <div class="tab-pane fade show active" id="formgenapp733" role="tabpanel" aria-labelledby="pills-home-tab">
+           		 <input type='hidden' name='station_id' id='mygroupid'>
           <div class="form-group">
             <label>Room</label>
             <select class="form-control allservicenterrooms" id="co_service_center" onchange="getcountofgen()" name="my_room">
@@ -407,9 +467,19 @@ background-color: #007DFF;
          <label>Number of Assets to be Generated</label>
          <h5 id="asstobegennum">0 Item(s)</h5>
         </div>
+           </div>
+           <div class="tab-pane fade" id="assgenco_elp" role="tabpanel" aria-labelledby="pills-profile-tab">
+           		<h5>Why is my asset not appearing in the generation?</h5>
+            	<p class="mt-0">Only scanned Capital-Outlay assets will appear on the generation of appendix 73 report. Make sure you have no discrepancies left on your Capital-Outlay asset registry.</p>
+            	<h5 class="mt-3">My service center is not included in the selection</h5>
+            	<p class="mt-0">Make sure you added your service center in Manage Service Center page.</p>
+           </div>
+        
+         </div>
+
         </div>
         <div class="modal-footer">
-          <button type="submit" id="continueenrep_btn" class="btn btn-primary">Continue</button>
+          <button type="submit" id="continueenrep_btn" class="btn btn-primary">Generate</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </div>
@@ -418,7 +488,8 @@ background-color: #007DFF;
 </form>
 
 <!-- REPORT GENERATION OF APPENDIX 66 -->
-    <div class="modal" tabindex="-1" id="m_generatesemireports" role="dialog">
+   	<form action="{{ route('goto_generate_appendix66') }}" method="GET">
+    	<div class="modal" tabindex="-1" id="m_generatesemireports" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -428,29 +499,133 @@ background-color: #007DFF;
             </button>
           </div>
           <div class="modal-body">
-           <div class="form-group">
+
+
+           <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#upass66_home" role="tab" aria-controls="pills-home" aria-selected="true">Generate Report</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#upass66_ins" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-info-circle"></i> Help</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="upass66_home" role="tabpanel" aria-labelledby="pills-home-tab">
+ <div class="form-group">
             <label>Room</label>
-            <select class="form-control allservicenterrooms" name="my_room">
+            <select class="form-control allservicenterrooms" required="" name="my_room">
               <option>Sample</option>
             </select>
           </div>
-             <div class="form-group">
-            <label>Category</label>
-            <select class="form-control" id="allcategoriesz" name="my_category">
-              <option>Sample</option>
-            </select>
+            </div>
+            <div class="tab-pane fade" id="upass66_ins" role="tabpanel" aria-labelledby="pills-profile-tab">
+            	<h5>Why is my asset not appearing in the generation?</h5>
+            	<p class="mt-0">Only scanned Semi-Expendable assets will appear on the generation of appendix 66 report. Make sure you have no discrepancies left on your Semi-Expendable asset registry.</p>
+            </div>
           </div>
+
+
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="submit" class="btn btn-primary">Generate</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </div>
 
+    </form>
 
-		<script type="text/javascript">
+
+
+
+	<h6>ADD-ON</h6>
+	<ul class="list-group mb-3">
+			<?php
+			if(session("user_type") < "4" && session("user_type") != "2"){
+			?>
+			<!-- NOT FOR TEACHERS -->					
+			<li class="list-group-item"><a href="/innoventory/manage/users"><i class="fas fa-users"></i> Manage Users</a></li>
+			<?php
+			}
+			if(session("user_type") == "0" || session("user_type") == "1"){
+			?>
+			<!-- FOR ADMIN ONLY -->
+			<!--<li class="list-group-item"><a href="/innoventory/manage/schools"><i class="fas fa-school"></i> Manage Schools</a></li>-->
+				<?php
+				}
+				?>
+			<?php
+			if(session("user_type") < "4"){
+				?>
+				<!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
+				<li class="list-group-item"> <a href="/innoventory/manage/service_centers"><i class="fas fa-warehouse"></i> Manage Service Centers</a></li>
+				<li class="list-group-item"> <a href="/innoventory/manage/reminders"><i class="fas fa-bell"></i> Reminders</a></li>
+				<li class="list-group-item"> <a href="{{ route('fetch_asset') }}"><i class="fas fa-qrcode"></i> QR Stickers</a></li>
+				<?php
+				}
+			?>
+		<li class="list-group-item"><a href="{{ route('ass_transhistory') }}"><i class="fas fa-history"></i> History</a></li>
+		<a class="list-group-item" href="{{ route('gohow') }}"><i class="far fa-question-circle"></i> How to?</a>
+		<li class="list-group-item"><a href="{{ route('abouts_sys') }}"><i class="fas fa-robot"></i> About the System</a></li>
+	</ul>
+
+		<!-- END OF MENU -->
+		</div>
+		<div class="col-lg-10">
+			@yield('contents')
+		</div>
+	</div>
+	</div>
+	<script type="text/javascript">
+		$(".modal-dialog").addClass("modal-dialog modal-dialog-centered");
+		var resizedx = false;
+		var is_hidden = false;
+ DynamicView();
+		$( window ).resize(function() {
+  DynamicView();
+});
+
+
+		function DynamicView(){
+			var sc_width = $( document ).width();
+			if(sc_width < 994){
+				// mobile
+				resizedx = true;
+			}else{
+				//big screen
+				resizedx = true;
+			}
+
+				if(resizedx == true){
+					if(sc_width < 994){
+				// mobile
+				$("#sidebarmenu").hide();
+				resizedx = false;
+				is_hidden = true;
+			}else{
+				//big screen
+				$("#sidebarmenu").show();
+					resizedx = false;
+			}
+
+				}
+		}
+
+$("#btn_navsdietoggle").click(function(){
+var sc_width = $( document ).width();
+	if(sc_width < 994){
+		if(is_hidden == true){
+		is_hidden = false;
+		$("#sidebarmenu").show();
+	}else{
+		is_hidden = true;
+		$("#sidebarmenu").hide();
+	}
+	}
+	
+})
+
 				var hasgetted = false;
 		function GetServiceCentersForOption(){
 			if(hasgetted == false){
@@ -503,46 +678,5 @@ background-color: #007DFF;
 		  }
 
 		</script>
-
-
-			<h6>ADD-ON</h6>
-			<ul class="list-group mb-3">
-					<?php
-					if(session("user_type") < "4" && session("user_type") != "2"){
-					?>
-					<!-- NOT FOR TEACHERS -->					
-					<li class="list-group-item"><a href="/innoventory/manage/users"><i class="fas fa-users"></i> Manage Users</a></li>
-					<?php
-					}
-					if(session("user_type") == "0" || session("user_type") == "1"){
-					?>
-					<!-- FOR ADMIN ONLY -->
-					<!--<li class="list-group-item"><a href="/innoventory/manage/schools"><i class="fas fa-school"></i> Manage Schools</a></li>-->
-						<?php
-						}
-						?>
-					<?php
-					if(session("user_type") < "4"){
-						?>
-						<!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-						<li class="list-group-item"> <a href="/innoventory/manage/service_centers"><i class="fas fa-warehouse"></i> Manage Service Centers</a></li>
-						<li class="list-group-item"> <a href="/innoventory/manage/reminders"><i class="fas fa-bell"></i> Reminders</a></li>
-						<li class="list-group-item"> <a href="{{ route('fetch_asset') }}"><i class="fas fa-qrcode"></i> QR Stickers</a></li>
-						<?php
-						}
-					?>
-				<li class="list-group-item"><a href="{{ route('ass_transhistory') }}"><i class="fas fa-history"></i> History</a></li>
-				<a class="list-group-item" href="{{ route('gohow') }}"><i class="far fa-question-circle"></i> How to?</a>
-				<li class="list-group-item"><a href="{{ route('abouts_sys') }}"><i class="fas fa-robot"></i> About the System</a></li>
-			</ul>
-		</div>
-		<div class="col-lg-10">
-			@yield('contents')
-		</div>
-	</div>
-	</div>
-	<script type="text/javascript">
-		$(".modal-dialog").addClass("modal-dialog modal-dialog-centered");
-	</script>
 </body>
 </html>

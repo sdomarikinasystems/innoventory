@@ -2,7 +2,7 @@
 <html>
 <head>
 	<link rel='icon' href='{{ asset("images/sdo.ico") }}' type='image/x-icon'/ >
-	<title>Appendix 73 - Capital Oultay Printing</title>
+	<title>Appendix 66 - Semi-Expendable Printing</title>
 	<script type="text/javascript" src="{{ asset('api/html2canvas/html2canvas.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('api/html2canvas/html2canvas.min.js') }}"></script>
 	<script src="{{ asset('api/js/jspdf.js') }}"></script>
@@ -60,25 +60,51 @@ table{
 
 <script type="text/javascript">
 	var mypagecountx = 0;
-	var tru_roomId= <?php echo json_encode($_GET["room_id"]); ?>;
-	var tru_roomname= <?php echo json_encode($_GET["roomname"]); ?>;
-	// get_ass_pdf_pagecount
-		$.ajax({
+
+
+	var original_ID_room = <?php echo json_encode($_GET["my_room"]); ?>;
+
+	var tru_roomId= "";
+	var tru_roomname= "";
+
+GetRoomInfo();
+
+
+function GetRoomInfo(){
+	$.ajax({
+		type:"POST",
+		url: "{{ route('stole_single_service_center_data_byid') }}",
+		data: {_token: "{{ csrf_token() }}",
+		service_center_id: original_ID_room},
+		success: function(data){
+			data = JSON.parse(data);
+			tru_roomId = data[0]["station_id"];
+			tru_roomname = data[0]["office"];
+			StartGennerationofAppendix66();
+		}
+	})
+}
+
+function StartGennerationofAppendix66(){
+	$.ajax({
 		type: "POST",
-		url: "{{ route('bionic_page_count') }}",
-		data: {_token: "{{ csrf_token() }}", rn:<?php echo json_encode($_GET["roomnum"]); ?>,cat:<?php echo json_encode($_GET["assetactegory"]); ?>},
+		url: "{{ route('stole_semi_pagecount') }}",
+		data: {_token: "{{ csrf_token() }}", lc_id:original_ID_room},
 		success: function(data){
 			data = parseInt(data);
 			mypagecountx = parseInt(data + 1);
 			LoadAssetDataReport();
 		}
 	})
+}
 
 	function LoadAssetDataReport(){
 		$.ajax({
 		type: "POST",
-		url: "{{ route('generate_asset_report_printout') }}",
-		data: {_token: "{{ csrf_token() }}", rn:<?php echo json_encode($_GET["roomnum"]); ?>,cat:<?php echo json_encode($_GET["assetactegory"]); ?>,roomname:tru_roomname},
+		url: "{{ route('stole_generate_se_app66_data') }}",
+		data: {_token: "{{ csrf_token() }}",
+											locationid: original_ID_room,
+											roomname: tru_roomname},
 		success: function(data){
 			// alert(data);
 			$("#mytbl").append(data);

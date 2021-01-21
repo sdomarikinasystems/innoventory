@@ -163,6 +163,12 @@ Route::post("/get_month_of_inventory_byyear_incapital_outlay",["uses"=>"function
 Route::post("/get_inventory_years_semi",["uses"=>"functions@look_all_years_with_inventory_semiexpendable","as"=>"stole_all_years_with_inventory_semiexpendable"]);
 Route::post("/get_inventory_months_semi_byyear",["uses"=>"functions@look_inventory_month_semiexpendable","as"=>"stole_inventory_month_semiexpendable"]);
 
+// GENERATION OF APPENDIX 66
+Route::get("/appendix_66_generation",["uses"=>"functions@fly_generate_appendix66","as"=>"goto_generate_appendix66"]);
+Route::post("/get_se_ass66_pagecount",["uses"=>"functions@look_semi_pagecount","as"=>"stole_semi_pagecount"]);
+Route::post("/get_se_ass66_printout",["uses"=>"functions@look_generate_se_app66_data","as"=>"stole_generate_se_app66_data"]);
+
+
 // ASSET MISSING SEMI EXPENDABLE SCANNED PAGE
 Route::get("/innoventory/inventory/semi_expendable/missing_items",["uses"=>"functions@fly_missing_scanned_semi","as"=>"goto_missing_scanned_semi"]);
 Route::post("/get_missing_semi_data",["uses"=>"functions@look_get_semi_expendable_not_scanned","as"=>"stole_get_semi_expendable_not_scanned"]);
@@ -178,7 +184,7 @@ Route::post("/get_service_center_allinfo_byid",["uses"=>"functions@look_single_s
 Route::post("/get_single_scanned_data_by_code",["uses"=>"functions@look_scanned_item_details","as"=>"stole_scanned_item_details"]);
 Route::post("/get_maxval_of_capitalo_and_semie",["uses"=>"functions@look_get_max_values_of_CoSe","as"=>"stole_get_max_values_of_CoSe"]);
 Route::post("/submit_scanned_asset_datum",["uses"=>"functions@fire_submit_scanned_data","as"=>"shoot_submit_scanned_data"]);
-
+Route::post("/check_rediness_specific",["uses"=>"functions@look_checkready_specific","as"=>"stole_checkready_specific"]);
 
 // ASSET SEMI EXPENDABLE DISCREPANCIES
 Route::get("/innoventory/asset_registry/semi_expendable/discrepancies",["uses"=>"functions@fly_semiexpendable_discrepancies","as"=>"goto_semiexpendable_discrepancies"]);

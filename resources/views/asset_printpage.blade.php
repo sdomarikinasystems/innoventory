@@ -44,6 +44,7 @@
 		text-transform: uppercase;
 		padding-left: 10px;
 	}
+
 	.printbox{
 		border: 1px solid gray;
 		display: block;
@@ -79,7 +80,6 @@
 <!-- FIXED BY VIRMIL TALATTAD -->
 	<div class="loadingui">
 		<div class="container">
-			
 			<center>
 				<br>
 				<br>
@@ -98,15 +98,25 @@
 	var totallod = 0;
 	var current = 0;
 	var toappend;
+	var gentime = 1000;
 
-
-	$(document).ready(function(){
 		var data=localStorage.getItem('pnumber_arr');
 		var json_data = JSON.parse(data);
 
+
 		totallod = json_data.length;
+
 		for (var i =0; i < json_data.length; i++) {
 			var pnumberarr=json_data[i];
+				
+				GenSelect(pnumberarr);
+				
+				
+
+		}
+
+function GenSelect(pnumberarr){
+		setTimeout(function(){
 			$.ajax({
 				url: "{{ route('g_items') }}",
 				type: "POST",
@@ -116,6 +126,7 @@
 					p_number: pnumberarr
 				},
 				complete: function(response){
+					gentime -= 234;
 					var data = JSON.parse(response.responseText);
 					// console.log(data);
 					for (var key in data) {
@@ -150,7 +161,9 @@
 					}
 				}	
 			})
-		}
-	})
 
+		},gentime)
+
+		gentime += 345;
+		}
 </script>

@@ -132,8 +132,7 @@ Innoventory - Inventory
       </div>
       <div class="card">
         <div class="card-body">
-          <p class="mt-0 mb-0"><i class="fas fa-check-circle"></i> Ready</p>
-          <span class="text-muted">You're now ready to start the inventory</span>
+         <h5>Start Inventory</h5>
         </div>
         <div class="card-footer">
          <form action="{{ route('goto_inventory_co') }}" method="GET">
@@ -221,11 +220,14 @@ Innoventory - Inventory
       </div>
       <div class="card">
         <div class="card-body">
-          <p class="mt-0 mb-0"><i class="fas fa-check-circle"></i> Ready</p>
-          <span class="text-muted">You're now ready to start the inventory</span>
+         <h5>Start Inventory</h5>
         </div>
         <div class="card-footer">
-          <button class="btn btn-danger btn-sm float-right">Start</button>
+         <form action="{{ route('goto_inventory_co') }}" method="GET">
+            <input type="hidden" name="station_full_name" class="inp_filtepurpose_stationname">
+            <input type="hidden" name="station_id" id="inp_sc_id_inv_2" value="">
+            <button type="submit" class="btn btn-danger btn-sm float-right">Start</button>
+         </form>
           Inventory
         </div>
       </div>
@@ -543,6 +545,7 @@ is_filter_loaded_semi = false;
     $("#lodass").css("display","block");
     $("#inp_sc_id").val(sc_id);
      $("#inp_sc_id_inv").val(sc_id);
+      $("#inp_sc_id_inv_2").val(sc_id);
 
     $("#inp_sc_id_semi").val(sc_id);
 

@@ -6,9 +6,16 @@ Innoventory - Inventory Mode
 
 @section('contents')
 <div id="step_1" style="display: block;">
-	<button class="float-right btn-success btn" data-toggle="modal" data-target="#modal_inventorysubmitssion"><i class="fas fa-check-circle"></i> Submit Inventory</button>
-<h4><?php echo $_GET["station_full_name"]; ?> <small class="text-muted">Inventory Mode</small></h4>
-<br>
+	
+
+<div class="row mb-2">
+	<div class="col-sm-8">
+		<h5><?php echo $_GET["station_full_name"]; ?> <small class="text-muted">Inventory Mode</small></h5>
+	</div>
+	<div class="col-sm-4">
+		<button class="btn-success btn-sm m-0 btn float-right" data-toggle="modal" data-target="#modal_inventorysubmitssion"><i class="fas fa-check-circle"></i> Submit Inventory</button>
+	</div>
+</div>
 <div class="row">
 	<div class="col-sm-6">
 		<!-- <p id="current_time"></p> -->
@@ -16,42 +23,32 @@ Innoventory - Inventory Mode
 		  <h3 class="mt-3 mb-0" id="disp_time">9:46 am</h3>
 		<h5 class="mb-3 mt-0" id="disp_date">Sunday March 12, 2020</h5>
 		</div>
-		 <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
-		  <li class="nav-item">
-		    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Scanning</a>
-		  </li>
-		  <li class="nav-item">
-		    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Error Logs</a>
-		  </li>
-
-		</ul>
-		<div class="tab-content" id="pills-tabContent">
-		  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+		
+	
 		  <div class="card mb-3">
-		  	<div class="card-body">
-			<button class="btn btn-sm btn-danger float-right" data-toggle="modal" data-target="#modal_changeassetlocationsource" onclick="OnSelect_ServiceCenterQuickInfo()"><i class="fas fa-sync"></i></button>
-				<h5>Service Center</h5>
-				<div class="alert alert-secondary" role="alert">
-				
+		  	<div class="card-header">
+		  		<button class="btn btn-sm btn-danger float-right" data-toggle="modal" data-target="#modal_changeassetlocationsource" onclick="OnSelect_ServiceCenterQuickInfo()"><i class="fas fa-sync"></i> Service Center</button>
 				<h5 class="mt-0 "><strong class="text-dark curr_roomname"></strong></h5>
 				<p class="mb-0"><span class="mb-0" id="curr_roomnumber">Room: <strong>...</strong></span> / <span class="mb-0">In-charge: <strong id="curr_roomincharge">...</strong></span></p>
-				</div>
-				<h5>QR Code Result</h5>
-				<div class="form-group">
+		  	</div>
+		  	<div class="card-body">
+				<h5 class="mt-0">Property / Stock Number</h5>
+				<div class="form-group" style="height: 50px; display: block; width: 100%;">
+					 <span class="deleteicon">
 				<input type="text" autocomplete="off" class="form-control form-control-lg" id="inp_qrfocus" placeholder="Scan Result" name="">
+				 <span onclick="$('#inp_qrfocus').val(''); $('#inp_qrfocus').focus();"></span>
+				 </span>
+
 				</div>
-		
-		<button class="btn btn-primary" id="btn_addtoinventory"><i class="fas fa-plus-circle"></i> Add To <span class="curr_roomname"></span></button>
+		<label class="float-right"><input type="checkbox" id="inp_autorecieve" name=""> Auto-Recieve</label>
+		<button class="btn btn-primary" id="btn_addtoinventory"><i class="fas fa-plus-circle"></i> Add to <span class="curr_roomname"></span></button>
 		  	</div>
 		  </div>
-		  </div>
-		  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-		  	<div id="errorlogscontainer">
+
+		  <div id="errorlogscontainer">
 		  		
 		  	</div>
-		  	
-		  </div>
-		</div>
+		
 		<div class="form-group mt-3" style="display: none;">
 			<label>Raw Data Preview</label>
 			<textarea id="rawdatatext" rows="15" style="widows: 100%;" class="form-control" disabled=""></textarea>
@@ -75,7 +72,7 @@ Innoventory - Inventory Mode
 			<div class="clickablething ff_co" style="border: 2px solid transparent; border-radius: 10px;">
 				<div class="card-body">
 					<h5 class="m-0 float-right"><span id="allscannedassets_capitaloutlay"></span>/<span id="allscannedassets_capitaloutlay_max"></span></h5>
-				<small><i class="fas fa-circle" style="color: #4EDD57;"></i> <span class="text-muted">Capital Outlay</span></small>
+				<small><i class="fas fa-circle" style="color: #4EDD57;"></i> <span class="text-muted">CO</span></small>
 				
 				<progress id="prog_co" style="width: 100%;" value="22" max="100">
 			</div>
@@ -85,7 +82,7 @@ Innoventory - Inventory Mode
 			<div class="clickablething ff_se" style="border: 2px solid transparent; border-radius: 10px;">
 				<div class="card-body">
 					<h5 class="m-0 float-right"><span id="allscannedassets_semiexpendable"></span>/<span id="allscannedassets_semiexpendable_max"></span></h5>
-				<small><i class="fas fa-circle" style="color: #FF3530;"></i> <span class="text-muted">Semi-Expendable</span></small>
+				<small><i class="fas fa-circle" style="color: #FF3530;"></i> <span class="text-muted">SE</span></small>
 				
 				<progress id="prog_se" style="width: 100%;" value="67" max="100">
 			</div>
@@ -244,6 +241,59 @@ Innoventory - Inventory Mode
 	var transfercount =0;
 
 	var iscomplete = false;
+
+	var isauto_recieve = false;
+	var currentlyready = "";
+	var col_s_COUNT = "<|count|>";
+
+
+ var timer = 0;
+	$("#inp_qrfocus").keyup(function(){
+		 if(isauto_recieve ){
+		 	
+	if($("#inp_qrfocus").val() != ""){
+			clearTimeout (timer);
+	        timer = setTimeout(function(){
+	        	AddToInv();
+	        }, 1000);
+	}
+		 }
+	})
+
+	CheckRediness();
+	function CheckRediness(){
+	$.ajax({
+  		type: "POST",
+  		url: "{{ route('stole_checkready_specific') }}",
+  		data: {_token: "{{ csrf_token() }}",user_school: current_station_id},
+  		success:function(data){
+  			// alert(data);
+  			currentlyready = data;
+  		}
+  	})
+}
+
+	ApplyScanningSettings();
+	$("#inp_autorecieve").change(function(){
+		ApplyScanningSettings();
+	})
+	function ApplyScanningSettings(){
+		isauto_recieve = $("#inp_autorecieve").prop("checked");
+
+		if(isauto_recieve){
+			$("#btn_addtoinventory").hide();
+
+			if ($("#inp_qrfocus").val() != "") {
+				AddToInv();
+}
+
+
+		}else{
+			$("#btn_addtoinventory").show();
+		}
+		$("#inp_qrfocus").focus();
+	}
+
 	function SaveData_Cancel(){
 		$("#step_2").hide();
 		$("#step_1").show();
@@ -259,11 +309,16 @@ Innoventory - Inventory Mode
 	}
 	function AddToErrorLogs(error_message, silent = false){
 		if(silent == false){
-			alert(error_message);
+			if(isauto_recieve == false){
+				alert(error_message);
+			}
 		}
-		$("#errorlogscontainer").prepend("<div class='card mb-3'><div class='card-body'><span class='text-muted'>" + current_time_good + "</span><br>" + htmlEntities(error_message) + "</div></div>");
+		$("#errorlogscontainer").prepend("<div class='card mb-3 addcard_anim'><div class='card-body'><span class='text-muted'>" + current_time_good + "</span><br>" + htmlEntities(error_message) + "</div></div>");
+		if(isauto_recieve == true){
+				$("#inp_qrfocus").focus();
+			}
 	}
-
+	var savetime = 500;
 	function RunDataSavingProcess(){
 
 		var currentdata = $("#rawdatatext").val();
@@ -292,30 +347,42 @@ Innoventory - Inventory Mode
 	}
 
 	function AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype){
-		$.ajax({
-					type:"POST",
-					url:"{{ route('shoot_submit_scanned_data') }}",
-					data: {_token: "{{ csrf_token() }}",
-							loc_id: ss_locationid,
-							ass_cd: ss_assetcode,
-							timesp: ss_timestamp,
-							ass_type: ss_assettype,
-							stationid: current_station_id
-					},success: function(data){
-						transfercount++;
-						Revisualize_percentage_transferUI();
-						$("#visual_data_representation").prepend("<span class='addtext_anim'>(" + ss_assettype + ") " + ss_assetcode + " -> " + ss_asset_name + " <i class='fas fa-check-circle'></i><span><br>");
-					}
-				})	
+		setTimeout(function(){
+
+		if(currentlyready.includes(ss_assettype)){
+			$.ajax({
+			type:"POST",
+			url:"{{ route('shoot_submit_scanned_data') }}",
+			data: {
+				_token: "{{ csrf_token() }}",
+				loc_id: ss_locationid,
+				ass_cd: ss_assetcode,
+				timesp: ss_timestamp,
+				ass_type: ss_assettype,
+				stationid: current_station_id,
+				asset_name: ss_asset_name
+			},success: function(data){
+				transfercount++;
+				Revisualize_percentage_transferUI();
+				$("#visual_data_representation").prepend("<span class='addtext_anim'>(" + ss_assettype + ") " + ss_assetcode + " -> " + ss_asset_name + " <i class='fas fa-check-circle'></i><span><br>");
+				savetime -= 333;
+			}
+			})	
+		}else{
+				transfercount++;
+				Revisualize_percentage_transferUI();
+				$("#visual_data_representation").prepend("<span class='addtext_anim text-danger'>(" + ss_assettype + ") " + ss_assetcode + " -> " + ss_asset_name + " <i class='fas fa-check-circle'></i><span><br>");
+				savetime -= 333;
+							
+		}
+		},savetime)
+		savetime += 555;
 	}
-
-
 	function Revisualize_percentage_transferUI(){
 		var currentdata = $("#rawdatatext").val();
 		var data_fragment = currentdata.split(separator_word);
 		var totalscannedasset = data_fragment.length;
 
-	
 		$("#trans_progress").prop("max",totalscannedasset);
 		$("#trans_progress").val(transfercount);
 
@@ -495,6 +562,7 @@ Innoventory - Inventory Mode
 					GetMaxValues();
 					if(is_silent == false){
 						alert("Service Center successfully selected!");
+						$("#inp_qrfocus").focus();
 					}
 				}else{
 					AddToErrorLogs("Problem in getting service center info. No service center selected.");
@@ -536,6 +604,10 @@ Innoventory - Inventory Mode
 	}
 
 	$("#btn_addtoinventory").click(function(){
+		AddToInv();
+	})
+
+	function AddToInv(){
 		$("#inp_qrfocus").prop("disabled",true);
 		var data_code =  htmlEntities($("#inp_qrfocus").val());
 		data_code = data_code.trim();
@@ -546,19 +618,25 @@ Innoventory - Inventory Mode
 				}else{
 					AddToErrorLogs("You already scanned this code(" + data_code + ").");
 					$("#inp_qrfocus").prop("disabled",false);
+					$("#inp_qrfocus").focus();
+					
 				}
 			}else{
 				AddToErrorLogs("No service center selected.");
 				$("#inp_qrfocus").prop("disabled",false);
+			
 			}
 			
 		}else{
 			AddToErrorLogs("Can't insert an empty inventory data.");
 			$("#inp_qrfocus").prop("disabled",false);
+			$("#inp_qrfocus").focus();
+			
 		}
 
 		$("#inp_qrfocus").val("");
-	})
+
+	}
 	function AddCodeToRawData(newdata){
 		 $("#inp_qrfocus").prop("placeholder","Proccessing....");
 		var currentdata = $("#rawdatatext").val();
@@ -569,6 +647,7 @@ Innoventory - Inventory Mode
 		
 		// GET SCANNED CODE INRMATION IF HAS EXISTING REFERENCE IN REGISTRY
 		var current_moreinfo = "";
+
 		$.ajax({
 			type:"POST",
 			url: "{{ route('stole_scanned_item_details') }}",
@@ -581,26 +660,48 @@ Innoventory - Inventory Mode
 
 				var asset_type = "";
 				var asset_name = "";
-
+				var result = "";
 				if(current_moreinfo[0]["property_number"]){
-					// alert("Capital Outlay Item");
 					asset_type = "co";
 					asset_name = current_moreinfo[0]["asset_item"];
 				}else{
-					// alert("Semi-Expendable Item");
+					result = prompt("Enter Semi-Expendable Item Quantity");
 					asset_type = "se";
 					asset_name = current_moreinfo[0]["description"];
+				}
+
+				
+				var semi_count_sep = col_s_COUNT;
+				// Pass data
+				var goodtogo = false;
+				if(asset_type == "se" && isNumeric(result) && result != ""){
+					// good semi-expendable data
+					if(parseInt(result) >= 1){
+						goodtogo = true;
+					}else{
+						AddToErrorLogs("Given quantity to Semi-Expendable (" + htmlEntities(newdata) + ") can't be less than 1.");
+					}
+				}else if(asset_type == "se" && (isNumeric(result) == false || result == "")){
+					// bad semi-expendable data
+					AddToErrorLogs("Semi-Expendable (" + htmlEntities(newdata) + ") given quantity is invalid.");
+				}else if(asset_type == "co"){
+					//good capital outlay data
+					result = "";
+					goodtogo = true;
+					semi_count_sep = "";
 				}
 
 				currentdata += current_location_id + col_XX +
 				newdata + col_XX +
 				current_timestamp + col_XX +
-				asset_name + col_XX +
+				asset_name + semi_count_sep + result + col_XX +
 				asset_type + col_XX +
 				current_time_good;
 
-				// Pass data
-				$("#rawdatatext").val(currentdata);
+				if(goodtogo){
+					$("#rawdatatext").val(currentdata);
+				}
+
 				filtershow_all();
 				}else{
 				// REFERENCE NOT FOUND
@@ -612,12 +713,17 @@ Innoventory - Inventory Mode
 				$("#inp_qrfocus").prop("disabled",false);
 				$("#inp_qrfocus").prop("placeholder","Scan Result");
 				ReflectDataToHTML();
+				$("#inp_qrfocus").focus();
 				},300);
 
 			}
 		})
 		
 	}
+
+	function isNumeric(num){
+  return !isNaN(num)
+}
 	function CheckIfAssetCodeIsExisiting(asset_code){
 		var existing = false;
 		var currentdata = $("#rawdatatext").val();
@@ -677,15 +783,33 @@ Innoventory - Inventory Mode
 				"<div class='card-body'>"+ 
 				"<span class='float-right text-muted' style='text-align: right;'>" + single_data[5] + "</span>" + 
 				"<strong>" + single_data[1] + "</strong>" + 
-				"<h6 class='mt-0 mb-0'>" + single_data[3] + "</h6>" + 
-				"</div>" + 
+				"<h6 class='mt-0 mb-0'>";
+
+
+				if(single_data[4] == "se"){
+					var se_name_fragments = single_data[3].split(col_s_COUNT);
+					newdt +=  se_name_fragments[0] + " <span class='text-primary'>Quantity: " + se_name_fragments[1] + "</span>";
+				}else{
+					newdt +=  single_data[3];
+				}
+				newdt += "</h6>";
+
+
+
+
+				if(!currentlyready.includes(single_data[4])){
+					if(single_data[4] == "co"){
+						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> This Capital Outlay is not ready for inventory so this will be ignored.</p>";
+					}else{
+						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> This Semi-Expendable is not ready for inventory so this will be ignored.</p>";
+					}
+				}
+				newdt += "</div>" + 
 				"</div>";
 				// compiled_toadd = newdt + compiled_toadd;
 				$("#asset_data_reflection").prepend(newdt);
 			}
-			
 			}
-			
 		}
 
 		$("#allscannedassets").html(allscanned);

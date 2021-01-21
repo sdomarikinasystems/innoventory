@@ -120,8 +120,206 @@ class functions extends Controller
     public function fly_inventory_co(){
        return view("asset_addinventory_capitaloutlay");
     }
+    public function fly_generate_appendix66(){
+       return view("doc_appendix66");
+    }
 
     // FUNCTIONS
+
+ public function look_generate_se_app66_data(Request $req){
+      $loc_id = $this->sdmenc($req["locationid"]);
+
+      $asset_table_head = '
+  <tr>
+   <th rowspan="2">ARTICLE</th>
+    <th rowspan="2">DESCRIPTION</th>
+    <th rowspan="2">STOCK<br>NUMBER</th>
+    <th rowspan="2">UNIT OF<br>MEASURE</th>
+    <th rowspan="2">UNIT<br>VALUE</th>
+    <th rowspan="2">BALANCE PER<br>CARD</th>
+    <th rowspan="2">ON HAND PER<br>COUNT</th>
+    <th colspan="2">SHORTAGE/OVERAGE</th>
+    <th rowspan="2">REMARKS</th>
+  </tr>
+  <tr>
+    <th><small>Quantity</small></th>
+    <th><small>Value</small></th>
+  </tr>
+      ';
+       $client = new \GuzzleHttp\Client();
+        $output = $this->send(["tag"=>"GET_SEMI_ASSETS_BYFILTER",
+        "loc_id"=>$loc_id,
+        "stat_id"=>$this->sdmenc(session("user_school"))
+      ]);
+         $lc_count = 0;
+         $pagecount = 0;
+      $toecho = '
+
+<table id="page_' .  $pagecount  . '" >
+<tr class="borderless">
+<th colspan="11">
+<div style="text-align: right;">Appendix 66</div>
+<div style="text-align: center; margin-top: -35px;">
+  <h4 style="margin-bottom: 0px;"><img style="display:none;" src="' . asset('images/deped.png') . '" style="height: 80px; width: 80px;"><br>REPORT ON THE PHYSICAL COUNT OF INVENTORIES</h4>
+  <small style="margin-bottom: 50px;"><u>Semi-Expendable</u><p style="margin:0px;">(Type of Inventory Item)</p>
+  As at <u>' . session("user_schoolname") .' - ' . $req["roomname"] . '</u></small><br><br>
+</div>
+<div style="text-align: left;">
+  <small>
+    <strong>
+      Fund Cluster:____________________________<br>
+      For which____________________________, <u>(Official Designation)</u>, <u>(Entity Name)</u> is accountable, having assumed such accountability on <u></u>.
+    </strong>
+  </small>
+</div>
+
+</th>
+</tr>
+
+ ' . $asset_table_head  . '
+
+
+
+      ';
+
+        for ($i=0; $i < count($output); $i++) { 
+            $on_hand_per_count = $output[$i]["asset_onhandcount"];
+            
+          if($on_hand_per_count != null && $on_hand_per_count != ""){
+                      $lc_count++;
+
+       if($lc_count > 16){
+$pagecount++;
+        $lc_count = 0;
+        $toecho .= '
+</table>
+<br>
+<br>
+<table id="page_' .  $pagecount  . '" >
+' . $asset_table_head  . '
+        ';
+
+
+       }
+        $toecho .= '<tr>
+         <td>' . $output[$i]["article"] . '</td>
+          <td>' . $output[$i]['description'] . "</td>";
+
+      $linecount = 0;
+          if(strlen($output[$i]['description']) > strlen($output[$i]["article"] )){
+             $linecount = intval(strlen($output[$i]['description']) / 101);
+           }else{
+             $linecount = intval(strlen($output[$i]['article']) / 101);
+           }
+         
+          $lc_count += $linecount;
+
+          //computation
+          $bal_per_card = $output[$i]['balance_per_card'];
+        
+
+           $short_ov_quantity = ($bal_per_card + $on_hand_per_count);
+          $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value'] ));
+          $disp_onhandcount = "";
+          if($on_hand_per_count == null || $on_hand_per_count == ""){
+           $disp_onhandcount = "Missing Inv.";
+          }else{
+            $disp_onhandcount =  $on_hand_per_count;
+          }
+
+          $toecho .= '
+            <td>' . $output[$i]['stock_num'] . '</td>
+            <td>' . $output[$i]['unit_of_mesure'] . '</td>
+            <td style="text-align:right;">' . number_format($output[$i]['unit_value'],2) .  '</td>
+            <td style="text-align:center;">' . $bal_per_card  . '</td>
+            <td style="text-align:center;">' .   $disp_onhandcount. '</td>
+            <td style="text-align:center;">' . $short_ov_quantity  .'</td>
+            <td style="text-align:right;">' . $short_ov_value  .'</td>
+            <td>' . $output[$i]['remarks'] . '</td>             
+          </tr>';
+    
+          }
+      }
+
+      $toecho .= '
+
+  <tr  class="bottom_field">
+   
+    <td class="fronter" colspan="3">
+      Certified Corrected by:
+      <center>
+        __________________________________<br>
+       Signature over Printed Name of<br>Inventory Committee Chair and<br>Members
+      </center>
+    </td>
+    <td colspan="3">
+      Approved by:
+      <center>
+        __________________________________<br>
+        Signature over Printed Name of Head of<br>Agency/Entity or Authorized Representative
+      </center>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="laster">
+      Verified by:
+      <center>
+        __________________________________<br>
+        Signature over Printed Name of COA<br>Representative
+      </center>
+    </td>
+  </tr>
+  </table>
+      ';
+
+$this->RecordLog("a02");
+      return  $toecho;
+    }
+
+
+     public function look_semi_pagecount(Request $req){
+         $result = $this->send(["tag"=>"GET_SEMI_ASSETS_BYFILTER",
+          "loc_id"=>$this->sdmenc($req["lc_id"]),
+          "stat_id"=>$this->sdmenc(session("user_school"))]);  
+
+        return  count($result);
+    }
+
+     public function look_checkready_specific(Request $req){
+    //CHECK CAPITAL OUTLAY REDINESS
+    $tag = $this->sdmenc("inventory_checkif_ready");
+    $station_id = $this->sdmenc($req["user_school"]);
+    $client = new \GuzzleHttp\Client();
+    $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
+    "tag"=>$tag,
+    "station_id"=> $station_id,
+    ]]);
+
+    $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
+    $toecho = "";
+
+      for ($i=0; $i < count($output); $i++) { 
+        // CHECK TYPE OF ASSET
+        $asset_type_name = "";
+        $missing_cases = "";
+        if($output[$i]["pref_name"] == "Inventory Status"){
+           $asset_type_name = "co";
+        }else if($output[$i]["pref_name"] == "Inventory Status Semi"){
+           $asset_type_name = "se";
+        }
+        
+        if( $asset_type_name != ""){
+          if($output[$i]["pref_value"] == "Ready"){
+            $toecho .= $asset_type_name;
+        }
+       }
+    }    
+  
+
+       return $toecho;
+     
+    }
     public function fire_submit_scanned_data(Request $req){
 
       $loc_id = $req["loc_id"];
@@ -134,7 +332,8 @@ class functions extends Controller
                           "ass_cd"=>$this->sdmenc($ass_cd),
                           "timesp"=>$this->sdmenc($timesp),
                           "ass_type"=>$this->sdmenc($ass_type),
-                          "sta_id"=>$this->sdmenc($req["stationid"])
+                          "sta_id"=>$this->sdmenc($req["stationid"]),
+                          "asset_name"=>$this->sdmenc($req["asset_name"])
                         ]);
 
       return json_encode($out);
@@ -2961,16 +3160,11 @@ $pagecount++;
 </div>
 
 </th>
-</tr>
-
- ' . $asset_table_head  . '
-
-
-
-      ';
+</tr>' . $asset_table_head  . '';
 
         for ($i=0; $i < count($output); $i++) { 
-        $lc_count++;
+          if($output[$i]["status"] == "0"){
+                    $lc_count++;
 
        if($lc_count > 16){
 $pagecount++;
@@ -2988,10 +3182,20 @@ $pagecount++;
         $toecho .= '<tr>
          <td>' . $output[$i]["uacs_object_code"] . '</td>
           <td>' . $output[$i]['asset_item'];
-
           $linecount = intval(strlen($output[$i]['asset_item']) / 101);
           $lc_count += $linecount;
+          //computation
+          $bal_per_card = $output[$i]['balance_per_card'];
+          $on_hand_per_count = $output[$i]["physical_count"];
 
+           $short_ov_quantity = ($bal_per_card + $on_hand_per_count);
+          $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value'] ));
+          $disp_onhandcount = "";
+          if($on_hand_per_count == null || $on_hand_per_count == ""){
+           $disp_onhandcount = "Missing Inv.";
+          }else{
+            $disp_onhandcount =  $on_hand_per_count;
+          }
           $toecho .= '</td>
           <td></td>
         
@@ -3004,6 +3208,8 @@ $pagecount++;
                         <td>' . $output[$i]['remarks'] . '</td>
       </tr>';
     
+          }
+
       }
 
 
@@ -3072,7 +3278,7 @@ $pagecount++;
       </center>
     </td>
     <td colspan="3">
-      Noted:
+      Approved by:
       <center>
         __________________________________<br>
         Signature over Printed Name of School Head of<br>Agency/Entity of Authorized Representative
@@ -3190,14 +3396,23 @@ $this->RecordLog("a02");
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
        $toecho .= "<tr>
-         <td><input type='checkbox' class='asset_item_check' data-oid='" . $output[$i]["id"]  . "' 
+         <td>";
 
+          if($output[$i]["status"] == "0"){
+            //NORMAL
+            $toecho .= "<input type='checkbox' class='asset_item_check' data-oid='" . $output[$i]["id"]  . "' 
 
          data-dateofaq='" . $output[$i]["date_of_acquisition"]  . "'
          data-totlifey='" . $output[$i]["estimated_total_life_years"]  . "'
          data-unitofmea='" . $output[$i]["unit_of_measure"]  . "'
 
-          data-itemname='" . $output[$i]["asset_item"]  . "' data-propnum='" . $output[$i]["property_number"] . "' data-assetitem='" . $output[$i]["asset_item"] . "'></td>
+          data-itemname='" . $output[$i]["asset_item"]  . "' data-propnum='" . $output[$i]["property_number"] . "' data-assetitem='" . $output[$i]["asset_item"] . "'>";
+          }else{
+            //DISPOSED
+            $toecho .= "<span class='text-danger'>Disposed</span>";
+          }
+
+         $toecho .= "</td>
           <td>" . $output[$i]["asset_item"] . "</td>
           <td>" . $output[$i]["property_number"] . "</td>
         

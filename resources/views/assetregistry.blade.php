@@ -216,7 +216,7 @@ Innoventory - Asset Registry
    <div class="tab-pane fade show" id="semiexpendable" role="tabpanel" aria-labelledby="pills-home-tab">
       <div class="row">
   <div class="col-sm mb-3">
-    <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import" onclick="  LoadserviceCentersMine()"></i> Import Semi-Expendable</a>
+    <a class="btn btn-success importbutton" href="#" data-toggle="modal" onclick="  LoadserviceCentersMine()" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import" ></i> Import Semi-Expendable</a>
     <div class="alert alert-info importwarning" role="alert">
       Change your asset source to import Semi-Expendable Asset(s)
     </div>
@@ -456,7 +456,6 @@ Innoventory - Asset Registry
 
     $("#lod_change_ass_source").css("display","block");
     LoadAssets();
-
     setTimeout(function(){
     $("#lod_change_ass_source").css("display","none");
     },1000)
@@ -760,6 +759,7 @@ Innoventory - Asset Registry
       }
   }
 
+var hasloadedservicecenterssel = false;
   function LoadserviceCentersMine(){
     var stationidassigned =  $("#myschool_realid").val();
     $.ajax({

@@ -19,7 +19,7 @@ Innoventory - Dashboard
 <div class="card-deck mb-3 mobiletext" id="statbar" style="display: none;">
 		<div class="card">
 			<div class="card-body">
-				<p class="mb-0 mt-0">Asset (CO-SE)</p>
+				<p class="mb-0 mt-0">Asset <small class="text-muted">(CO-SE)</small></p>
 				<h3 class="mb-0 mt-0" id="count_ass_reg"></h3>
 			</div>
 			<div class="card-footer">
@@ -30,7 +30,7 @@ Innoventory - Dashboard
 
 		<div class="card">
 			<div class="card-body">
-				<p class="mb-0 mt-0">Inventory Items</p>
+				<p class="mb-0 mt-0">Inventory <small class="text-muted">(CO-SE)</small></p>
 				<h3 class="mb-0 mt-0" id="count_sc_assets"></h3>
 			</div>
 			<div class="card-footer">
@@ -41,7 +41,7 @@ Innoventory - Dashboard
 <div class="w-100 d-none d-sm-block d-lg-none"></div>
 		<div class="card">
 			<div class="card-body">
-				<p class="mb-0 mt-0">Disposed Items</p>
+				<p class="mb-0 mt-0">Disposed <small class="text-muted">(CO-SE)</small></p>
 				<h3 class="mb-0 mt-0" id="count_ass_disposed">0</h3>
 			</div>
 			<div class="card-footer">
@@ -86,7 +86,7 @@ Innoventory - Dashboard
 			?>
 
 			<li class="nav-item">
-			    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false" onclick="DisplayAllStationsInventoryStatus()"><i class="fas fa-clipboard-list"></i> All Inventory Status</a>
+			    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false" onclick="DisplayAllStationsInventoryStatus()"><i class="fas fa-clipboard-list"></i> All</a>
 			  </li>
 			<?php
 			}
@@ -179,16 +179,17 @@ $("#statbar").css("display","none");
 		$("#statbar").css("display","flex");
 		var d_data  = data.split(",");
 		var asset_registry = d_data[1].split(":");
+		var asset_scanned = d_data[2].split(":");
+		var asset_disposed = d_data[3].split(":");
 		$("#count_assloc_created").html(d_data[0]);
 		$("#count_ass_reg").html(asset_registry[0] + " - " + asset_registry[1]);
-		$("#count_sc_assets").html(d_data[2]);
-		$("#count_ass_disposed").html(d_data[3]);
+		$("#count_sc_assets").html(asset_scanned[0] + " - " + asset_scanned[1]);
+		$("#count_ass_disposed").html(asset_disposed[0] + " - " + asset_disposed[1]);
 		$("#count_ass_servicecenters").html(d_data[4]);
 		$("#count_accounts").html(d_data[5]);
     }
   })
   }
-
 
 </script>
 @endsection
