@@ -5,14 +5,11 @@ Innoventory - Omitted Semi Expendables
 @endsection
 
 @section('contents')
-
-<h2>Asset Registry - Omitted Assets</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('assetregistry') }}">Asset Registry</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Omitted Assets</li>
+		<li class="breadcrumb-item active" aria-current="page">Asset Registry - Semi-Expendable Omitted Assets</li>
 	</ol>
 </nav>
 

@@ -5,14 +5,11 @@ Innoventory - Semi Expendables Discrepancies
 @endsection
 
 @section('contents')
-
-<h2>Asset Registry - Discrepancies</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/asset/registry">Asset Registry</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Discrepancies</li>
+		<li class="breadcrumb-item active" aria-current="page">Asset Registry - Discrepancies</li>
 	</ol>
 </nav>
 <input type="hidden" value="{{ session('user_school') }}" id="myschool_realid" name="">

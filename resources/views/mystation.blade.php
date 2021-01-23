@@ -5,9 +5,6 @@ Innoventory - Service Centers
 @endsection
 
 @section('contents')
-
-<h2>Service Centers</h2>
-
 <input type="hidden" value="{{ session('user_school') }}" id="myschool_realid" name="">
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">

@@ -6,7 +6,7 @@ Innoventory - Dashboard
 
 @section('contents')
 
-<h2>Dashboard</h2>
+<h5 class="text-muted">Dashboard</h5>
 
 <!--REMINDERS-->
 <div class="row">
@@ -76,9 +76,9 @@ Innoventory - Dashboard
 	</div>
 
 	<div class="col-sm-5">
-			 <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+			 <ul class="nav nav-tabs nav-fill mb-3" id="pills-tab" role="tablist">
 			  <li class="nav-item">
-			    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-home"></i> <?php echo session("user_schoolname"); ?></a>
+			    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-home"></i> My Station</a>
 			  </li>
 
 			  <?php
@@ -91,13 +91,17 @@ Innoventory - Dashboard
 			<?php
 			}
 			?>
-
 			</ul>
 			<div class="tab-content" id="pills-tabContent">
 			  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-			  	
+			
 			  	<div id="inv_status">
 					
+				</div>
+				<div class="alert alert-secondary ">
+					<h5 class="text-dark">Suggestion</h5>
+			  	<p class="text-dark">Let's learn these simple steps to kickstart how Innoventory works.</p>
+			  	<a href="{{ route('gohow') }}" class="btn btn-sm btn-primary">Go to Tutorial</a>
 				</div>
 
 				

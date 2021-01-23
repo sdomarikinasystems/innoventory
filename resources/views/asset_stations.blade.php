@@ -5,9 +5,6 @@ Inno... - Stations
 @endsection
 
 @section('contents')
-
-<h2>Manage Schools</h2>
-
 <input type="hidden" value="{{ session('user_school') }}" id="myschool_realid" name="">
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">

@@ -5,8 +5,6 @@ Innoventory - Disposed Assets
 @endsection
 
 @section('contents')
-<h2>Disposed Assets</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page">Home</li>
@@ -46,10 +44,7 @@ Innoventory - Disposed Assets
   }
   ?>
 
-<h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
-
-
-
+  <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
  <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="capout" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-box"></i> Capital Outlay</a>

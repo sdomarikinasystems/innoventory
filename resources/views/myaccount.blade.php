@@ -5,13 +5,10 @@ Innoventory - My Account
 @endsection
 
 @section('contents')
-<h2>My Account</h2>
-
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Reports</li>
-    <li class="breadcrumb-item active" aria-current="page">Omitted Assets</li>
+    <li class="breadcrumb-item active" aria-current="page">My Account</li>
   </ol>
 </nav>
 

@@ -6,13 +6,11 @@ Inno... - Capital Outlay Omitted
 
 @section('contents')
 
-<h2>Asset Registry - Omitted Assets</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('assetregistry') }}">Asset Registry</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Omitted Assets</li>
+		<li class="breadcrumb-item active" aria-current="page">Asset Registry - Capital Outlay Omitted Assets</li>
 	</ol>
 </nav>
 
@@ -172,8 +170,6 @@ Make sure that you re-encoded these assets on your asset registry to prevent the
 
 	      		</div>
 	      	</div>
-
-
 	      </div>
 	      <div class="modal-footer">
 	        <button type="submit" class="btn btn-danger">Submit Report</button>
@@ -185,8 +181,7 @@ Make sure that you re-encoded these assets on your asset registry to prevent the
 </form>
 
 <script type="text/javascript">
-
-
+	var sc_id = <?php echo json_encode($_GET["station_id"]); ?>;
 
 	$("#spec_reason").change(function(){
 		var reason = $(this).val();
@@ -200,16 +195,15 @@ Make sure that you re-encoded these assets on your asset registry to prevent the
 			$("#spn").attr("required",true);
 		}else if (reason == "2"){
 			// SPECIFY
-			
 			$("#prop_remarks").css("display","block");
 			$("#remfield").attr("required",true);
 		}
 	})
-
+	
 	$.ajax({
 		type: "POST",
 		url: "{{ route('get_omitteditems_astable') }}",
-		data: {_token:"{{ csrf_token() }}"},
+		data: {_token:"{{ csrf_token() }}",sid: sc_id},
 		success: function(data){
 			$("#tbl_omitted").html(data);
 			$("#tbl_omass").DataTable();

@@ -5,14 +5,11 @@ Inno... - Capital Outlay Upload Result
 @endsection
 
 @section('contents')
-
-<h2><i class="fas fa-box"></i> <span >Capital Outlay - Upload Summary</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/asset/registry">Asset Registry</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Upload Summary</li>
+		<li class="breadcrumb-item active" aria-current="page">Capital Outlay - Upload Summary</li>
 	</ol>
 </nav>
 
@@ -76,7 +73,7 @@ Inno... - Capital Outlay Upload Result
 		</ul>
 		<div class="tab-content" id="pills-tabContent">
 		  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-<table class="table table-sm table-bordered table-striped " id="tbl_allregups">
+				<table class="table table-bordered table-striped " id="tbl_allregups">
 					<thead>
 						<tr>
 							<th>Property Number</th>
@@ -85,12 +82,12 @@ Inno... - Capital Outlay Upload Result
 						</tr>
 					</thead>
 					<tbody>
-						<?php echo $_GET["i_logs"]; ?>
+						<?php echo gzuncompress($_GET["i_logs"]); ?>
 					</tbody>
 				</table>
 		  </div>
 		  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-<table class="table table-sm table-bordered table-striped " id="tbl_allomitt">
+<table class="table table-bordered table-striped " id="tbl_allomitt">
 					<thead>
 						<tr>
 						  <th scope="col">Property Number</th>
@@ -126,7 +123,7 @@ Inno... - Capital Outlay Upload Result
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	       <table class="table table-sm table-striped" id="todtnow">
+	       <table class="table table-striped" id="todtnow">
 	       	<thead>
 	       		<tr>
 	       			<th>Service Centers</th>

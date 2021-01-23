@@ -6,13 +6,12 @@ Generate Appendix 73 Report
 
 @section('contents')
 
-<h2>Generate Appendix 73 Report</h2>
 
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb mb-3">
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('asset_scanned') }}">Inventory</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Generate Report</li>
+		<li class="breadcrumb-item active" aria-current="page">Generate Appendix 73 Report</li>
 	</ol>
 </nav>
 

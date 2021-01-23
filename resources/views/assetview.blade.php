@@ -5,9 +5,6 @@ Innoventory (Loading....)
 @endsection
 
 @section('contents')
-<h2>Asset Registry</h2>
-
-
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item " aria-current="page"><a href="/innoventory/asset/registry">Asset Registry</a></li>

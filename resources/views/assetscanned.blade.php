@@ -6,8 +6,6 @@ Innoventory - Inventory
 
 @section('contents')
 
-<h2>Inventory</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page">Home</li>
@@ -586,7 +584,10 @@ GetScannedCapital();
     $.ajax({
     type: "POST",
     url: "{{ route('get_noscitems') }}",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
+    data: {_token:"{{ csrf_token() }}",
+    "station_number":sc_id,
+    selyear:choosen_year,
+    selmonth:choosen_month},
     success: function(data){
       if(data == "0"){
  $("#notextsum").html("No items missing");

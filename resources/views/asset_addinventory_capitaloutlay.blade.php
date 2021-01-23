@@ -27,7 +27,7 @@ Innoventory - Inventory Mode
 	
 		  <div class="card mb-3">
 		  	<div class="card-header">
-		  		<button class="btn btn-sm btn-danger float-right" data-toggle="modal" data-target="#modal_changeassetlocationsource" onclick="OnSelect_ServiceCenterQuickInfo()"><i class="fas fa-sync"></i> Service Center</button>
+		  		<button class="btn btn-sm btn-danger float-right" data-toggle="modal" data-target="#modal_changeassetlocationsource" id="chooseserv" onclick="OnSelect_ServiceCenterQuickInfo()"><i class="fas fa-sync"></i> Service Center</button>
 				<h5 class="mt-0 "><strong class="text-dark curr_roomname"></strong></h5>
 				<p class="mb-0"><span class="mb-0" id="curr_roomnumber">Room: <strong>...</strong></span> / <span class="mb-0">In-charge: <strong id="curr_roomincharge">...</strong></span></p>
 		  	</div>
@@ -62,7 +62,6 @@ Innoventory - Inventory Mode
 					<div class="card-body">
 						<h5 class="m-0 float-right" ><span id="allscannedassets"></span>/<span id="allscannedassets_max"></span></h5>
 				<small><span class="text-muted">All</span></small>
-				
 				<progress id="prog_all" style="width: 100%;" value="34" max="100">
 			</div>
 				</div>
@@ -141,7 +140,7 @@ Innoventory - Inventory Mode
 	</div>
 </div>
 
-<div class="modal" tabindex="-1" role="dialog" id="modal_changeassetlocationsource" onclick="OnSelect_ServiceCenterQuickInfo()">
+<div class="modal" tabindex="-1" role="dialog" id="modal_changeassetlocationsource" >
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -191,7 +190,7 @@ Innoventory - Inventory Mode
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="GetRoomInformationByID(false)" data-dismiss="modal"><i class="fas fa-sync-alt"></i> Change Service Center</button>
+        <button type="button" class="btn btn-primary" id="chlocbtn" onclick="GetRoomInformationByID(false)" data-dismiss="modal"><i class="fas fa-sync-alt"></i> Change Service Center</button>
       </div>
     </div>
   </div>
@@ -220,6 +219,7 @@ Innoventory - Inventory Mode
 
 
 <script type="text/javascript">
+	$("#chooseserv").hide();
 	$("#inp_qrfocus").focus();
 	var current_location_id = "";
 	var separator_word = "<|next|>";
@@ -260,7 +260,21 @@ Innoventory - Inventory Mode
 		 }
 	})
 
-	CheckRediness();
+
+
+CheckLastSession();
+
+	function CheckLastSession(){
+		$.ajax({
+			type:"POST",
+			url: "{{ route('') }}",
+			data: {_token: "{{ csrf_token() }}"},
+			success : function(data){
+
+				CheckRediness();
+			}
+		})
+	}
 	function CheckRediness(){
 	$.ajax({
   		type: "POST",
@@ -269,11 +283,18 @@ Innoventory - Inventory Mode
   		success:function(data){
   			// alert(data);
   			currentlyready = data;
+  		
+  			setTimeout(function(){
+				ApplyScanningSettings();
+  			},600)
+  			setTimeout(function(){
+				LoadAllLocations();
+  			},800)
   		}
   	})
 }
 
-	ApplyScanningSettings();
+	
 	$("#inp_autorecieve").change(function(){
 		ApplyScanningSettings();
 	})
@@ -318,8 +339,10 @@ Innoventory - Inventory Mode
 				$("#inp_qrfocus").focus();
 			}
 	}
-	var savetime = 500;
-	function RunDataSavingProcess(){
+	var savetime = 1000;
+
+var loaded_data_pausetime =0;
+	async function RunDataSavingProcess(){
 
 		var currentdata = $("#rawdatatext").val();
 		var data_fragment = currentdata.split(separator_word);
@@ -333,21 +356,30 @@ Innoventory - Inventory Mode
 		for(var i = 0; i < totalscannedasset;i++){
 			// location id,code,timestamp, item name, asset type, gorg timestamp
 			if(data_fragment[i] != ""){
-				var single_data = data_fragment[i].split(col_XX);
-
+var single_data = data_fragment[i].split(col_XX);
 				var ss_locationid = single_data[0];
 				var ss_assetcode = single_data[1];
 				var ss_timestamp = single_data[2];
 				var ss_asset_name = single_data[3];
 				var ss_assettype = single_data[4];
+		if(loaded_data_pausetime < 100){
+			await x_timer(256);
+			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
+			// loaded_data_pausetime++;
+		}else{
+			await x_timer(1000);
+			// alert("pausetime");
+			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
+			loaded_data_pausetime = 0;
+		}
 
-				AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
 			}
 		}
 	}
 
+
 	function AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype){
-		setTimeout(function(){
+		// setTimeout(function(){
 
 		if(currentlyready.includes(ss_assettype)){
 			$.ajax({
@@ -371,13 +403,12 @@ Innoventory - Inventory Mode
 		}else{
 				transfercount++;
 				Revisualize_percentage_transferUI();
-				$("#visual_data_representation").prepend("<span class='addtext_anim text-danger'>(" + ss_assettype + ") " + ss_assetcode + " -> " + ss_asset_name + " <i class='fas fa-check-circle'></i><span><br>");
-				savetime -= 333;
-							
+				$("#visual_data_representation").prepend("<span class='addtext_anim text-danger'>(" + ss_assettype + ") " + ss_assetcode + " -> " + ss_asset_name + " <i class='fas fa-check-circle'></i><span><br>");		
 		}
-		},savetime)
-		savetime += 555;
+		// },savetime)
+		// savetime += 555;
 	}
+	function x_timer(ms) { return new Promise(res => setTimeout(res, ms)); }
 	function Revisualize_percentage_transferUI(){
 		var currentdata = $("#rawdatatext").val();
 		var data_fragment = currentdata.split(separator_word);
@@ -397,14 +428,17 @@ Innoventory - Inventory Mode
 			$("#step_3").show();
 		}
 	}
-
 	function OnSelect_ServiceCenterQuickInfo(){
+		$("#toloadservicecenters").prop("disabled",true);
+		$("#chooseserv").hide();
+		$("#chlocbtn").hide();
 		var idof_servicecenter = $("#toloadservicecenters").val();
 		$.ajax({
 			type:"POST",
 			url: "{{ route('stole_single_service_center_data_byid') }}",
 			data: {_token: "{{ csrf_token() }}",service_center_id: idof_servicecenter},
 			success: function(data){
+					
 				data = JSON.parse(data);
 				// display in-charge
 				if(data[0]["username"] != "" && data[0]["username"] != null){
@@ -434,19 +468,17 @@ Innoventory - Inventory Mode
 					se_count ++;
 					}
 					last_scannedtime = single_data[5];
-					last_scannedasset = single_data[3];
+					var sc_code = single_data[3].split(col_s_COUNT);
+					last_scannedasset = sc_code[0];
 				}}
 				}
 				$("#prev_capitaloutlay").html(co_count);
 				$("#prev_semiexpendable").html(se_count);
 				$("#prev_totalscannedasset").html(allscanned);
-
-
 				RunPreviewOfMaxValIn_servicecenters($("#toloadservicecenters").val());
-				
-
 				$("#prev_lastscantime").html(last_scannedtime);
 				$("#prev_lastscanitem").html(last_scannedasset);
+
 			}
 		})
 	}
@@ -461,11 +493,14 @@ Innoventory - Inventory Mode
 				$("#prev_totalscannedasset_max").html((parseInt(data[0]) + parseInt(data[1])));
 				$("#prev_capitaloutlay_max").html( data[0]);
 				$("#prev_semiexpendable_max").html(data[1]);
-
+			
+				$("#toloadservicecenters").prop("disabled",false);
+				$("#chooseserv").show();
+				$("#chlocbtn").show();
+			
 			}
 		})
 	}
-	
 	$(window).bind('beforeunload', function(){
 		if($("#rawdatatext").val() != "" && $("#rawdatatext").val() != null){
 			if(iscomplete == false){
@@ -528,7 +563,7 @@ Innoventory - Inventory Mode
 	function convertTZ(date, tzString) {
     return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
 }
-	LoadAllLocations();
+	
 	function LoadAllLocations(){
 		$.ajax({
 			type:"POST",
@@ -558,8 +593,14 @@ Innoventory - Inventory Mode
 				if(data.length != 0){
 					// Apply in UI
 					selected_location_info = data;
-					ApplySelectedLocationInfoToUI();
-					GetMaxValues();
+					setTimeout(function(){
+						ApplySelectedLocationInfoToUI();
+					},300)
+
+					setTimeout(function(){
+						GetMaxValues();
+					},400)
+					
 					if(is_silent == false){
 						alert("Service Center successfully selected!");
 						$("#inp_qrfocus").focus();
@@ -584,7 +625,7 @@ Innoventory - Inventory Mode
 				$("#allscannedassets_max").html((parseInt(ref_max_co) + parseInt(ref_max_se)));
 				$("#allscannedassets_capitaloutlay_max").html(ref_max_co);
 				$("#allscannedassets_semiexpendable_max").html(ref_max_se);
-
+$("#chooseserv").show();
 			}
 		})
 	}
@@ -651,7 +692,10 @@ Innoventory - Inventory Mode
 		$.ajax({
 			type:"POST",
 			url: "{{ route('stole_scanned_item_details') }}",
-			data: {_token: "{{ csrf_token() }}",sta_id: current_station_id,scanned_cod: newdata},
+			data: {_token: "{{ csrf_token() }}",
+				sta_id: current_station_id,
+				scanned_cod: newdata,
+				location_id: current_location_id},
 			success: function(data){
 				current_moreinfo = JSON.parse(data);
 				if(current_moreinfo.length !=0){
@@ -705,7 +749,7 @@ Innoventory - Inventory Mode
 				filtershow_all();
 				}else{
 				// REFERENCE NOT FOUND
-				AddToErrorLogs("Reference not found in asset registry.\n\nCause: Not encoded in registry, Asset is encoded but contains discrepancies");
+				AddToErrorLogs("Reference not found in asset registry. Make sure you are on the right service center and this asset(" + newdata  + ") is in the registry.");
 				}
 
 				$("#inp_qrfocus").val("");
@@ -722,8 +766,8 @@ Innoventory - Inventory Mode
 	}
 
 	function isNumeric(num){
-  return !isNaN(num)
-}
+		return !isNaN(num)
+	}
 	function CheckIfAssetCodeIsExisiting(asset_code){
 		var existing = false;
 		var currentdata = $("#rawdatatext").val();
@@ -734,11 +778,20 @@ Innoventory - Inventory Mode
 			// location id,code,timestamp, item name, asset type
 			if(data_fragment[i] != ""){
 			var single_data = data_fragment[i].split(col_XX);
-			// if(single_data[0] == current_location_id){
+
+			if(single_data[4] == "co"){
+				//CAPITAL
+				if(single_data[1] == asset_code){
+					existing = true;
+				}
+			}else{
+				//SEMI 
+				if(single_data[0] == current_location_id){
 					if(single_data[1] == asset_code){
 						existing = true;
 					}
-				// }
+				}
+			}
 			}
 		}
 		return existing;

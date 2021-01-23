@@ -5,8 +5,6 @@ Innoventory - Resources
 @endsection
 
 @section('contents')
-<h2>Resources</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page">Home</li>
@@ -41,23 +39,22 @@ Innoventory - Resources
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
     
-
  <div class="mt-3">
-    <table class="table table-sm table-striped table-bordered" id="dtbl">
-  <thead>
-    <tr>
-    <th scope="col"></th>
-    <th scope="col">File Name</th>
-    <th scope="col">Uploaded By</th>
-    <th scope="col">Date Uploaded</th>
-    <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody id="allmyres">
-  </tbody>
-</table>
- </div>
 
+  <table class="table table-striped table-bordered" id="dtbl">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">File Name</th>
+        <th scope="col">Uploaded By</th>
+        <th scope="col">Date Uploaded</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody id="allmyres"></tbody>
+  </table>
+
+ </div>
 
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">

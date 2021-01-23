@@ -5,14 +5,11 @@ Inno... - Semi-Expendable Upload Result
 @endsection
 
 @section('contents')
-
-<h2><i class="fas fa-boxes"></i> <span >Semi-Expendable - Upload Summary</h2>
-
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>
     <li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/asset/registry">Asset Registry</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Upload Summary</li>
+    <li class="breadcrumb-item active" aria-current="page">Semi-Expendable - Upload Summary</li>
   </ol>
 </nav>
 

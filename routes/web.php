@@ -149,6 +149,8 @@ Route::post("/get_mysemi_omitted",["uses"=>"functions@look_semi_expendable_omitt
 Route::post("/get_suppy_data",["uses"=>"functions@look_all_of_my_supply_data","as"=>"stole_all_of_my_supply_data"]);
 Route::post("/validate_uploaded_supply_file",["uses"=>"functions@look_preview_of_uploaded_supplyfile","as"=>"stole_preview_of_uploaded_supplyfile"]);
 Route::post("/add_new_supply",["uses"=>"functions@fire_add_supply","as"=>"shoot_add_supply"]);
+Route::post("/clear_specific_asset_data_by_type_station",["uses"=>"functions@fire_delete_specific_assetdata_all","as"=>"shoot_delete_specific_assetdata_all"]);
+
 
 // ASSET INVENTORY PAGE
 Route::post("/upload_semi_expendable_inventory",["uses"=>"functions@fire_uploadsemiexpendabledatascanned","as"=>"shoot_uploadsemiexpendabledata"]);
@@ -185,7 +187,7 @@ Route::post("/get_single_scanned_data_by_code",["uses"=>"functions@look_scanned_
 Route::post("/get_maxval_of_capitalo_and_semie",["uses"=>"functions@look_get_max_values_of_CoSe","as"=>"stole_get_max_values_of_CoSe"]);
 Route::post("/submit_scanned_asset_datum",["uses"=>"functions@fire_submit_scanned_data","as"=>"shoot_submit_scanned_data"]);
 Route::post("/check_rediness_specific",["uses"=>"functions@look_checkready_specific","as"=>"stole_checkready_specific"]);
-
+Route::post("/check_if_last_session",["uses"=>"functions@look_last_session","as"=>"stole_last_session"]);
 // ASSET SEMI EXPENDABLE DISCREPANCIES
 Route::get("/innoventory/asset_registry/semi_expendable/discrepancies",["uses"=>"functions@fly_semiexpendable_discrepancies","as"=>"goto_semiexpendable_discrepancies"]);
 

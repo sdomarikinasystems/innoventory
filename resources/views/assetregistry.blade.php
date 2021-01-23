@@ -5,9 +5,6 @@ Innoventory - Asset Registry
 @endsection
 
 @section('contents')
-
-<h2>Asset Registry</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>
@@ -23,9 +20,9 @@ Innoventory - Asset Registry
 <div id="lod_change_ass_source" style="display:none; top: 0; right: 0; left: 0; bottom: 0; position: fixed; background-color: rgba(0,0,0,0.9); z-index: 100; color:white;">
  <center><br><br><br><h4 class="mt-5">Changing Asset Source</h4></center>
 </div>
- <?php
-      if(session("user_type") == "0" || session("user_type") == "1"){
-    ?>
+  <?php
+    if(session("user_type") == "0" || session("user_type") == "1"){
+  ?>
   <!-- FOR ADMIN ONLY -->
     <a class="btn btn-secondary dropdown-toggle float-right" href="#" id="navbardrop" data-toggle="dropdown">
     <i class="fas fa-filter"></i> Filter Asset Source</a>
@@ -53,7 +50,7 @@ Innoventory - Asset Registry
       </div>
     </div>
   <?php
-  }
+    }
   ?>
   <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
   <!--ASSET REGISTRY-->
@@ -82,7 +79,25 @@ Innoventory - Asset Registry
           <th>Total Assets</th>
           <th>Discrepancies</th>
           <th>Omitted</th>
-          <th>Last Updated</th>
+          <th> 
+
+                        <?php
+    if(session("user_type") == "0" || session("user_type") == "1"){
+  ?>
+ <div class="dropdown">
+            <a class="btn btn-link float-right btn-sm" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-caret-down"></i>
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#unicleardata" onclick="ClearAssetData(this)" data-datatoclear="Supply"><i class="fas fa-trash"></i> Clear Supply Data</a>
+            </div>
+          </div>
+  <?php
+    }
+  ?>
+
+  Last Updated</th>
         </tr>
       </thead>
       <tbody>
@@ -348,7 +363,21 @@ Innoventory - Asset Registry
           <th>Total Assets</th>
           <th>Discrepancies</th>
           <th>Omitted</th>
-          <th>Last Updated</th>
+          <th>                         <?php
+    if(session("user_type") == "0" || session("user_type") == "1"){
+  ?>
+ <div class="dropdown">
+            <a class="btn btn-link float-right btn-sm" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-caret-down"></i>
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#unicleardata"  onclick="ClearAssetData(this)" data-datatoclear="Semi-Expendable"><i class="fas fa-trash"></i> Clear Semi-Expendable Data</a>
+            </div>
+          </div>
+  <?php
+    }
+  ?> Last Updated</th>
         </tr>
       </thead>
       <tbody>
@@ -405,8 +434,23 @@ Innoventory - Asset Registry
           <th>Total Assets</th>
           <th>Discrepancies</th>
           <th>Omitted</th>
-          <th>Last Updated</th>
-        
+          <th>
+                                   <?php
+    if(session("user_type") == "0" || session("user_type") == "1"){
+  ?>
+ <div class="dropdown">
+            <a class="btn btn-link float-right btn-sm" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-caret-down"></i>
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#unicleardata"  onclick="ClearAssetData(this)" data-datatoclear="Capital Outlay"><i class="fas fa-trash"></i> Clear Capital Outlay Data</a>
+            </div>
+          </div>
+  <?php
+    }
+  ?>
+        Last Updated</th>
         </tr>
       </thead>
       <tbody id="assvalsum">
@@ -609,7 +653,51 @@ Innoventory - Asset Registry
   </div>
 </form>
 
+
+<div class="modal" tabindex="-1" role="dialog" id="unicleardata">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Clear <span class="assdataname"></span> Data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="mt-5 mb-5">All of <span class="assdataname"></span> on this selected station will be permanently deleted with its omitted data. Inventory and Resource files will not be inluded in this deletion.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="ProceedToAssetDeletion()"><i class="fas fa-trash"></i> Clear <span class="assdataname"></span></button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <script type="text/javascript">
+  var dttoclear;
+    function ClearAssetData(control_obj){
+      dttoclear = $(control_obj).data("datatoclear");
+      $(".assdataname").html(dttoclear);
+    }
+
+    function ProceedToAssetDeletion(){
+
+    var stid = $("#myschool_realid").val();
+         // alert(stid);
+    $.ajax({
+      type:"POST",
+      url: "{{ route('shoot_delete_specific_assetdata_all') }}",
+      data: {_token: "{{ csrf_token() }}",station_id:stid,asset_type: dttoclear},
+      success: function(data){
+      alert(dttoclear + " asset clearing process completed!");
+      LoadAssets();
+      }
+    })
+
+    }
+
+
     $("#tbl_ass").DataTable();
     $("#tbl_semiexpendable").DataTable();
     $("#tbl_supply").DataTable();
@@ -709,15 +797,14 @@ Innoventory - Asset Registry
       })
     }
     function LoadAssetRegistrySummary(sc_id){
+       var school_real_id = $("#myschool_realid").val();
       $.ajax({
         type: "POST",
         url: "{{ route('loadassetvalsum') }}",
-        data: {_token:"{{ csrf_token() }}",selected_realid:sc_id},
+        data: {_token:"{{ csrf_token() }}",selected_realid:school_real_id},
         success: function(data){
         $("#assvalsum").html(data);
-
             LoadSemiExpendable();
-  
         }
       })
     }

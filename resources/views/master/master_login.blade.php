@@ -32,7 +32,13 @@
 .featurefont{
 	font-family: archfont;
 }
-
+@font-face {
+  font-family: regularfontnew;
+  src: url({{ asset('fonts/sanfrancisco_pro.ttf')  }});
+}
+body {
+	font-family: regularfontnew;
+}
 	pre {
     white-space: pre-wrap;       /* Since CSS 2.1 */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
@@ -72,9 +78,10 @@
 		background-color: rgba(255,255,255,0.9);
 	}
 	.form-control{
-		border-radius: 6px !important;
-		background-color: #dfe4ea;
+		border-radius: 20px !important;
+		background-color: #F8F9FA;
 		border:none;
+		box-shadow:inset  0px 1px 3px rgba(0,0,0,0.2);
 	}
 	.sub-list-group {
 		margin-top: 10px;
@@ -105,7 +112,25 @@
 			transform: scale(0.9);
 		}
 	}
-	
+	.tridify {
+		font-size: 50px;
+		text-transform: uppercase;
+		color: #f5f5f5;
+		text-shadow: 1px 1px 1px #919191,
+		1px 1px 1px #919191,
+		1px 2px 1px #919191,
+		1px 3px 1px #919191,
+		1px 4px 1px #919191,
+		1px 5px 1px #919191,
+		1px 6px 1px #919191,
+		1px 7px 1px #919191,
+		1px 4px 1px #919191,
+		1px 5px 1px #919191,
+		1px 5px 6px rgba(16,16,16,0.4),
+		1px 7px 10px rgba(16,16,16,0.2),
+		1px 8px 35px rgba(16,16,16,0.2),
+		1px 10px 60px rgba(16,16,16,0.4);
+	}
 </style>
 
 <body>

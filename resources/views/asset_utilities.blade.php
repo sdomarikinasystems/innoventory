@@ -5,44 +5,58 @@ Inno... - Utilities
 @endsection
 
 @section('contents')
-
-<h2>QR Stickers</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page">Home</li>
-		<li class="breadcrumb-item active" aria-current="page">Utilities</li>
+		<li class="breadcrumb-item active" aria-current="page">QR Stickers</li>
 	</ol>
 </nav>
 
-<div class="row mb-3">
-	<div class="col-sm-6">
-		<h5><i class="fas fa-filter"></i> Filter</h5>
-		<div class="form-group">
-			<label>Service Center</label>
-			<select class="form-control" onchange="	LoadContentsbyservicecenter(this)" id="id_qrfilter">
-				
-			</select>
-
-		</div>
-		<a href="" class="mt-3" data-toggle="modal" data-target="#modal_miss"><i class="fas fa-question-circle"></i> Why some of my asset(s) are not displaying?</a>
-	</div>
-	<div class="col-sm-6">
-	<div class="card" id="startinginfo">
+<div class="card-deck mb-3">
+	<div class="card">
 		<div class="card-body">
-			<h5><i class="fas fa-tasks"></i> Check item(s) to Generate</h5>
+			<a href="" class="float-right" data-toggle="modal" data-target="#modal_miss"><i class="fas fa-question-circle"></i></a>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+				<label>Service Center</label>
+					<select class="form-control" onchange="LoadContentsbyservicecenter()" id="id_qrfilter">
+					</select>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label>Asset Type</label>
+					<select onchange="LoadContentsbyservicecenter()" class="form-control" id="asset_type">
+						<option value="co" id="val_co">Capital Outlay</option>
+						<option value="se" id="val_se">Semi-Expendable</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div class="card-footer">
+			<i class="fas fa-filter"></i> Filter
+		</div>
+	</div>
+	<div class="card" id="startinginfo">
+		<div class="card-body">	
 			<h6>You can <strong>Check All</strong> to print all QR Stickers for your asset(s) or individually select and filter them.</h6>
 		</div>
+		<div class="card-footer">
+			<i class="fas fa-tasks"></i> Check item(s) to Generate
+		</div>
 	</div>
-
 	<div class="card" id="selectinginfo">
 		<div class="card-body">
-			<h5 id="selected_count"></h5>
-			<button class="btn btn-primary mt-3" id="print"><i class="fas fa-qrcode"></i> Print to QR Stickers</button>
+			<h5 id="selected_count"></h5>	
+		</div>
+		<div class="card-footer">
+			<button class="btn btn-primary btn-sm" id="print"><i class="fas fa-qrcode"></i> Print to QR Stickers</button>
 		</div>
 	</div>
 	
-	</div>
+
 	
 </div>
 
@@ -63,7 +77,19 @@ Inno... - Utilities
 </div>
 <div class="row">
 	<div class="col-sm-12 table-responsive">
-		<table class="table table-hover table-bordered" id="tbl_ass">
+		<div id="warning" style="display: none;">
+			<div class="card">
+				<div class="card-body">
+					<h3 class="text-danger mt-4"><i class="fas fa-times"></i> <span id="asstypename"></span></h3>
+					<p id="whattodo" class="mb-4"></p>
+				</div>
+				<div class="card-footer">
+					<a class="btn btn-secondary" href="{{ route('assetregistry') }}">Fix Discrepancies</a>
+				</div>
+			</div>
+		</div>
+		<div id="thedistable">
+			<table class="table table-hover table-bordered" id="tbl_ass">
 		<thead>
 			<tr>
 				<th scope="col">
@@ -75,32 +101,18 @@ Inno... - Utilities
 						</label>
 					</div>
 				</th>
-				<th scope="col" width="150">Property Number</th>
-				<th scope="col">Asset Item</th>
-				<th scope="col">Asset Classification</th>
-				<th scope="col">Current Condition</th>
-				<th scope="col">Service Center</th>
-				<th scope="col">Room</th>
+				<th scope="col" width="150" id="tblhead_propnum">Property Number</th>
+				<th scope="col" id="tblhead_assetitem">Asset Item</th>
+				<th scope="col" id="tblhead_assclass">Asset Classification</th>
+				<th scope="col" id="tblhead_currcond">Current Condition</th>
+				<th scope="col" id="tblhead_servcent">Service Center</th>
+				<th scope="col" id="tblhead_roomnum">Room</th>
 			</tr>
 		</thead>
 		<tbody id="tbl_qrcontents">
-			@foreach($key as $data)
-				<tr>
-					<td>
-						<div class="form-check">
-							<input data-propno="{{ $data['property_number'] }}" class="form-check-input checkbox_y" type="checkbox" value="" id="defaultCheck1">
-						</div>
-					</td>
-					<td>{{ $data['property_number'] }}</td>
-					<td>{{ $data['asset_item'] }}</td>
-					<td>{{ $data['asset_classification'] }}</td>
-					<td>{{ $data['current_condition'] }}</td>
-					<td>{{ $data['service_center'] }}</td>
-					<td>{{ $data['room_number'] }}</td>
-				</tr>
-			@endforeach
 		</tbody>
 		</table>
+		</div>
 	</div>
 </div>
 
@@ -117,46 +129,122 @@ Inno... - Utilities
 				    }
 				});
 		if(countofselected == 0){
-			$("#selectinginfo").css("display","none");
-$("#startinginfo").css("display","block");
+			$("#selectinginfo").hide();
+$("#startinginfo").show();
 
 		}else{
 			$("#selected_count").html("<i class='fas fa-print'></i> Print <strong>" + countofselected + "</strong> Visible Selected Asset(s)");
-			$("#selectinginfo").css("display","block");
-			$("#startinginfo").css("display","none");
+			$("#selectinginfo").show();
+			$("#startinginfo").hide();
 		}
 		
 	},100)
-
+	var currentlyready = "";
+	var hasfilterlocaded = false;
 	LoadServiceCenterFilter();
+
+
 	function LoadServiceCenterFilter(){
-		$.ajax({
+		$("#id_qrfilter").prop("disabled",true);
+		$("#asset_type").prop("disabled",true);
+		if(hasfilterlocaded == false){
+			$.ajax({
 			type:"POST",
 			url: "{{ route('get_ser_of_sta_fo_fil') }}",
 			data: {_token:"{{ csrf_token() }}"},
 			success: function(data){
 				$("#id_qrfilter").html(data);
+				CheckRediness();
 
 			}
 		})
+		}else{
+				CheckRediness();
+		}
+		hasfilterlocaded = true;
 	}
+	function CheckRediness(){
 
-	function LoadContentsbyservicecenter(control_obj){
-		var myval = $(control_obj).val().split("|");
-		// alert(myval[0]);
+		
+
+	$.ajax({
+		type: "POST",
+		url: "{{ route('stole_checkready_specific') }}",
+		data: {_token: "{{ csrf_token() }}",user_school: <?php echo json_encode(session("user_school")); ?>},
+		success:function(data){
+			// alert(data);
+			currentlyready = data;
+			LoadContentsbyservicecenter();
+		}
+	})
+	}
+	function LoadContentsbyservicecenter(){
+		$("#thedistable").hide();
+
+		$("#id_qrfilter").prop("disabled",true);
+		$("#asset_type").prop("disabled",true);
+		// alert("runned!");
+		$("#master_check").prop("checked",false);
+		var myval = $("#id_qrfilter").val().split("|");
+		var ass_type = $("#asset_type").val();
+
+		if(currentlyready.includes(ass_type)){
+				$("#thedistable").show();
+				$("#warning").hide();
+				if(ass_type == "co"){
+			// CAPITAL OUTLAY
+			$("#tblhead_propnum").html("Property Number");
+			$("#tblhead_assetitem").html("Asset Item");
+			$("#tblhead_assclass").html("Asset Classification");
+			$("#tblhead_currcond").html("Current Condition");
+			$("#tblhead_servcent").html("Service Center");
+			$("#tblhead_roomnum").html("Room");
+		}else{
+			// SEMI-EXPENDABLE
+			$("#tblhead_propnum").html("Stock Number");
+			$("#tblhead_assetitem").html("Description");
+			$("#tblhead_assclass").html("Article");
+			$("#tblhead_currcond").html("Unit of Mesure");
+			$("#tblhead_servcent").html("Service Center");
+			$("#tblhead_roomnum").html("Room");
+		}
 		$.ajax({
 			type:"POST",
 			url: "{{ route('Loadqrbyservicecen') }}",
-			data: {_token:"{{ csrf_token() }}",service_center:myval[0],room_number:myval[1]},
+			data: {_token:"{{ csrf_token() }}",
+			service_center:myval[0],
+			room_number:myval[1],
+			asset_type: ass_type},
 			success: function(data){
 				// alert(data);
 				  $("#tbl_ass").DataTable().destroy();
 				$("#tbl_qrcontents").html(data);
-				$("#tbl_ass").DataTable();
+				// $("#tbl_ass").DataTable();
+				$('#tbl_ass').DataTable({  "bPaginate": false,"ordering":false});
+				$("#id_qrfilter").prop("disabled",false);
+				$("#asset_type").prop("disabled",false);
 			}
 		})
-	}
+		}else{
+			$("#thedistable").hide();
+			$("#warning").show();
 
+			if(ass_type == "co"){
+				$("#asstypename").html("Capital Outlay");
+				$("#whattodo").html("Please fix all discrepancies in your " + "Capital Outlay" + " assets in your Asset Registry page first before you generate QR Stickers.");
+			}else{
+				$("#asstypename").html("Semi-Expendable");
+				$("#whattodo").html("Please fix all discrepancies in your " + "Semi-Expendable" + " assets in your Asset Registry page first before you generate QR Stickers.");
+			}
+setTimeout(function(){
+	$("#id_qrfilter").prop("disabled",false);
+				$("#asset_type").prop("disabled",false);
+			},1000)
+			
+		}
+
+		
+	}
 	function toggle(source) {
 	var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 		for (var i = 0; i < checkboxes.length; i++) {
@@ -164,8 +252,6 @@ $("#startinginfo").css("display","block");
 		    	checkboxes[i].checked = source.checked;
 		}
 	}
-
-	$('#tbl_ass').DataTable({  "bPaginate": false,"ordering":false});
 	$('#print').click(function(){
 		var arr1 = [];
 		$('table tr').each(function(i) {
@@ -174,7 +260,7 @@ $("#startinginfo").css("display","block");
 
 		    // Only check rows that contain a checkbox
 		    if(chkbox.prop('checked') == true) {
-		    	console.log(chkbox.data('propno'));
+		    	// console.log(chkbox.data('propno'));
 				arr1.push(chkbox.data('propno'));
 		    }
 		});
@@ -182,8 +268,7 @@ $("#startinginfo").css("display","block");
 			alert("Please select and asset first before you print QR Stickers!");
 		} else {
 			localStorage.setItem('pnumber_arr', JSON.stringify(arr1));
-			console.log(JSON.stringify(arr1));
-			window.open('{{ route("pr_asset") }}', '_blank'); // <- This is what makes it open in a new window.
+			window.open('{{ route("pr_asset") }}?ass_type=' + $("#asset_type").val() + '&locationinfo=' + $("#id_qrfilter").val(), '_blank'); // <- This is what makes it open in a new window.
 		}
 	})
 </script>

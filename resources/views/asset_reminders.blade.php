@@ -6,8 +6,6 @@ Innoventory - Reminders
 
 @section('contents')
 
-<h2>Reminders</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>

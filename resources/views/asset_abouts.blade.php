@@ -5,7 +5,6 @@ Innoventory - Abouts
 @endsection
 
 @section('contents')
-<h2>About the System</h2>
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item " aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>

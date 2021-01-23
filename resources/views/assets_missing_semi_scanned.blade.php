@@ -5,9 +5,6 @@ Inno... - Semi-Expendable Missing
 @endsection
 
 @section('contents')
-
-<h2>Semi-Expendable - Items Not Found</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page">Home</li>

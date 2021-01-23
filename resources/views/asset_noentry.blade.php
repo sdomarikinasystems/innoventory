@@ -5,14 +5,11 @@ Inno... - Capital Outlay Missing
 @endsection
 
 @section('contents')
-
-<h2>Capital Outlay - Missing Asset(s)</h2>
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('asset_scanned') }}">Inventory</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Capital Outlay - Items Not Found</li>
+		<li class="breadcrumb-item active" aria-current="page">Capital Outlay - Missing Asset(s)</li>
 	</ol>
 </nav>
 

@@ -125,7 +125,16 @@ class functions extends Controller
     }
 
     // FUNCTIONS
+    public function look_last_session(){
+      
+    }
+    public function fire_delete_specific_assetdata_all(Request $req){
+        $result = $this->send(["tag"=>"DELETE_DATA_ASSET_BYSTATION_TYPE",
+          "station_id"=>$this->sdmenc($req["station_id"]),
+          "asset_type"=>$this->sdmenc($req["asset_type"])]);  
 
+        return json_encode($result);
+    }
  public function look_generate_se_app66_data(Request $req){
       $loc_id = $this->sdmenc($req["locationid"]);
 
@@ -347,7 +356,8 @@ $this->RecordLog("a02");
     public function look_scanned_item_details(Request $req){
        $out = $this->send(["tag"=>"GET_SINGLE_SCANNED_ASSET_DETAILS",
                           "station_id"=>$this->sdmenc($req["sta_id"]),
-                          "code"=>$this->sdmenc($req["scanned_cod"])]);
+                          "code"=>$this->sdmenc($req["scanned_cod"]),
+                          "loc_id"=>$this->sdmenc($req["location_id"])]);
        return json_encode($out);
     }
     public function look_single_service_center_data_byid(Request $req){
@@ -1050,7 +1060,7 @@ $this->RecordLog("a02");
       return  $toecho;
     }
     public function look_my_semiexpendable_descrepancies(Request $req){
-        $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"])]);
+        $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"]),"location_id"=>$this->sdmenc("all")]);
 
       $toecho = "";
       $desccount = 0;
@@ -1178,7 +1188,7 @@ $this->RecordLog("a02");
       return $toecho;
     }
     public function look_semi_expendable_bystation(Request $req){
-      $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"])]);
+      $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"]),"location_id"=>$this->sdmenc("all")]);
 
       $toecho = "";
 
@@ -1240,7 +1250,7 @@ $this->RecordLog("a02");
       $file = fopen($upload_CSVFILE, "r");
       $toecho = "";
       // SELECT ALL EXISTING SEMI EXPENDABLE
-      $AllSemiExpendable = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
+      $AllSemiExpendable = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc(session("user_school")),"location_id"=>$this->sdmenc($req["service_center_id"])]);
 
       $tbl_discrepancies = "";
       $tbl_assetnofound = "";
@@ -1289,7 +1299,7 @@ $this->RecordLog("a02");
           for ($ix=0; $ix < count($AllSemiExpendable); $ix++) { 
           $is_exact = true; 
 
-          //CHECK IF HAS EXISTING STOCK NUMBER
+          //CHECK IF HAS EXISTING STOCK NUMBER AND LOCATION ID
           if($sem_stocknumber  != "" && $sem_stocknumber != null){
               if($sem_stocknumber == $AllSemiExpendable[$ix]["stock_number"]){
                 $has_existing_stock_number = true;
@@ -1769,49 +1779,73 @@ switch ($output[$i]["om_reason"]) {
       ]]);
       $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
 
-      $toecho = "<option selected value='all|all'>Show All</option>";
+      $toecho = "<option selected value='" . $this->sdmenc("all") . "|all'>Show All</option>";
 
       for ($i=0; $i < count($output); $i++) { 
-       $toecho .= "<option value='" . $output[$i]["office"] . "|" . $output[$i]["room_number"] . "'>" . $output[$i]["office"] . " (" . $output[$i]["room_number"] . ")" . "</option>";
+       $toecho .= "<option value='" . $this->sdmenc($output[$i]["office"]) . "|" . $output[$i]["room_number"] . "'>" . $output[$i]["office"] . " (" . $output[$i]["room_number"] . ")" . "</option>";
       }
       return $toecho;
     }
     public function get_qr_as_sbyer(Request $req){
      $tag = $this->sdmenc("getassqrbyroomfilter");
 
-      $service_center = $this->sdmenc($req["service_center"]);
+      $service_center = $this->sdmenc($this->sdmdec($req["service_center"]));
       $room_number = $this->sdmenc($req["room_number"]);
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
-      "station_id"=>$this->sdmenc(session("user_school")),
-      "service_center"=>$service_center,
-      "room_number"=>$room_number,
+        "tag"=>$tag,
+        "station_id"=>$this->sdmenc(session("user_school")),
+        "service_center"=>$service_center,
+        "room_number"=>$room_number,
+        "assettype"=>$this->sdmenc($req["asset_type"]),
       ]]);
 
       $out_res = $this->sdmdec($xresult->getBody()->getContents());
       $output = json_decode($out_res,true);
 
       $toecho = "";
-      for ($i=0; $i < count($output); $i++) { 
+    if($req["asset_type"] == "co"){
+         for ($i=0; $i < count($output); $i++) { 
        $toecho .= '
-<tr>
+        <tr>
           <td>
             <div class="form-check">
               <input data-propno="' . $output["$i"]["property_number"] . '" class="form-check-input checkbox_y" type="checkbox" value="" id="defaultCheck1">
             </div>
           </td>
-          <td>' . $output["$i"]["property_number"] . '</td>
-          <td>' . $output["$i"]["asset_item"] . '</td>
-          <td>' . $output["$i"]["asset_classification"] . '</td>
-          <td>' . $output["$i"]["current_condition"] . '</td>
-          <td>' . $output["$i"]["service_center"] . '</td>
-          <td>' . $output["$i"]["room_number"] . '</td>
+          <td>' . $output[$i]["property_number"] . '</td>
+          <td>' . $output[$i]["asset_item"] . '</td>
+          <td>' . $output[$i]["asset_classification"] . '</td>
+          <td>' . $output[$i]["current_condition"] . '</td>
+          <td>' . $output[$i]["service_center"] . '</td>
+          <td>' . $output[$i]["room_number"] . '</td>
         </tr>
 
        ';
       }
+    }else{
+
+      //SEMI EXPENDABLE
+       for ($i=0; $i < count($output); $i++) { 
+       $toecho .= '
+        <tr>
+          <td>
+            <div class="form-check">
+              <input data-propno="' . $output[$i]["stock_number"] . '" class="form-check-input checkbox_y" type="checkbox" value="" id="defaultCheck1">
+            </div>
+          </td>
+          <td>' . $output[$i]["stock_number"] . '</td>
+          <td>' . $output[$i]["description"] . '</td>
+          <td>' . $output[$i]["article"] . '</td>
+          <td>' . $output[$i]["unit_of_mesure"] . '</td>
+          <td>' . $output[$i]["office"] . '</td>
+          <td>' . $output[$i]["room_number"] . '</td>
+        </tr>
+
+       ';
+      }
+    }
 
       return $toecho;
     }
@@ -2269,7 +2303,6 @@ $colval = "";
       ]]);
       $discrepancies = $this->sdmdec($result->getBody()->getContents());
       // GET LAST LOGIN TO THE SYSTEM 
-
       if($re["selected_realid"]  == session("user_school")){
 
         $out = $this->send(["tag"=>"GET_LAST_DATE_CODEOF",
@@ -2281,7 +2314,6 @@ $colval = "";
         }else{
           $last_login = "N/A";
         }
-        
       }else{
         $last_login = "Private";
       }
@@ -2318,10 +2350,10 @@ $colval = "";
     $is_own = false;
     }
       if($last_login == ""){
-          $last_login = "No Record";
+        $last_login = "No Record";
       }
       if($last_trans == ""){
-          $last_trans = "No Record";
+        $last_trans = "No Record";
       }
        $toecho = "<tr>
             <td>" . $total_assets . "</td>
@@ -2329,10 +2361,10 @@ $colval = "";
               <form action='" . route("lod_discrep_indetail") . "' method='get'>
               <input type='hidden' value='" . $is_own . "' name='isown'>
                <input type='hidden' value='" . $re["selected_realid"] . "' name='stationid'>
-              <button type='submit' class='btn btn-link btn-sm' title='Click to view discrepancies in detail.'>" . $discrepancies . "</button>
+              <button type='submit' class='btn btn-link' style='margin:0px; padding:0px;' title='Click to view discrepancies in detail.'>" . $discrepancies . "</button>
               </form>
             </td>
-            <td><a href='" . route('gotoomitted') . "'>" . $omittedcount . "</a></td>
+            <td><a href='" . route('gotoomitted') . "?station_id=" . $re["selected_realid"] . "'>" . $omittedcount . "</a></td>
             <td>" . $last_login ."</td>
              
             
@@ -2341,7 +2373,7 @@ $colval = "";
     }
     public function get_om_itms_astbls(Request $req){
       $tag = $this->sdmenc("load_om_itms");
-      $station_id = $this->sdmenc(session("user_school"));
+      $station_id = $this->sdmenc($req["sid"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
       "tag"=>$tag,
@@ -2886,6 +2918,9 @@ $colval = "";
             session(['user_depedemail'=>$output[0]["depedemail"]]);
             session(['user_school'=>$output[0]["station_id"]]);
             session(['user_schoolname'=> $mynameschool]);
+
+            session(['user_last_scansession_sc'=> ""]);
+            session(['user_last_scansession'=> ""]);
             //RIGHT CREDENTIALS
            return redirect()->route("dboard");
           }
@@ -3915,7 +3950,13 @@ $toecho .="
       for ($i=0; $i < count($output); $i++) { 
         $toecho .= "
         <tr>
-        <td>" . $output[$i]["property_number"] . "</td>
+        <td>";
+          if($output[$i]["omitted"] == "1"){
+            $toecho .= $output[$i]["property_number"] . " <strong class='text-danger'>Omitted</strong>";
+          }else{
+            $toecho .= $output[$i]["property_number"];
+          }
+        $toecho .= "</td>
         <td>" . $output[$i]["asset_item"] . "</td>
         <td>" . $output[$i]["specification"] . "</td>
         <td>" . $output[$i]["current_condition"] . "</td>
@@ -4302,7 +4343,8 @@ $omitted_tbl = "";
               "st_id"=>$this->sdmenc(session("user_school"))
             ]]);
             $outx = $this->sdmdec($resultxm->getBody()->getContents());
-
+// $mylogs =""
+              $mylogs = gzcompress($mylogs);
               // return $outx;
             Alert::success("Asset Uploaded.");
             return redirect()->route("assetuploadresult",["i_newly"=>$inserted_new,"i_existing"=>$inserted_alreadyexisting,"i_not"=>$inserted_not,"i_logs"=>$mylogs,"i_incomplete"=>$blankcols,"total_assets"=>$tots,"nothere"=>$nothere,"omcount"=>$omitted_count,"om_logs"=>$omitted_tbl]);

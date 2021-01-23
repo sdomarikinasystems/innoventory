@@ -80,8 +80,6 @@ span.deleteicon span {
     cursor: pointer;
 }
    
-
-
 @font-face {
   font-family: regularfontnew;
   src: url({{ asset('fonts/sanfrancisco_pro.ttf')  }});
@@ -225,9 +223,12 @@ body {
 		padding-right: 20px;
 	}
 	.form-control{
-		border-radius: 10px !important;
-		background-color: #dfe4ea;
+		border-radius: 30px !important;
+		background-color: #F8F9FA;
 		border:none;
+		box-shadow:inset  0px 1px 3px rgba(0,0,0,0.2);
+
+
 	}
 	.sub-list-group {
 		margin-top: 10px;
@@ -285,7 +286,7 @@ body {
 		color: white;
 	}
 	.alert-secondary{
-		color: rgba(0,0,0,0.5)  !important;
+		background-color: #FAFAFC  !important;
 		color: white;
 	}
 	.alert-warning{
@@ -354,8 +355,8 @@ background-color: #007DFF;
 
 <body>
 	@include('sweet::alert')
-	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
-	  <a class="navbar-brand" href="#">Innoventory <small class="text-muted">by SDO - Marikina City</small></a>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
+	  <a class="navbar-brand" href="#"><span class="featurefont" style="color: #007DFF;">Innoventory</span> <small class="text-muted">by SDO - Marikina City</small></a>
 	  <button id="btn_navsdietoggle" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
@@ -439,6 +440,8 @@ background-color: #007DFF;
         </div>
         <div class="modal-body">
           {{ csrf_field() }}
+
+
           
           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
            <li class="nav-item">
@@ -451,6 +454,18 @@ background-color: #007DFF;
          <div class="tab-content" id="pills-tabContent">
            <div class="tab-pane fade show active" id="formgenapp733" role="tabpanel" aria-labelledby="pills-home-tab">
            		 <input type='hidden' name='station_id' id='mygroupid'>
+
+   		  <div class="row">
+          	<div class="col-sm-6">
+          		<div>Year</div>
+          		<select class="form-control" id="co_invyear" required="" name="inv_year"></select>
+          	</div>
+          	<div class="col-sm-6">
+          		<div>Month</div>
+          		<select class="form-control" id="co_invmonth" required="" name="inv_month"></select>
+          	</div>
+          </div>
+
           <div class="form-group">
             <label>Room</label>
             <select class="form-control allservicenterrooms" id="co_service_center" onchange="getcountofgen()" name="my_room">
@@ -499,8 +514,6 @@ background-color: #007DFF;
             </button>
           </div>
           <div class="modal-body">
-
-
            <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
             <li class="nav-item">
               <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#upass66_home" role="tab" aria-controls="pills-home" aria-selected="true">Generate Report</a>
@@ -511,6 +524,18 @@ background-color: #007DFF;
           </ul>
           <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="upass66_home" role="tabpanel" aria-labelledby="pills-home-tab">
+            	<div class="form-group">
+            		<div class="row">
+            				<div class="col-sm-6">
+          		<div>Year</div>
+          		<select class="form-control" id="se_invyear" required="" name="inv_year"></select>
+          	</div>
+          	<div class="col-sm-6">
+          		<div>Month</div>
+          		<select class="form-control" id="se_invmonth" required="" name="inv_month"></select>
+          	</div>
+            		</div>
+            	</div>
  <div class="form-group">
             <label>Room</label>
             <select class="form-control allservicenterrooms" required="" name="my_room">
@@ -523,8 +548,6 @@ background-color: #007DFF;
             	<p class="mt-0">Only scanned Semi-Expendable assets will appear on the generation of appendix 66 report. Make sure you have no discrepancies left on your Semi-Expendable asset registry.</p>
             </div>
           </div>
-
-
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Generate</button>
@@ -535,9 +558,6 @@ background-color: #007DFF;
     </div>
 
     </form>
-
-
-
 
 	<h6>ADD-ON</h6>
 	<ul class="list-group mb-3">
@@ -581,10 +601,10 @@ background-color: #007DFF;
 		$(".modal-dialog").addClass("modal-dialog modal-dialog-centered");
 		var resizedx = false;
 		var is_hidden = false;
- DynamicView();
+		DynamicView();
 		$( window ).resize(function() {
-  DynamicView();
-});
+		DynamicView();
+		});
 
 
 		function DynamicView(){
@@ -657,12 +677,69 @@ var sc_width = $( document ).width();
 		}
 
 		function getcountofgen(){
+			var soul_default_station = <?php echo json_encode(session("user_school")); ?>;
+			getcoinyears();
+
+			// GET CO INVENTORY YEARS
+			function getcoinyears(){
+				$.ajax({
+					type:"POST",
+					url: "{{ route('stole_all_years_with_inventory_capitaloutlay') }}",
+					data: {_token: "{{ csrf_token() }}", station_id: soul_default_station},
+					success: function(data){
+						$("#co_invyear").html(data);
+						getcoinvmonths();
+					}
+				})
+			}
+			// GET CO INVENTORY MONTHS
+			function getcoinvmonths(){
+				var prom_year = $("#co_invyear").val();
+				$.ajax({
+					type:"POST",
+					url: "{{ route('stole_inventory_month_capital_outlay') }}",
+					data: {_token: "{{ csrf_token() }}", station_id: soul_default_station, date_year: prom_year},
+					success: function(data){
+						$("#co_invmonth").html(data);
+						getseinvyears();
+					}
+				})
+			}
+			// GET SE INVENTORY YEARS
+			function getseinvyears(){
+				$.ajax({
+					type:"POST",
+					url: "{{ route('stole_all_years_with_inventory_semiexpendable') }}",
+					data: {_token: "{{ csrf_token() }}", station_id: soul_default_station},
+					success: function(data){
+						$("#se_invyear").html(data);
+						getseinvmonths();
+					}
+				})
+			}
+			// GET SE INVENTORY MONTHS
+			function getseinvmonths(){
+					var prom_year = $("#se_invyear").val();
+				$.ajax({
+					type:"POST",
+					url: "{{ route('stole_inventory_month_semiexpendable') }}",
+					data: {_token: "{{ csrf_token() }}", station_id: soul_default_station, date_year:prom_year },
+					success: function(data){
+						$("#se_invmonth").html(data);
+						loadservicecentersall();
+					}
+				})
+			}
+			
+			function loadservicecentersall(){
 				$("#continueenrep_btn").css("display","none");
 				$("#asstobegennum").html("Getting reports, please wait...");
 				var inp_sc_id = <?php  echo json_encode(session("user_school")); ?>;
 				var roomnum = $("#co_service_center").val();
 				var category_class = $("#allcategoriesz").val();
-				$.ajax( {
+
+
+				$.ajax({
 				type: "POST",
 				url: "{{ route('get_tobegen_repcount') }}",
 				data: {_token:"{{ csrf_token() }}",rn:roomnum,cc:category_class,station_id:inp_sc_id},
@@ -675,6 +752,7 @@ var sc_width = $( document ).width();
 				$("#asstobegennum").html(data + " item(s) to be included.");
 				}
 				}})
+			}
 		  }
 
 		</script>
