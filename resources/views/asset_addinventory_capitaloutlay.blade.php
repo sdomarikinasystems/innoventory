@@ -5,9 +5,14 @@ Innoventory - Inventory Mode
 @endsection
 
 @section('contents')
-<div id="step_1" style="display: block;">
-	
-
+<div id="step_0" style="display: block;">
+	<div class="container">
+		<div class="mt-5">
+			<h5>Recovering last session...</h5>
+		</div>
+	</div>
+</div>
+<div id="step_1" style="display: none;">
 <div class="row mb-2">
 	<div class="col-sm-8">
 		<h5><?php echo $_GET["station_full_name"]; ?> <small class="text-muted">Inventory Mode</small></h5>
@@ -247,7 +252,7 @@ Innoventory - Inventory Mode
 	var col_s_COUNT = "<|count|>";
 
 
- var timer = 0;
+	var timer = 0;
 	$("#inp_qrfocus").keyup(function(){
 		 if(isauto_recieve ){
 		 	
@@ -261,21 +266,60 @@ Innoventory - Inventory Mode
 	})
 
 
-
-CheckLastSession();
+	CheckLastSession();
 
 	function CheckLastSession(){
+		$("#step_0").show();
 		$.ajax({
 			type:"POST",
-			url: "{{ route('') }}",
+			url: "{{ route('stole_last_session') }}",
 			data: {_token: "{{ csrf_token() }}"},
 			success : function(data){
+				// alert(data);
+				$("#step_0").hide();
+				if(data != "false"){
+					data = data.split("<|SLICER|>");
 
+					if(current_station_id == data[0]){
+						// HAS SESSION
+					if (confirm("Do you want to recover your last session in this station?")) {
+					//APPLY SETTINGS
+					current_station_id = data[0];
+
+					$("#rawdatatext").html(data[1]);
+					current_station_fullname = data[2];
+					CheckRediness();
+					}else{
+					//NORMAL
+					RemoveLastSessionInStation();
+					}
+					}else{
+						// NO SESSION SO NORMAL CAUSE NOT A MATCHING STATION
+					CheckRediness();
+					}
+					
+				}else{
+					// NO SESSION SO NORMAL
+					CheckRediness();
+				}
+				
+			}
+		})
+	}
+
+	function RemoveLastSessionInStation(){
+		$.ajax({
+			type: "POST",
+			url: "{{ route('shoot_remove_last_session') }}",
+			data: {_token: "{{ csrf_token() }}"},
+			success: function(data){
 				CheckRediness();
 			}
 		})
 	}
+
 	function CheckRediness(){
+		$("#step_1").show();
 	$.ajax({
   		type: "POST",
   		url: "{{ route('stole_checkready_specific') }}",
@@ -674,7 +718,6 @@ $("#chooseserv").show();
 			$("#inp_qrfocus").focus();
 			
 		}
-
 		$("#inp_qrfocus").val("");
 
 	}
@@ -758,11 +801,26 @@ $("#chooseserv").show();
 				$("#inp_qrfocus").prop("placeholder","Scan Result");
 				ReflectDataToHTML();
 				$("#inp_qrfocus").focus();
+				SaveSession();
 				},300);
 
 			}
 		})
 		
+	}
+	function SaveSession(){
+		var current_raw = $("#rawdatatext").val();
+		$.ajax({
+			type:"POST",
+			url: "{{ route('shoot_save_last_session') }}",
+			data: {_token: "{{ csrf_token() }}",
+					stationid: current_station_id,
+					rawdata:current_raw,
+					user_last_schoolname:current_station_fullname},
+			success: function(data){
+				alert(data);
+			}
+		})
 	}
 
 	function isNumeric(num){

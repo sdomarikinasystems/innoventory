@@ -209,11 +209,11 @@ body {
 		border:none;
 		animation-name: scale-in;
 		animation-duration: 0.3s;
-		box-shadow: 0px 20px 50px rgba(0,0,0,0.2);
+		box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
 	}
 	.dropdown-menu{
 		border-radius: 10px !important;
-		box-shadow: 0px 20px 50px rgba(0,0,0,0.2);
+		box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
 		border-color: #EEEEF2 !important;
 	}
 	.nav-tabs .nav-item .nav-link{
@@ -335,24 +335,16 @@ background-color: #007DFF;
 		height: 400px;
 		overflow: scroll;
 	}
-	/*@keyframes scale-in{
-		0%{
-			transform: scale(0.9);
-		}
-	}*/
 </style>
 <script type="text/javascript">
 	function urlify(text) {
-    var urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(urlRegex, function(url) {
-        return '<a href="' + url + '" target="_blank"><i class="fas fa-globe-africa"></i> ' + url + '</a>';
-    })
-}
+		var urlRegex = /(https?:\/\/[^\s]+)/g;
+		return text.replace(urlRegex, function(url) {
+			return '<a href="' + url + '" target="_blank"><i class="fas fa-globe-africa"></i> ' + url + '</a>';
+		})
+	}
 </script>
 </head>
-
-
-
 <body>
 	@include('sweet::alert')
 	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
@@ -362,9 +354,9 @@ background-color: #007DFF;
 	  </button>
 	
 	  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-	  	<form class="form-inline">
-		<!-- <input class="form-control mr-sm-2" type="search" placeholder="QUICK SIGHT" aria-label="Search"> -->
-		</form>
+	  	<!-- <form class="form-inline"> -->
+		<!-- <input class="form-control mr-sm-2" type="search" placeholder="Quick Sight" aria-label="Search"> -->
+		<!-- </form> -->
 	    <ul class="navbar-nav mr-auto">
 
 	    </ul>
@@ -399,8 +391,6 @@ background-color: #007DFF;
 				<li class="list-group-item"><a data-toggle="collapse" href="#collapse1" onclick="GetServiceCentersForOption()"><i class="fas fa-chart-bar"></i> Reports <i class="float-right fas fa-sort-down"></i></a>
 					<div id="collapse1" class="panel-collapse collapse in">
 						<ul class="sub-list-group mb-3">
-
-
     <?php
       if(session("user_type") < "4" && session("user_type") != "2"){
         ?>

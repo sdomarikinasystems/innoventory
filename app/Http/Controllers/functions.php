@@ -124,9 +124,27 @@ class functions extends Controller
        return view("doc_appendix66");
     }
 
+
     // FUNCTIONS
+    public function fire_save_last_session(Request $req){
+      session(['user_last_scansession_sc'=> $req["stationid"]]);
+      session(['user_last_scansession'=> $req["rawdata"]]);
+        session(['user_last_schoolname'=> $req["stationname"]]);
+      return "saved";
+    }
+    public function fire_remove_last_session(){
+      session(['user_last_scansession_sc'=> ""]);
+      session(['user_last_scansession'=> ""]);
+      session(['user_last_schoolname'=> ""]);
+      return "deleted";
+    }
     public function look_last_session(){
-      
+      if(session('user_last_scansession') != ""){
+        // HAS LAST SESSION
+        return session('user_last_scansession_sc') . "<|SLICER|>" . session('user_last_scansession') .  "<|SLICER|>" . session('user_last_schoolname');
+      }else{
+        return "false";
+      }
     }
     public function fire_delete_specific_assetdata_all(Request $req){
         $result = $this->send(["tag"=>"DELETE_DATA_ASSET_BYSTATION_TYPE",
@@ -2921,6 +2939,8 @@ $colval = "";
 
             session(['user_last_scansession_sc'=> ""]);
             session(['user_last_scansession'=> ""]);
+            session(['user_last_schoolname'=> ""]);
+
             //RIGHT CREDENTIALS
            return redirect()->route("dboard");
           }

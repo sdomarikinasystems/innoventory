@@ -7,7 +7,6 @@ Innoventory - Dashboard
 @section('contents')
 
 <h5 class="text-muted">Dashboard</h5>
-
 <!--REMINDERS-->
 <div class="row">
 	<div class="col-sm-7">

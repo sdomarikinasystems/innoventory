@@ -188,6 +188,9 @@ Route::post("/get_maxval_of_capitalo_and_semie",["uses"=>"functions@look_get_max
 Route::post("/submit_scanned_asset_datum",["uses"=>"functions@fire_submit_scanned_data","as"=>"shoot_submit_scanned_data"]);
 Route::post("/check_rediness_specific",["uses"=>"functions@look_checkready_specific","as"=>"stole_checkready_specific"]);
 Route::post("/check_if_last_session",["uses"=>"functions@look_last_session","as"=>"stole_last_session"]);
+Route::post("/remove_last_session",["uses"=>"functions@fire_remove_last_session","as"=>"shoot_remove_last_session"]);
+Route::post("/save_session_today",["uses"=>"functions@fire_save_last_session","as"=>"shoot_save_last_session"]);
+
 // ASSET SEMI EXPENDABLE DISCREPANCIES
 Route::get("/innoventory/asset_registry/semi_expendable/discrepancies",["uses"=>"functions@fly_semiexpendable_discrepancies","as"=>"goto_semiexpendable_discrepancies"]);
 

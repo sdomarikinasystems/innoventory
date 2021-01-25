@@ -52,7 +52,7 @@ Innoventory - Asset Registry
   <?php
     }
   ?>
-  <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
+  <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname') }}</span></h4>
   <!--ASSET REGISTRY-->
   <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
     <li class="nav-item">
@@ -506,7 +506,6 @@ Innoventory - Asset Registry
     }
 
     function gotomyownassets(){
-
     var myassets = <?php echo json_encode(session("user_school")); ?>;
     $("#myschool_realid").val(myassets);
      $("#lod_change_ass_source").css("display","block");

@@ -47,7 +47,12 @@ Innoventory  - Login
 		<div class="col-sm-6 col-left">
 			<div class="card" style="box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
 				<div class="card-body">
-					<h5 class="mb-4 mt-0">Sign-in</h3>
+
+					<?php 
+					if(empty(session("user_uname"))){
+						?>
+						<!-- LOGIN -->
+						<h5 class="mb-4 mt-0">Sign-in</h3>
 					<form action="{{ route('proc_sign_protocol') }}" method="POST" autocomplete="off">
 					   {{ csrf_field() }}
 						<div class="row">
@@ -68,6 +73,20 @@ Innoventory  - Login
 							<button style="margin-top: 5px;" name="btn_login" id="btnsub" class="btn btn-primary float-right" type="submit">Sign in <i class="fas fa-arrow-right"></i></button>
 						</div>				
 					</form>
+						<?php 
+					}else{
+
+						?>
+						<!-- LOAD SESSION -->
+						<div class="mt-4 mb-4">
+							<h1 class="m-0 mb-3"><i class="far fa-user-circle"></i></h1>
+							<h5 class="mb-0"><span class="text-muted">Welcome back</span> <?php echo session("user_uname"); ?>!</h5>
+							<p class="mb-3">You're still logged-in to your innoventory account. Continue by clicking the button below.</p>
+							<a class="btn btn-primary mt-4" href="{{ route('dboard') }}"><i class="fas fa-arrow-circle-right"></i> Continue</a>
+						</div>
+						<?php
+					}
+					?>
 					</div>			
 				</div>
 			</div>
