@@ -44,7 +44,7 @@ Innoventory - Disposed Assets
   }
   ?>
 
-  <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
+  <h4 class="mb-3"><span id="sourcename">{{ session('user_changesource_station_name')}}</span></h4>
  <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="capout" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-box"></i> Capital Outlay</a>
@@ -156,12 +156,12 @@ Innoventory - Disposed Assets
 
 
   <script type="text/javascript">
- $("#sourcename").html("{{ session('user_schoolname') }}");
+ $("#sourcename").html("{{ session('user_changesource_station_name') }}");
   function OpenAssetToDispose(control_obj){
     $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
   }
 
-  LoadAssets("{{ session('user_school') }}");
+  LoadAssets("{{ session('user_changesource_station') }}");
   function LoadAssets(station_id){
     $.ajax({
       type : "POST",
@@ -198,15 +198,35 @@ Innoventory - Disposed Assets
   })
 
      function changesource(control_obj){
-        var sourceid = $(control_obj).data("sourceid");
-        var sourcename = $(control_obj).data("sourcename");
-        // alert(sourceid);
-        $("#sourcename").html(sourcename);
+
+         var sourceid = $(control_obj).data("sourceid");
+   var sourcename = $(control_obj).data("sourcename");
+         $.ajax({
+      type: "POST",
+      url: "{{ route('shoot_univ_change_source') }}",
+      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+      success: function(){
+         $("#sourcename").html(sourcename);
         LoadAssets(sourceid);
+      }
+    })
+   
+        
      }
      function gotomyownassets(){
-      $("#sourcename").html("{{ session('user_schoolname') }}");
-       LoadAssets("{{ session('user_school') }}");
+      var sourceid =  <?php echo json_encode(session("user_school")); ?>;
+      var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
+       $.ajax({
+      type: "POST",
+      url: "{{ route('shoot_univ_change_source') }}",
+      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+      success: function(){
+           $("#sourcename").html(sourcename);
+      LoadAssets(sourceid);
+      }
+    })
+   
+     
      }
   </script>
 

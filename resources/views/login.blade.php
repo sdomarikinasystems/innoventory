@@ -81,8 +81,7 @@ Innoventory  - Login
 						<div class="mt-4 mb-4">
 							<h1 class="m-0 mb-3"><i class="far fa-user-circle"></i></h1>
 							<h5 class="mb-0"><span class="text-muted">Welcome back</span> <?php echo session("user_uname"); ?>!</h5>
-							<p class="mb-3">You're still logged-in to your innoventory account. Continue by clicking the button below.</p>
-							
+							<p class="mb-3">You're still logged-in to your innoventory account. Continue by clicking the button below.</p>		
 							  <form action="{{ route('proc_logout') }}" method="GET" >
 							  	<a class="btn btn-primary mt-4" href="{{ route('dboard') }}"><i class="fas fa-arrow-circle-right"></i> Continue</a>
 								<button class="btn btn-secondary mt-4" type="submit"><i class="fas fa-sign-out-alt"></i> Log-out</button>

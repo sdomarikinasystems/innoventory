@@ -26,7 +26,7 @@ Innoventory - Inventory
         </div>
         <div class="form-group">
           <div class=' mt-2'>
-            <a href='#' onclick="gotodefaultsource()" title='Switch to my own assets'>
+            <a href='#' onclick="gotomyownassets()" title='Switch to my own assets'>
             <span class="float-right text-muted"><i class="fas fa-home"></i></span>
             <small class='text-muted card-subtitle'>Switch to</small><br>
             <strong class='card-title' ><?php echo session("user_schoolname"); ?></strong>
@@ -43,7 +43,7 @@ Innoventory - Inventory
     <?php
     }
     ?>
-<h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
+ <h4 class="mb-3"><span id="sourcename">{{ session('user_changesource_station_name') }}</span></h4>
 
  <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
   <li class="nav-item">
@@ -374,28 +374,54 @@ function UniversalLoaderSourceChange(stationID){
 }
 
   $("#tbl_sc").DataTable();
-  var ss = <?php echo json_encode(session("user_school")); ?>;
+  var ss = <?php echo json_encode(session("user_changesource_station")); ?>;
   UniversalLoaderSourceChange(ss);
-  $(".inp_filtepurpose_stationname").val(<?php echo json_encode(session("user_schoolname")); ?>);
-  function gotodefaultsource(){
+  $(".inp_filtepurpose_stationname").val(<?php echo json_encode(session("user_changesource_station_name")); ?>);
+  function gotomyownassets(){
+
     is_filter_loaded = false;
-is_filter_loaded_semi = false;
-      UniversalLoaderSourceChange(ss);
-      $(".inp_filtepurpose_stationname").val(<?php echo json_encode(session("user_schoolname")); ?>);
-       $("#sourcename").html(<?php echo json_encode(session("user_schoolname")); ?>);
+    is_filter_loaded_semi = false;
+    var sourceid =  <?php echo json_encode(session("user_school")); ?>;
+    var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
+
+
+     $.ajax({
+      type: "POST",
+      url: "{{ route('shoot_univ_change_source') }}",
+      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+      success: function(){
+          UniversalLoaderSourceChange(sourceid);
+          $(".inp_filtepurpose_stationname").val(sourceid);
+          $("#sourcename").html(sourcename);
+      }
+    })
+
   }
   function changesource(control_obj){
     is_filter_loaded = false;
-is_filter_loaded_semi = false;
+    is_filter_loaded_semi = false;
 
-     if($(control_obj).data("sourceid") != <?php echo session("user_school"); ?>){
-            $("#sourcename").html($(control_obj).data("sourcename"));
-           
-          }else{
-              $("#sourcename").html($(control_obj).data("sourcename"));
-          }
-           $(".inp_filtepurpose_stationname").val($(control_obj).data("sourcename"));
-     UniversalLoaderSourceChange($(control_obj).data("sourceid"));
+ var sourceid = $(control_obj).data("sourceid");
+   var sourcename = $(control_obj).data("sourcename");
+
+
+    $.ajax({
+      type: "POST",
+      url: "{{ route('shoot_univ_change_source') }}",
+      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+      success: function(){
+        if(sourceid != <?php echo session("user_school"); ?>){
+        $("#sourcename").html(sourcename);
+        }else{
+        $("#sourcename").html(sourcename);
+        }
+        $(".inp_filtepurpose_stationname").val(sourcename);
+        UniversalLoaderSourceChange(sourceid);
+      }
+    })
+
+
+
   }
       function GetSemiScannedAsset(schoolid){
 
