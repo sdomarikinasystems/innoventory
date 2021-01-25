@@ -126,6 +126,66 @@ class functions extends Controller
 
 
     // FUNCTIONS
+
+    public function fire_univ_change_source(Request $req){
+      session(['user_changesource_station'=>$req["new_source_id"]]);
+       session(['user_changesource_station_name'=>$req["new_source_name"]]);
+      return "true";
+    }
+    public function fire_clear_recovery_data(){
+      session(['user_last_scansession_sc'=> ""]);
+      session(['user_last_scansession'=> ""]);
+      session(['user_last_schoolname'=> ""]);
+      return "deleted";
+    }
+    public function look_not_inserted_recent_co_data(Request $req){
+      $out =  $this->send(["tag"=>"GET_RECENT_NOT_ADDED_ASSET_CO",
+        "stationid"=>$this->sdmenc($req["current_station"])]);
+      $toecho = "";
+      for ($i=0; $i < count($out); $i++) { 
+
+        //office_type ---- 0
+        //office_name ---- 1
+        //asset_classification ---- 2
+        //asset_sub_class ---- 3
+        //uacs_object_code ---- 4
+        //asset_item ---- 5
+        //manufacturer ---- 6
+        //model ---- 7
+        //serial_number ---- 8
+        //specification ---- 9
+        //property_number ---- 10
+        //unit_of_measure ---- 11
+        //current_condition ---- 12
+        //source_of_fund ---- 13
+        //cost_of_acquisition ---- 14
+        //date_of_acquisition ----- 15
+        //estimated_total_life_years ---- 16
+        //name_of_accountable_officer ---- 17
+        //asset_location ---- 18
+        //service_center ---- 19
+        //room_number ---- 20
+        //remarks ---- 21
+
+        if($out[$i] != ""){
+            $data_fragment = explode("<|next|>", $out[$i]["json_data"]);
+         $toecho .= "<tr>
+            <td>" . $data_fragment[10] . "</td>
+            <td>" . $data_fragment[5] . "</td>
+            <td>" . $data_fragment[9] . "</td>
+            <td>" . $data_fragment[12] . "</td>
+            <td>" . $data_fragment[19] . "</td>
+            <td>" . $data_fragment[20] . "</td>
+            <td>" . $out[$i]["sub_note"] . "<br><small class='text-muted'>" . $this->DateExplainder($out[$i]["date_recorded"]) . "</small></td>
+         </tr>";
+        }
+      
+      }
+      return $toecho;
+    }
+    public function fire_trans_sdm(Request $req){
+      return $this->sdmdec(str_replace(" ", "+", $req["todec"]));
+    }
     public function fire_save_last_session(Request $req){
       session(['user_last_scansession_sc'=> $req["stationid"]]);
       session(['user_last_scansession'=> $req["rawdata"]]);
@@ -212,22 +272,19 @@ class functions extends Controller
         for ($i=0; $i < count($output); $i++) { 
             $on_hand_per_count = $output[$i]["asset_onhandcount"];
             
-          if($on_hand_per_count != null && $on_hand_per_count != ""){
-                      $lc_count++;
-
-       if($lc_count > 16){
-$pagecount++;
-        $lc_count = 0;
-        $toecho .= '
-</table>
-<br>
-<br>
-<table id="page_' .  $pagecount  . '" >
-' . $asset_table_head  . '
-        ';
-
-
-       }
+if($on_hand_per_count != null && $on_hand_per_count != ""){
+  $lc_count++;
+  if($lc_count > 16){
+      $pagecount++;
+      $lc_count = 0;
+      $toecho .= '
+      </table>
+      <br>
+      <br>
+      <table id="page_' .  $pagecount  . '" >
+      ' . $asset_table_head  . '
+      ';
+}
         $toecho .= '<tr>
          <td>' . $output[$i]["article"] . '</td>
           <td>' . $output[$i]['description'] . "</td>";
@@ -243,8 +300,7 @@ $pagecount++;
 
           //computation
           $bal_per_card = $output[$i]['balance_per_card'];
-        
-
+      
            $short_ov_quantity = ($bal_per_card + $on_hand_per_count);
           $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value'] ));
           $disp_onhandcount = "";
@@ -264,7 +320,6 @@ $pagecount++;
             <td style="text-align:right;">' . $short_ov_value  .'</td>
             <td>' . $output[$i]['remarks'] . '</td>             
           </tr>';
-    
           }
       }
 
@@ -1797,10 +1852,10 @@ switch ($output[$i]["om_reason"]) {
       ]]);
       $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
 
-      $toecho = "<option selected value='" . $this->sdmenc("all") . "|all'>Show All</option>";
+      $toecho = "<option selected value='" . $this->sdmenc("all") . "~all'>Show All</option>";
 
       for ($i=0; $i < count($output); $i++) { 
-       $toecho .= "<option value='" . $this->sdmenc($output[$i]["office"]) . "|" . $output[$i]["room_number"] . "'>" . $output[$i]["office"] . " (" . $output[$i]["room_number"] . ")" . "</option>";
+       $toecho .= "<option value='" . $this->sdmenc($output[$i]["office"]) . "~" . $output[$i]["room_number"] . "'>" . $output[$i]["office"] . " (" . $output[$i]["room_number"] . ")" . "</option>";
       }
       return $toecho;
     }
@@ -2373,8 +2428,16 @@ $colval = "";
       if($last_trans == ""){
         $last_trans = "No Record";
       }
+
+
+    $not_inserted_co_count = $this->send(["tag"=>"GET_RECENT_NOT_ADDED_ASSET_CO_COUNT",
+                                    "stationid"=>$this->sdmenc($re["selected_realid"])]);
+
+
        $toecho = "<tr>
             <td>" . $total_assets . "</td>
+
+
             <td>
               <form action='" . route("lod_discrep_indetail") . "' method='get'>
               <input type='hidden' value='" . $is_own . "' name='isown'>
@@ -2382,7 +2445,14 @@ $colval = "";
               <button type='submit' class='btn btn-link' style='margin:0px; padding:0px;' title='Click to view discrepancies in detail.'>" . $discrepancies . "</button>
               </form>
             </td>
+
+
+            <td><a href='#' data-toggle='modal' data-target='#notinserted_co' onclick='load_not_inserted_co()'>" . $not_inserted_co_count[0] . "</a></td>
+
+
             <td><a href='" . route('gotoomitted') . "?station_id=" . $re["selected_realid"] . "'>" . $omittedcount . "</a></td>
+            
+
             <td>" . $last_login ."</td>
              
             
@@ -2941,6 +3011,8 @@ $colval = "";
             session(['user_last_scansession'=> ""]);
             session(['user_last_schoolname'=> ""]);
 
+            session(['user_changesource_station'=> $output[0]["station_id"]]);
+            session(['user_changesource_station_name'=>  $mynameschool]);
             //RIGHT CREDENTIALS
            return redirect()->route("dboard");
           }
@@ -2949,8 +3021,9 @@ $colval = "";
           return  $output;
            return redirect('/');
         }
-        
     }
+
+
 
     public function get_asc_not_included(Request $req){
               $client = new \GuzzleHttp\Client();
@@ -4077,7 +4150,6 @@ if( $isown){
        return redirect()->route("asset_resources");
 
     }
-
     public function uploadassetregistrycsv(Request $req){
       $output = "";
       $tag = $this->sdmenc("get_all_assets_pr");
@@ -4097,6 +4169,11 @@ if( $isown){
             $asset_signature = array();
             $asset_signature_existing = array();
              $asset_signature_existing_id = array();
+
+
+
+      $this->send(["tag"=>"RESET_MY_NOT_INSERTED_DEFINITION_IN_CO",
+                  "stationid"=>$this->sdmenc(session("user_school"))]);
 
       $tag = $this->sdmenc("get_all_pn_in_ir");
             // GET EXISITING ASSETS 
@@ -4139,26 +4216,28 @@ if( $isown){
         $has_disc = false;
         $has_propertynum = false;
         $fieldwithvals = 0;
+        $has_cost_problem = false;
         for($i =0; $i < count($fieldsx);$i++){
           if($getData[$i] == "" || $getData[$i] == null ){
             if($fieldsx[$i] != "Remarks" && $fieldsx[$i] != "Cost of Acquisition"){
                $missinglog .= "Missing " . $fieldsx[$i] . "<br>";
                $has_disc = true;
             }
-              
-
           }else{
            $fieldwithvals++;
+           // FIELD VALIDATION
+            if($fieldsx[$i] ==  "Cost of Acquisition" && str_replace(",", "", $getData[$i]) < 15000){
+                 $has_cost_problem = true;
+            }
           }
           if($i == 10){
             if($getData[10] == "" || $getData[10] == null ){
-            $has_propertynum = false;
-          }else{
-            $has_propertynum = true;
-          }
+              $has_propertynum = false;
+            }else{
+              $has_propertynum = true;
+            }
           }
         }
-
         if($fieldwithvals > 5 && $has_propertynum == false){
           $tots ++;
         }
@@ -4187,8 +4266,9 @@ if( $isown){
         $service_center = $this->sdmenc(htmlentities($getData[19]));
         $room_number = $this->sdmenc(htmlentities($getData[20]));
         $remarks = $this->sdmenc(htmlentities($getData[21]));
-
-        $client = new \GuzzleHttp\Client();
+         $output = "3";
+        if($has_cost_problem == false){
+            $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
             "tag"=>$tag,
             "property_number"=>$property_number,
@@ -4221,8 +4301,6 @@ if( $isown){
                }
           $is_inserted = "";
             $output = $this->sdmdec($result->getBody()->getContents());
-        
-
         $hasinsertednew = false;
              if($output == "1"){
                $is_inserted = "Added";
@@ -4230,13 +4308,45 @@ if( $isown){
                 $inserted_new++;
              }else if($output == "2"){
                $is_inserted = "Updated";
-
              }else if($output == "3"){
                $is_inserted = "Not Inserted";
              }
+        }
 
             if($missinglog != ""){
                $mylogs .= "<tr><td>" . $getData[10] . "</td><td>" . $getData[5] . "</td><td>" .  $missinglog . "</td></tr>";
+            }else if($has_cost_problem == true){
+              $logreason = "Not inserted. Cost of Aquisition (" .  $getData[14] . ") is below 15,000";
+                $mylogs .=    "<tr><td>" . $getData[10] . "</td><td>" . $getData[5] . "</td><td> " . $logreason . "</td></tr>";
+
+                $data_structure = $this->sdmdec($office_type) . "<|next|>" . 
+                                  $this->sdmdec($office_name) . "<|next|>" . 
+                                  $this->sdmdec($asset_classification) . "<|next|>" . 
+                                  $this->sdmdec($asset_sub_class) . "<|next|>" . 
+                                  $this->sdmdec($uacs_object_code) . "<|next|>" . 
+                                  $this->sdmdec($asset_item) . "<|next|>" . 
+                                  $this->sdmdec($manufacturer) . "<|next|>" . 
+                                  $this->sdmdec($model) . "<|next|>" . 
+                                  $this->sdmdec($serial_number) . "<|next|>" . 
+                                  $this->sdmdec($specification) . "<|next|>" . 
+                                  $this->sdmdec($property_number) . "<|next|>" . 
+                                  $this->sdmdec($unit_of_measure) . "<|next|>" . 
+                                  $this->sdmdec($current_condition) . "<|next|>" . 
+                                  $this->sdmdec($source_of_fund) . "<|next|>" . 
+                                  $this->sdmdec($cost_of_acquisition) . "<|next|>" . 
+                                  $this->sdmdec($date_of_acquisition) . "<|next|>" . 
+                                  $this->sdmdec($estimated_total_life_years) . "<|next|>" . 
+                                  $this->sdmdec($name_of_accountable_officer) . "<|next|>" . 
+                                  $this->sdmdec($asset_location) . "<|next|>" . 
+                                  $this->sdmdec($service_center) . "<|next|>" . 
+                                  $this->sdmdec($room_number) . "<|next|>" . 
+                                  $this->sdmdec($remarks);
+
+                $this->send(["tag"=>"INSERT_NEW_NOT_INSERTED_DATUM_CO",
+                            "jsondata"=> $this->sdmenc($data_structure) ,
+                            "stationid"=>$this->sdmenc(session("user_school")),
+                            "subnote"=>$this->sdmenc(htmlentities($logreason))]);
+
             }else if($output == "1" &&   $hasinsertednew == false){
                 $inserted_new++;
             }else if($output == "2"){
@@ -4271,6 +4381,8 @@ if( $isown){
            $inserted_not ++;
             $mylogs .= "<tr><td>" . $getData[10] . "</td><td>" . $getData[5] . "</td><td> Please add the property number of this item (NOT INSERTED).</td></tr>";
               }
+
+         
             }
               $previewcount ++;
            }

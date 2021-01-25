@@ -12,6 +12,45 @@ Innoventory - Inventory Mode
 		</div>
 	</div>
 </div>
+<div id="session_restore" style="display: none;">
+	<div class="container">
+		<div style="margin-top: 25vh;">
+			<div class="card card-shadow" style="margin: auto; width: 600px;">
+				<div class="card-body">
+					<div class="mt-3 mb-3">
+						<h5 class="mb-2">Continue your last session in<br><?php echo $_GET["station_full_name"]; ?>?</h5>
+						<p class="text-muted mb-4 mt-0">Continuing will recover your last unsubmitted scanned data. New scan will completely remove your last scanned data and start a new.</p>
+					</div>
+				</div>
+				<div class="card-footer">
+					<button class="btn btn-primary" onclick="SessionAbsoluteRestore()"><i class="fas fa-redo"></i> Continue Session</button>
+						<button class="btn btn-secondary" onclick="SessionAbsoluteCancel()">New Scan</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="select_service_center_page" style="display: none;">
+	<div class="container">
+		<div style="margin-top: 25vh;">
+			<div class="card card-shadow" style="margin: auto; width: 600px;">
+				<div class="card-body">
+					<div class="mt-3 mb-3">
+						<h5 class="mb-2">Service Center to begin with</h5>
+						<div class="form-group">
+							<label>Service Centers</label>
+							<select class="form-control" id="custom_service_center_ofstation"></select>
+						</div>
+					</div>
+				</div>
+				<div class="card-footer">
+					<button class="btn btn-primary" onclick="AbsoluteServiceCenterSelect()"><i class="fas fa-arrow-circle-right"></i> Select</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <div id="step_1" style="display: none;">
 <div class="row mb-2">
 	<div class="col-sm-8">
@@ -45,8 +84,8 @@ Innoventory - Inventory Mode
 				 </span>
 
 				</div>
-		<label class="float-right"><input type="checkbox" id="inp_autorecieve" name=""> Auto-Recieve</label>
-		<button class="btn btn-primary" id="btn_addtoinventory"><i class="fas fa-plus-circle"></i> Add to <span class="curr_roomname"></span></button>
+		<label class="float-left mt-2"><input type="checkbox" id="inp_autorecieve" name=""> Auto-Recieve</label>
+		<button class="btn btn-primary float-right" id="btn_addtoinventory"><i class="fas fa-plus-circle"></i> Add to <span class="curr_roomname"></span></button>
 		  	</div>
 		  </div>
 
@@ -60,7 +99,6 @@ Innoventory - Inventory Mode
 		</div>
 	</div>
 	<div class="col-sm-6">
-
 		<div class="card-deck">
 			<div class="card " style="border : none !important; border-radius: 0px !important;" onclick="filtershow_all()">
 				<div class="clickablething ff_all" style="border: 2px solid transparent; border-radius: 10px;">
@@ -70,7 +108,6 @@ Innoventory - Inventory Mode
 				<progress id="prog_all" style="width: 100%;" value="34" max="100">
 			</div>
 				</div>
-			
 		</div>
 		<div class="card" style="border : none !important; border-radius: 0px !important;" onclick="filtershow_co()">
 			<div class="clickablething ff_co" style="border: 2px solid transparent; border-radius: 10px;">
@@ -93,7 +130,6 @@ Innoventory - Inventory Mode
 			</div>
 		</div>
 		</div>
-
 		<div class="card  mt-3">
 			<div class="card-header" style="display: none">
 				<div class="card-deck">
@@ -250,18 +286,19 @@ Innoventory - Inventory Mode
 	var isauto_recieve = false;
 	var currentlyready = "";
 	var col_s_COUNT = "<|count|>";
-
+	var sessioned_data = "";
 
 	var timer = 0;
-	$("#inp_qrfocus").keyup(function(){
+	$("#inp_qrfocus").keyup(async function(){
 		 if(isauto_recieve ){
 		 	
 	if($("#inp_qrfocus").val() != ""){
+		await x_timer(500);
 			clearTimeout (timer);
 	        timer = setTimeout(function(){
 	        	AddToInv();
 	        }, 1000);
-	}
+		}
 		 }
 	})
 
@@ -279,33 +316,38 @@ Innoventory - Inventory Mode
 				$("#step_0").hide();
 				if(data != "false"){
 					data = data.split("<|SLICER|>");
-
 					if(current_station_id == data[0]){
-						// HAS SESSION
-					if (confirm("Do you want to recover your last session in this station?")) {
-					//APPLY SETTINGS
-					current_station_id = data[0];
-
-					$("#rawdatatext").html(data[1]);
-					current_station_fullname = data[2];
-					CheckRediness();
+						sessioned_data = data;
+						$("#session_restore").show();
 					}else{
-					//NORMAL
-					RemoveLastSessionInStation();
-					}
-					}else{
-						// NO SESSION SO NORMAL CAUSE NOT A MATCHING STATION
+						// NOT STATION SO NORMAL
 					CheckRediness();
 					}
-					
 				}else{
 					// NO SESSION SO NORMAL
 					CheckRediness();
 				}
-				
-			}
+				}	
 		})
 	}
+
+
+	function SessionAbsoluteRestore(){
+		$("#session_restore").hide();
+		// RESTORE SESSION
+		current_station_id = sessioned_data[0];
+		$("#rawdatatext").html(sessioned_data[1]);
+		current_station_fullname = sessioned_data[2];
+		CheckRediness();
+	}
+	function SessionAbsoluteCancel(){
+		$("#session_restore").hide();
+		//NORMAL
+		RemoveLastSessionInStation();
+	}
+
+
+
 
 	function RemoveLastSessionInStation(){
 		$.ajax({
@@ -319,7 +361,6 @@ Innoventory - Inventory Mode
 	}
 
 	function CheckRediness(){
-		$("#step_1").show();
 	$.ajax({
   		type: "POST",
   		url: "{{ route('stole_checkready_specific') }}",
@@ -347,12 +388,9 @@ Innoventory - Inventory Mode
 
 		if(isauto_recieve){
 			$("#btn_addtoinventory").hide();
-
 			if ($("#inp_qrfocus").val() != "") {
 				AddToInv();
-}
-
-
+		}
 		}else{
 			$("#btn_addtoinventory").show();
 		}
@@ -407,9 +445,9 @@ var single_data = data_fragment[i].split(col_XX);
 				var ss_asset_name = single_data[3];
 				var ss_assettype = single_data[4];
 		if(loaded_data_pausetime < 100){
-			await x_timer(256);
+			await x_timer(315);
 			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
-			// loaded_data_pausetime++;
+			loaded_data_pausetime++;
 		}else{
 			await x_timer(1000);
 			// alert("pausetime");
@@ -453,7 +491,8 @@ var single_data = data_fragment[i].split(col_XX);
 		// savetime += 555;
 	}
 	function x_timer(ms) { return new Promise(res => setTimeout(res, ms)); }
-	function Revisualize_percentage_transferUI(){
+
+	async function Revisualize_percentage_transferUI(){
 		var currentdata = $("#rawdatatext").val();
 		var data_fragment = currentdata.split(separator_word);
 		var totalscannedasset = data_fragment.length;
@@ -466,13 +505,31 @@ var single_data = data_fragment[i].split(col_XX);
 
 		if(percentage_value_trans == "100%"){
 			//COMPLETE SUBMISSION SCREEN
-			iscomplete = true;
+
 			$("#step_2").hide();
 			$("#step_1").hide();
 			$("#step_3").show();
+
+
+			if(iscomplete == false){
+				await x_timer(355);
+				$.ajax({
+					type: "POST",
+					url: "{{ route('shoot_clear_recovery_data') }}",
+					data: {_token: "{{ csrf_token() }}"},
+					success: function(data){
+						// alert(data);
+					}
+				})
+			}
+			iscomplete = true;
+			
+
 		}
 	}
-	function OnSelect_ServiceCenterQuickInfo(){
+	
+	async function OnSelect_ServiceCenterQuickInfo(){
+		await x_timer(351);
 		$("#toloadservicecenters").prop("disabled",true);
 		$("#chooseserv").hide();
 		$("#chlocbtn").hide();
@@ -488,7 +545,7 @@ var single_data = data_fragment[i].split(col_XX);
 				if(data[0]["username"] != "" && data[0]["username"] != null){
 					$("#prev_incharge").html(data[0]["username"]);
 				}else{
-					$("#prev_incharge").html("<span class='text-muted'>(no set)</span>");
+					$("#prev_incharge").html("<span class='text-muted'>(not set)</span>");
 				}
 				var currentdata = $("#rawdatatext").val();
 				var data_fragment = currentdata.split(separator_word);
@@ -527,7 +584,8 @@ var single_data = data_fragment[i].split(col_XX);
 		})
 	}
 
-	function RunPreviewOfMaxValIn_servicecenters(prev_service_center_id){
+	async function RunPreviewOfMaxValIn_servicecenters(prev_service_center_id){
+		await x_timer(351);
 		$.ajax({
 			type:"POST",
 			url: "{{ route('stole_get_max_values_of_CoSe') }}",
@@ -609,6 +667,10 @@ var single_data = data_fragment[i].split(col_XX);
 }
 	
 	function LoadAllLocations(){
+
+		$("#select_service_center_page").show();
+		$("#step_1").hide();
+
 		$.ajax({
 			type:"POST",
 			url: "{{ route('stole_getallservicecenters') }}",
@@ -616,35 +678,38 @@ var single_data = data_fragment[i].split(col_XX);
 			success: function(data){
 				// alert(data);
 				$("#toloadservicecenters").html(data);
+				$("#custom_service_center_ofstation").html(data);
 				// Store current service center ID in variable
-				current_location_id = $("#toloadservicecenters").val();
-				GetRoomInformationByID();
+				
 			}
 		})
 	}
 
+	function AbsoluteServiceCenterSelect(){
+		$("#select_service_center_page").hide();
+		current_location_id = $("#custom_service_center_ofstation").val();
+		$("#toloadservicecenters").val(current_location_id);
+		GetRoomInformationByID();
+		$("#step_1").show();
+	}
+
 	var selected_location_info = "";
-	function GetRoomInformationByID(is_silent = true){
+	 function GetRoomInformationByID(is_silent = true){
 
 		current_location_id = $("#toloadservicecenters").val();
 		$.ajax({
 			type:"POST",
 			url: "{{ route('stole_single_service_center_data_byid') }}",
 			data: {_token: "{{ csrf_token() }}",service_center_id: current_location_id},
-			success: function(data){
+			success:async function(data){
 				// alert(data);
 				data = JSON.parse(data);
 				if(data.length != 0){
 					// Apply in UI
 					selected_location_info = data;
-					setTimeout(function(){
-						ApplySelectedLocationInfoToUI();
-					},300)
-
-					setTimeout(function(){
-						GetMaxValues();
-					},400)
-					
+					ApplySelectedLocationInfoToUI();
+					await x_timer(351);
+					GetMaxValues();
 					if(is_silent == false){
 						alert("Service Center successfully selected!");
 						$("#inp_qrfocus").focus();
@@ -692,13 +757,14 @@ $("#chooseserv").show();
 		AddToInv();
 	})
 
-	function AddToInv(){
+	 function AddToInv(){
 		$("#inp_qrfocus").prop("disabled",true);
 		var data_code =  htmlEntities($("#inp_qrfocus").val());
 		data_code = data_code.trim();
 		if(data_code != ""){
 			if(current_location_id != ""){
 				if(CheckIfAssetCodeIsExisiting(data_code) == false){
+
 					AddCodeToRawData(data_code);
 				}else{
 					AddToErrorLogs("You already scanned this code(" + data_code + ").");
@@ -721,7 +787,7 @@ $("#chooseserv").show();
 		$("#inp_qrfocus").val("");
 
 	}
-	function AddCodeToRawData(newdata){
+	 function AddCodeToRawData(newdata){
 		 $("#inp_qrfocus").prop("placeholder","Proccessing....");
 		var currentdata = $("#rawdatatext").val();
 		if(currentdata != "" && currentdata != null){
@@ -818,7 +884,7 @@ $("#chooseserv").show();
 					rawdata:current_raw,
 					user_last_schoolname:current_station_fullname},
 			success: function(data){
-				alert(data);
+				// alert(data);
 			}
 		})
 	}

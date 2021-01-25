@@ -185,7 +185,7 @@ $("#startinginfo").show();
 		$("#asset_type").prop("disabled",true);
 		// alert("runned!");
 		$("#master_check").prop("checked",false);
-		var myval = $("#id_qrfilter").val().split("|");
+		var myval = $("#id_qrfilter").val().split("~");
 		var ass_type = $("#asset_type").val();
 
 		if(currentlyready.includes(ass_type)){

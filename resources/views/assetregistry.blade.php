@@ -13,7 +13,7 @@ Innoventory - Asset Registry
      
 </nav>
 
-<input type="hidden" value="{{ session('user_school') }}" id="myschool_realid" name="">
+<input type="hidden" value="{{ session('user_changesource_station') }}" id="myschool_realid" name="">
 
 <div class="mobiletext">
 
@@ -26,17 +26,15 @@ Innoventory - Asset Registry
   <!-- FOR ADMIN ONLY -->
     <a class="btn btn-secondary dropdown-toggle float-right" href="#" id="navbardrop" data-toggle="dropdown">
     <i class="fas fa-filter"></i> Filter Asset Source</a>
-  
     <div class="dropdown-menu" style="width:450px; min-height: 300px;">
       <div class="container">
         <div class="form-group">
-          <input type="text" class="form-control mt-3" id="searchss" placeholder="Search Station here..." name="">
+          <input type="text" class="form-control mt-3" id="searchss" autocomplete="off" placeholder="Search Station here..." name="">
         </div>
         <div class="form-group">
           <div class=' mt-2'>
             <a onclick='gotomyownassets()' href='#' title='Switch to my own assets'>
             <span class="float-right text-muted"><i class="fas fa-home"></i></span>
-
             <small class='text-muted card-subtitle'>Switch to</small><br>
             <strong class='card-title' ><?php echo session("user_schoolname"); ?></strong>
             </a>
@@ -52,7 +50,7 @@ Innoventory - Asset Registry
   <?php
     }
   ?>
-  <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname') }}</span></h4>
+  <h4 class="mb-3"><span id="sourcename">{{ session('user_changesource_station_name') }}</span></h4>
   <!--ASSET REGISTRY-->
   <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
     <li class="nav-item">
@@ -73,7 +71,7 @@ Innoventory - Asset Registry
           <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
       </div>
       <div class="col-sm-6">
-        <table class="table table-sm table-bordered">
+        <table class="table table-bordered">
       <thead>
         <tr>
           <th>Total Assets</th>
@@ -81,23 +79,21 @@ Innoventory - Asset Registry
           <th>Omitted</th>
           <th> 
 
-                        <?php
-    if(session("user_type") == "0" || session("user_type") == "1"){
-  ?>
- <div class="dropdown">
+          <?php
+          if(session("user_type") == "0" || session("user_type") == "1"){
+          ?>
+            <div class="dropdown">
             <a class="btn btn-link float-right btn-sm" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-caret-down"></i>
+            <i class="fas fa-caret-down"></i>
             </a>
-
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#unicleardata" onclick="ClearAssetData(this)" data-datatoclear="Supply"><i class="fas fa-trash"></i> Clear Supply Data</a>
+            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#unicleardata" onclick="ClearAssetData(this)" data-datatoclear="Supply"><i class="fas fa-trash"></i> Clear Supply Data</a>
             </div>
-          </div>
-  <?php
-    }
-  ?>
-
-  Last Updated</th>
+            </div>
+          <?php
+          }
+          ?>
+          As of</th>
         </tr>
       </thead>
       <tbody>
@@ -357,7 +353,7 @@ Innoventory - Asset Registry
 
   </div>
   <div class="col-sm">
-     <table class="table table-sm table-bordered">
+     <table class="table table-bordered">
       <thead>
         <tr>
           <th>Total Assets</th>
@@ -377,7 +373,7 @@ Innoventory - Asset Registry
           </div>
   <?php
     }
-  ?> Last Updated</th>
+  ?> As of</th>
         </tr>
       </thead>
       <tbody>
@@ -428,11 +424,12 @@ Innoventory - Asset Registry
     <?php } ?>
   </div>
   <div class="col-sm">
-    <table class="table table-sm table-bordered">
+    <table class="table table-bordered">
       <thead>
         <tr>
           <th>Total Assets</th>
           <th>Discrepancies</th>
+          <th>Not Inserted</th>
           <th>Omitted</th>
           <th>
                                    <?php
@@ -450,11 +447,12 @@ Innoventory - Asset Registry
   <?php
     }
   ?>
-        Last Updated</th>
+        As of</th>
         </tr>
       </thead>
       <tbody id="assvalsum">
         <tr>
+          <td>0</td>
           <td>0</td>
           <td>0</td>
           <td>0</td>
@@ -464,59 +462,6 @@ Innoventory - Asset Registry
     </table>
   </div>  
 </div>
-
-<script type="text/javascript">
-  $("#searchss").change(function(){
-    var skey = $("#searchss").val();
-   $.ajax({
-    type: "POST",
-    url: "{{ route('search_asstov') }}",
-    data: {_token: "{{ csrf_token() }}",searchkey:skey},
-    success: function(data){
-      if(data == ""){
-          $("#search_narrative").html("No result found.");
-          $("#school_search_cont").css("display","none");
-          $("#search_narrative").css("display","block");
-      }else{
-          $("#school_search_cont").css("display","block");
-          $("#search_narrative").css("display","none");
-          $("#school_search_cont").html(data);
-      }
-      $("#searchss").val("");
-    }
-   })
-  })
-  function changesource(control_obj){
-   
-    $("#myschool_realid").val($(control_obj).data("sourceid"));
-    $(".source_id_dynamic").val($(control_obj).data("sourceid"));
-
-     if($(control_obj).data("sourceid") != <?php echo session("user_school"); ?>){
-            $("#sourcename").html($(control_obj).data("sourcename"));
-          }else{
-              $("#sourcename").html($(control_obj).data("sourcename"));
-          }
-
-
-    $("#lod_change_ass_source").css("display","block");
-    LoadAssets();
-    setTimeout(function(){
-    $("#lod_change_ass_source").css("display","none");
-    },1000)
-    }
-
-    function gotomyownassets(){
-    var myassets = <?php echo json_encode(session("user_school")); ?>;
-    $("#myschool_realid").val(myassets);
-     $("#lod_change_ass_source").css("display","block");
-    LoadAssets();
-    setTimeout(function(){
-    $("#lod_change_ass_source").css("display","none");
-     $("#sourcename").html(<?php echo json_encode(session("user_schoolname")); ?>);
-    },1000)
-
-    }
-</script>
 
 
       <table class="table table-hover table-bordered" id="tbl_ass">
@@ -576,9 +521,6 @@ Innoventory - Asset Registry
 <form action="{{ route('uploadassetregistrycsv') }}" method="POST"  enctype="multipart/form-data">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
   <div class="modal" tabindex="-1" id="uploadnewcsv" role="dialog">
-    <div>
-      
-    </div>
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
          <div id="lod_uploadass" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: white; display:none;">
@@ -673,7 +615,124 @@ Innoventory - Asset Registry
   </div>
 </div>
 
-  <script type="text/javascript">
+
+<div class="modal" tabindex="-1" role="dialog" id="notinserted_co">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Not Inserted Capital Outlay</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+     <div class="card-body">
+        <table class="table m-0 table-striped table-bordered" id="tbl_notinscap">
+          <thead>
+            <tr>
+              <th>Property #</th>
+              <th>Asset Item</th>
+              <th>Specification</th>
+              <th>Condition</th>
+              <th>Service Center</th>
+              <th>Room</th>
+              <th style="width: 30%;">Reason</th>
+            </tr>
+          </thead>
+          <tbody id="thenotinsdataofco">
+          </tbody>
+        </table>
+     </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  var hasloadednotinserted = false;
+  function load_not_inserted_co(){
+
+    if(hasloadednotinserted == false){
+      var curr_sc = $("#myschool_realid").val();
+    $.ajax({
+      type:"POST",
+      url: "{{ route('stole_not_inserted_recent_co_data') }}",
+      data: {_token: "{{ csrf_token() }}",current_station: curr_sc},
+      success: function(data){  
+        $("#tbl_notinscap").DataTable().destroy();
+        $("#thenotinsdataofco").html(data);
+        $("#tbl_notinscap").DataTable();
+      }
+    })
+      hasloadednotinserted = true;
+    }
+  }
+  $("#searchss").change(function(){
+    var skey = $("#searchss").val();
+   $.ajax({
+    type: "POST",
+    url: "{{ route('search_asstov') }}",
+    data: {_token: "{{ csrf_token() }}",searchkey:skey},
+    success: function(data){
+      if(data == ""){
+          $("#search_narrative").html("No result found.");
+          $("#school_search_cont").css("display","none");
+          $("#search_narrative").css("display","block");
+      }else{
+          $("#school_search_cont").css("display","block");
+          $("#search_narrative").css("display","none");
+          $("#school_search_cont").html(data);
+      }
+      $("#searchss").val("");
+    }
+   })
+  })
+  function changesource(control_obj){
+   hasloadednotinserted = false;
+   var sourceid = $(control_obj).data("sourceid");
+   var sourcename = $(control_obj).data("sourcename");
+    $("#myschool_realid").val(sourceid);
+    $(".source_id_dynamic").val(sourceid);
+    $("#sourcename").html(sourcename);
+    $("#lod_change_ass_source").css("display","block");
+
+    $.ajax({
+      type: "POST",
+      url: "{{ route('shoot_univ_change_source') }}",
+      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+      success: function(){
+          LoadAssets();
+          setTimeout(function(){
+          $("#lod_change_ass_source").css("display","none");
+          },1000)
+      }
+    })
+   
+    }
+
+    function gotomyownassets(){
+        hasloadednotinserted = false;
+
+    var sourceid =  <?php echo json_encode(session("user_school")); ?>;
+   var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
+    $.ajax({
+      type: "POST",
+      url: "{{ route('shoot_univ_change_source') }}",
+      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+      success: function(){
+          $("#myschool_realid").val(sourceid);
+          $("#lod_change_ass_source").css("display","block");
+          LoadAssets();
+          setTimeout(function(){
+          $("#lod_change_ass_source").css("display","none");
+          $("#sourcename").html(sourcename);
+          },1000)
+      }
+    })
+    }
+
   var dttoclear;
     function ClearAssetData(control_obj){
       dttoclear = $(control_obj).data("datatoclear");

@@ -77,7 +77,8 @@
 						<h4 id="percentagecounter" class="float-right text-primary"></h4>
 		<h4 ><img src="https://uploads.toptal.io/blog/image/122385/toptal-blog-image-1489082610696-459e0ba886e0ae4841753d626ff6ae0f.gif" style="width: 30px; margin-right: 10px;">Generating QR Stickers</h4>
 		<progress value="" style="width: 100%;" id="xproggen" max=""></progress>
-		<p class="text-muted mb-0"><span id="currs">0</span> out of <span id="totss">0</span> QR code has been successfully generated.</p>
+		<p class="text-muted mb-0" id="txt_okstat" style="display: none;"><span id="currs">0</span> out of <span id="totss">0</span> QR code has been successfully generated.</p>
+		<p class="text-muted mb-0" id="warmuptxt">Warming up...</p>
 					</div>
 				</div>
 			</div>
@@ -88,8 +89,9 @@
 	</div>
 </body>
 </html>
+
 <script type="text/javascript">
-var doneload = false;
+	var doneload = false;
 	var totallod = 0;
 	var current = 0;
 	var toappend;
@@ -98,23 +100,25 @@ var doneload = false;
 
 
 	var asset_type = <?php echo json_encode($_GET["ass_type"]); ?>;
-	var loca_id = <?php
-	$transter =  $_GET["locationinfo"];
-	$transter = explode("|", $transter);
-	$ozon = sdmdec($transter[0]);
-	echo json_encode($ozon . "|" . $transter[1]);
-    function sdmdec($data){
-      $keycode = openssl_digest(utf8_encode("virmil"),"sha512",true);
-      $string = substr($keycode, 10,24);
-      $utfData = base64_decode($data);
-      $decryptData = openssl_decrypt($utfData, "DES-EDE3", $string, OPENSSL_RAW_DATA,'');
-      return $decryptData;
-    }
-	?>;
-	// alert(loca_id);
-	loca_id = loca_id.split("|");
-	var rname = loca_id[0];
-	var rnum =loca_id[1];
+	var loca_id = <?php echo json_encode($_GET["locationinfo"]); ?>;
+	loca_id = loca_id.split("~");
+	
+	dec_data();
+	var rname ="";
+	var rnum ="";
+	function dec_data(){
+		$.ajax({
+			type:"POST",
+			url: "{{ route('shoot_trans_sdm') }}",
+			data: {_token: "{{ csrf_token() }}",todec: loca_id[0]},
+			success: function(data){
+				loca_id[0] = data;
+				rname = loca_id[0];
+				rnum =loca_id[1];
+				coco();
+			}
+		})
+	}
 	var alreadydone = "";
 	var data=localStorage.getItem('pnumber_arr');
 	var json_data = JSON.parse(data);
@@ -123,7 +127,7 @@ var doneload = false;
 	$("#xproggen").prop("max",totallod);
 		
 
-coco();
+		
     	async function coco(){
     			for (var i = 0; i < json_data.length;i++) {
 		var pnumberarr=json_data[i];	
@@ -148,7 +152,7 @@ var inserted = false;
 async function GenSelect(pnumberarr){
 	
 		// setTimeout(function(){
-			// alert(pnumberarr + "---" + rname + "----" + rnum + "----" + asset_type + "----");
+			// alert(pnumberarr + "---(" + rname + ")----" + rnum + "----" + asset_type + "----");
 			$.ajax({
 				url: "{{ route('g_items') }}",
 				type: "POST",
@@ -204,7 +208,8 @@ $("#percentagecounter").html(percentage_value_trans);
 					   
 
 
-						
+						$("#txt_okstat").show();
+$("#warmuptxt").hide();
 						   $("#currs").html(current);
 					    $("#totss").html(totallod);
 					    if(current == totallod){
@@ -266,7 +271,8 @@ $("#percentagecounter").html(percentage_value_trans);
 						});
 
 
-						
+										$("#txt_okstat").show();
+$("#warmuptxt").hide();
 						   $("#currs").html(current);
 					    $("#totss").html(totallod);
 					    if(current == totallod){

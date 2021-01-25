@@ -43,7 +43,6 @@ Innoventory - Inventory
     <?php
     }
     ?>
-
 <h4 class="mb-3"><span id="sourcename">{{ session('user_schoolname')}}</span></h4>
 
  <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
@@ -56,10 +55,7 @@ Innoventory - Inventory
 </ul>
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-
 <div class="row">
-  
-
   <script type="text/javascript">
   $("#searchss").change(function(){
   var skey = $("#searchss").val();
@@ -133,10 +129,10 @@ Innoventory - Inventory
          <h5>Start Inventory</h5>
         </div>
         <div class="card-footer">
-         <form action="{{ route('goto_inventory_co') }}" method="GET">
+         <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
             <input type="hidden" name="station_full_name" class="inp_filtepurpose_stationname">
             <input type="hidden" name="station_id" id="inp_sc_id_inv" value="">
-            <button type="submit" class="btn btn-danger btn-sm float-right">Start</button>
+            <button type="submit"  id="btn_capital_startinv" class="btn btn-danger btn-sm float-right">Start</button>
          </form>
           Inventory
         </div>
@@ -172,16 +168,9 @@ Innoventory - Inventory
       if(session("user_type") < "4" && session("user_type") != "2"){
         ?>
         <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-
     <?php } ?>
-
-
-
-        
       </div>
        <div class="col-sm-12">
-
-
          <div class="card-deck">
       <div class="card">
         <div class="card-body">
@@ -221,10 +210,10 @@ Innoventory - Inventory
          <h5>Start Inventory</h5>
         </div>
         <div class="card-footer">
-         <form action="{{ route('goto_inventory_co') }}" method="GET">
+         <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
             <input type="hidden" name="station_full_name" class="inp_filtepurpose_stationname">
             <input type="hidden" name="station_id" id="inp_sc_id_inv_2" value="">
-            <button type="submit" class="btn btn-danger btn-sm float-right">Start</button>
+            <button type="submit"  id="btn_semi_startinv" class="btn btn-danger btn-sm float-right">Start</button>
          </form>
           Inventory
         </div>
@@ -368,6 +357,10 @@ var is_filter_loaded = false;
 var is_filter_loaded_semi = false;
 
  var ref_station = "";
+ $("#btn_semi_startinv").hide();
+ $("#btn_capital_startinv").hide();
+
+
 function UniversalLoaderSourceChange(stationID){
   ref_station = stationID;
   LoadSelection_YearWithInventory(stationID);
@@ -544,7 +537,9 @@ is_filter_loaded_semi = false;
     $("#inp_sc_id").val(sc_id);
      $("#inp_sc_id_inv").val(sc_id);
       $("#inp_sc_id_inv_2").val(sc_id);
+      $("#btn_semi_startinv").show();
 
+    $("#btn_capital_startinv").show();
     $("#inp_sc_id_semi").val(sc_id);
 
     var choosen_year = $("#capout_filter_year").val();

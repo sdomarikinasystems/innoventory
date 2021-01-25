@@ -35,11 +35,15 @@ Innoventory (Loading....)
     
       </div>
       <div class="col-md-4">
-        <div class="alert alert-info alert-sm" role="alert">
-          <small>Estimated Total Life Years</small> : <br><h4 class="a_ely mb-0"></h4>
+        <div class="card mb-3">
+          <div class="card-body">
+              <small>Estimated Total Life Years</small> : <br><h4 class="a_ely mb-0"></h4>
+          </div>
         </div>
-        <div class="alert alert-secondary alert-sm" role="alert">
-          <small>Condition</small> : <br><strong class="a_current"></strong>
+         <div class="card">
+          <div class="card-body">
+           <small>Condition</small> : <br><strong class="a_current"></strong>
+          </div>
         </div>
       </div>
     </div>

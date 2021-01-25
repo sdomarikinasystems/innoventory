@@ -113,7 +113,6 @@ body {
 		}
 	}
 	.tridify {
-		font-size: 50px;
 		text-transform: uppercase;
 		color: #f5f5f5;
 		text-shadow: 1px 1px 1px #919191,

@@ -150,6 +150,7 @@ Route::post("/get_suppy_data",["uses"=>"functions@look_all_of_my_supply_data","a
 Route::post("/validate_uploaded_supply_file",["uses"=>"functions@look_preview_of_uploaded_supplyfile","as"=>"stole_preview_of_uploaded_supplyfile"]);
 Route::post("/add_new_supply",["uses"=>"functions@fire_add_supply","as"=>"shoot_add_supply"]);
 Route::post("/clear_specific_asset_data_by_type_station",["uses"=>"functions@fire_delete_specific_assetdata_all","as"=>"shoot_delete_specific_assetdata_all"]);
+Route::post("/get_not_inserted_co",["uses"=>"functions@look_not_inserted_recent_co_data","as"=>"stole_not_inserted_recent_co_data"]);
 
 
 // ASSET INVENTORY PAGE
@@ -190,6 +191,8 @@ Route::post("/check_rediness_specific",["uses"=>"functions@look_checkready_speci
 Route::post("/check_if_last_session",["uses"=>"functions@look_last_session","as"=>"stole_last_session"]);
 Route::post("/remove_last_session",["uses"=>"functions@fire_remove_last_session","as"=>"shoot_remove_last_session"]);
 Route::post("/save_session_today",["uses"=>"functions@fire_save_last_session","as"=>"shoot_save_last_session"]);
+Route::post("/clear_cache_data_rec",["uses"=>"functions@fire_clear_recovery_data","as"=>"shoot_clear_recovery_data"]);
+
 
 // ASSET SEMI EXPENDABLE DISCREPANCIES
 Route::get("/innoventory/asset_registry/semi_expendable/discrepancies",["uses"=>"functions@fly_semiexpendable_discrepancies","as"=>"goto_semiexpendable_discrepancies"]);
@@ -211,4 +214,10 @@ Route::get("/innoventory/issuances",["uses"=>"functions@fly_issuances","as"=>"go
 
 // UNIVERSAL
 Route::post("/get_last_logdate",["uses"=>"functions@look_last_date_ofcode","as"=>"stole_last_date_ofcode"]);
+Route::post("/uni_change_source",["uses"=>"functions@fire_univ_change_source","as"=>"shoot_univ_change_source"]);
+
+
+// user_changesource_station
+// QR PRINING PAGE
+Route::post("/translate_sdm_securitywise",["uses"=>"functions@fire_trans_sdm","as"=>"shoot_trans_sdm"]);
 
