@@ -52,7 +52,7 @@ Inno... - Utilities
 			<h5 id="selected_count"></h5>	
 		</div>
 		<div class="card-footer">
-			<button class="btn btn-primary btn-sm" id="print"><i class="fas fa-qrcode"></i> Print to QR Stickers</button>
+			<button class="btn btn-primary btn-sm" id="print" ><i class="fas fa-qrcode"></i> Print to QR Stickers</button>
 		</div>
 	</div>
 	

@@ -703,10 +703,8 @@ Innoventory - Asset Registry
       url: "{{ route('shoot_univ_change_source') }}",
       data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
       success: function(){
-          LoadAssets();
-          setTimeout(function(){
-          $("#lod_change_ass_source").css("display","none");
-          },1000)
+        location.reload();
+         
       }
     })
    
@@ -722,13 +720,7 @@ Innoventory - Asset Registry
       url: "{{ route('shoot_univ_change_source') }}",
       data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
       success: function(){
-          $("#myschool_realid").val(sourceid);
-          $("#lod_change_ass_source").css("display","block");
-          LoadAssets();
-          setTimeout(function(){
-          $("#lod_change_ass_source").css("display","none");
-          $("#sourcename").html(sourcename);
-          },1000)
+        location.reload();
       }
     })
     }

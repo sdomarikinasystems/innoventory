@@ -66,18 +66,18 @@ span.deleteicon {
 
 }
 span.deleteicon span {
-    position: absolute;
-    display: block;
-    top: 11px;
-  right: 10px;
-    width: 25px;
-    height: 25px;
-    opacity: 0.5;
-    background: url('https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png') 0 -6px;
-  background-size: contain;
-  background-position:center;
-  background-repeat:no-repeat;
-    cursor: pointer;
+	position: absolute;
+	display: block;
+	top: 11px;
+	right: 10px;
+	width: 25px;
+	height: 25px;
+	opacity: 0.5;
+	background: url('https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png') 0 -6px;
+	background-size: contain;
+	background-position:center;
+	background-repeat:no-repeat;
+	cursor: pointer;
 }
    
 @font-face {
@@ -143,7 +143,8 @@ body {
 		margin:auto;
 	}
 	.card-shadow{
-		box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+		box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);
 	}
 	@media only screen and (max-width: 1366px) {
 	.announcement_card{
@@ -209,11 +210,17 @@ body {
 		border:none;
 		animation-name: scale-in;
 		animation-duration: 0.3s;
-		box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+			box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);
+	}
+	.btn:hover{
+			box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);
 	}
 	.dropdown-menu{
 		border-radius: 10px !important;
-		box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+			box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);
 		border-color: #EEEEF2 !important;
 	}
 	.nav-tabs .nav-item .nav-link{
@@ -347,7 +354,8 @@ background-color: #007DFF;
 </head>
 <body>
 	@include('sweet::alert')
-	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
+	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid rgba(0,0,0,0.05); 	box-shadow:0px 2px 3px rgba(0,0,0,0.01),
+		0px 5px 10px rgba(0,0,0,0.03);">
 	  <a class="navbar-brand" href="#"><span class="featurefont" style="color: #007DFF;">Innoventory</span> <small class="text-muted">by SDO - Marikina City</small></a>
 	  <button id="btn_navsdietoggle" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
@@ -581,13 +589,128 @@ background-color: #007DFF;
 	</ul>
 
 		<!-- END OF MENU -->
+<script type="text/javascript">
+	(function ($) {
+    $.fn.DuplicateWindow = function () {
+        var localStorageTimeout = (5) * 1000; // 15,000 milliseconds = 15 seconds.
+        var localStorageResetInterval = (1/2) * 1000; // 10,000 milliseconds = 10 seconds.
+        var localStorageTabKey = 'my-application-browser-tab';
+        var sessionStorageGuidKey = 'browser-tab-guid';
+
+        var ItemType = {
+            Session: 1,
+            Local: 2
+        };
+
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function GetItem(itemtype) {
+            var val = "";
+            switch (itemtype) {
+                case ItemType.Session:
+                    val = window.name;
+                    break;
+                case ItemType.Local:
+                    val = decodeURIComponent(getCookie(localStorageTabKey));
+                    if (val == undefined)
+                        val = "";
+                    break;
+            }
+            return val;
+        }
+
+        function SetItem(itemtype, val) {
+            switch (itemtype) {
+                case ItemType.Session:
+                    window.name = val;
+                    break;
+                case ItemType.Local:
+                    setCookie(localStorageTabKey, val);
+                    break;
+            }
+        }
+
+        function createGUID() {
+            this.s4 = function () {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                  .toString(16)
+                  .substring(1);
+            };
+            return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + this.s4() + this.s4();
+        }
+      function TestIfDuplicate() {
+            //console.log("In testTab");
+            var sessionGuid = GetItem(ItemType.Session) || createGUID();
+            SetItem(ItemType.Session, sessionGuid);
+
+            var val = GetItem(ItemType.Local);
+            var tabObj = (val == "" ? null : JSON.parse(val)) || null;
+            console.log(val);
+            console.log(sessionGuid);
+            console.log(tabObj);
+
+            // If no or stale tab object, our session is the winner.  If the guid matches, ours is still the winner
+            if (tabObj === null || (tabObj.timestamp < (new Date().getTime() - localStorageTimeout)) || tabObj.guid === sessionGuid) {
+                function setTabObj() {
+                    //console.log("In setTabObj");
+                    var newTabObj = {
+                        guid: sessionGuid,
+                        timestamp: new Date().getTime()
+                    };
+                    SetItem(ItemType.Local, JSON.stringify(newTabObj));
+                }
+                setTabObj();
+                setInterval(setTabObj, localStorageResetInterval);//every x interval refresh timestamp in cookie
+                return false;
+            } else {
+                // An active tab is already open that does not match our session guid.
+                return true;
+            }
+        }
+
+        window.IsDuplicate = function () {
+            var duplicate = TestIfDuplicate();
+            //console.log("Is Duplicate: "+ duplicate);
+            return duplicate;
+        };
+
+        $(window).on("beforeunload", function () {
+            if (TestIfDuplicate() == false) {
+                SetItem(ItemType.Local, "");
+            }
+        })
+    }
+    $(window).DuplicateWindow();
+}(jQuery));
+
+</script>
 		</div>
 		<div class="col-lg-10">
 			@yield('contents')
+
 		</div>
 	</div>
 	</div>
 	<script type="text/javascript">
+		
 		$(".modal-dialog").addClass("modal-dialog modal-dialog-centered");
 		var resizedx = false;
 		var is_hidden = false;
@@ -744,6 +867,8 @@ var sc_width = $( document ).width();
 				}})
 			}
 		  }
+
+
 
 		</script>
 </body>

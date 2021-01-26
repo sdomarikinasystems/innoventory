@@ -59,19 +59,13 @@ Innoventory - Dashboard
 		</div>
 	
 </div>
-		<div class="card mobiletext">
-			<div class="card-header">
-				<h5><i class="fas fa-bullhorn"></i> Announcements</h>
-			</div>
-			<div class="card-body announcement_card_body" style="padding:0; background-color: #F1F1F1 !important;" >	
-				<div id="newann" style="background-color: #F1F1F1 !important; margin: 20px;">
+		<a href="{{ route('manage_reminders') }}" class="float-right"><i class="fas fa-hand-point-right"></i> See All</a>
+		<h5 class="text-muted">Announcements</h5>
+		<div class="announcement_card_body" style="padding:0;" >	
+				<div id="newann" style="margin: 20px;">
 					
 				</div>
 			</div>
-			<div class="card-footer">
-				<a href="{{ route('manage_reminders') }}" class="float-right"><i class="fas fa-hand-point-right"></i> View All</a>
-			</div>
-		</div>
 	</div>
 
 	<div class="col-sm-5">
@@ -97,11 +91,7 @@ Innoventory - Dashboard
 			  	<div id="inv_status">
 					
 				</div>
-				<div class="alert alert-secondary ">
-					<h5 class="text-dark">Suggestion</h5>
-			  	<p class="text-dark">Let's learn these simple steps to kickstart how Innoventory works.</p>
-			  	<a href="{{ route('gohow') }}" class="btn btn-sm btn-primary">Go to Tutorial</a>
-				</div>
+				
 
 				
 			  </div>
@@ -166,7 +156,7 @@ $("#statbar").css("display","none");
   		data: {_token: "{{ csrf_token() }}",typeofget:"0"},
   		success:function(data){
   			// alert(data);
-  			$("#newann").html(urlify(data));
+  			$("#newann").html(data);
   			LoadDashboardInfo();
   		}
   	})

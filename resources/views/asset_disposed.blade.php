@@ -206,8 +206,8 @@ Innoventory - Disposed Assets
       url: "{{ route('shoot_univ_change_source') }}",
       data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
       success: function(){
-         $("#sourcename").html(sourcename);
-        LoadAssets(sourceid);
+        location.reload();
+
       }
     })
    
@@ -221,8 +221,8 @@ Innoventory - Disposed Assets
       url: "{{ route('shoot_univ_change_source') }}",
       data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
       success: function(){
-           $("#sourcename").html(sourcename);
-      LoadAssets(sourceid);
+        location.reload();
+      
       }
     })
    

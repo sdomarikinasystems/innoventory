@@ -9,10 +9,47 @@ Innoventory - User Management
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page">Home</li>
 		<li class="breadcrumb-item active" aria-current="page">Manage Users</li>
+    <li class="breadcrumb-item active" aria-current="page">{{ session('user_changesource_station_name') }}</li>
 	</ol>
 </nav>
+
+
+    <?php
+    if(session("user_type") == "0" || session("user_type") == "1"){
+  ?>
+  <!-- FOR ADMIN ONLY -->
+    <a class="btn btn-secondary dropdown-toggle float-right" href="#" id="navbardrop" data-toggle="dropdown">
+    <i class="fas fa-filter"></i> Filter User Source</a>
+    <div class="dropdown-menu" style="width:450px; min-height: 300px;">
+      <div class="container">
+        <div class="form-group">
+          <input type="text" class="form-control mt-3" id="searchss" autocomplete="off" placeholder="Search Station here..." name="">
+        </div>
+        <div class="form-group">
+          <div class=' mt-2'>
+            <a onclick='gotomyownassets()' href='#' title='Switch to my own assets'>
+            <span class="float-right text-muted"><i class="fas fa-home"></i></span>
+            <small class='text-muted card-subtitle'>Switch to</small><br>
+            <strong class='card-title' ><?php echo session("user_schoolname"); ?></strong>
+            </a>
+            <hr>
+            <center id="search_narrative"><h5 class="text-muted mt-5"><i class="fas fa-search"></i> Search result will appear here...</h5></center>
+          </div>
+          <div id="school_search_cont" style=" overflow-y: auto; overflow-x: hidden; max-height: 300px;">
+          <!-- result -->
+          </div>
+        </div>
+      </div>
+    </div>
+  <?php
+    }
+  ?>
+<h4 class="mb-3"><span id="sourcename">{{ session('user_changesource_station_name') }}</span></h4>
 <div class="row">
-	<div class="col-sm" style="padding-left:0">
+	<div class="col-sm-12">
+
+
+
 		<ul class="nav">
       <?php
       if(session("user_type") < "4" && session("user_type") != "2"){
@@ -31,6 +68,9 @@ Innoventory - User Management
 	<div class="col-sm">
 	</div>	
 </div>
+
+
+
 
 <div class="row mt-3">
   <div class="col-sm-12">
@@ -290,6 +330,8 @@ $cocoa =  random_strings(10);
 
 
 <script type="text/javascript">
+  var curr_station_id = <?php echo json_encode(session("user_changesource_station")); ?>;
+  var curr_station_name = <?php echo json_encode(session("user_changesource_station_name")); ?>;
 
   function lod_resetpass(control_obj){
     $("#theempid").val($(control_obj).data("empid"));
@@ -320,18 +362,17 @@ $("#emp_id_del").val($(control_obj).data("empid"));
 
 }
 LoadAllSchoolsInSelection();
+
 function LoadAllAccounts(){
    $.ajax({
     type: "POST",
     url: "{{ route('display_all_employees') }}",
-    data : {_token: "{{ csrf_token() }}"},
+    data : {_token: "{{ csrf_token() }}",user_school: curr_station_id},
     success: function(data){
-      console.log(data);
       $("#tallemp").html(data);
        $("#tblu").DataTable();
     }
   })
-
 }
  
   function LoadAllSchoolsInSelection(){
@@ -350,6 +391,55 @@ LoadAllAccounts();
      // $("#addtype").val("4");
      $("#all_sc_name").val("{{ session('user_school') }}");
     }
+
+
+    function gotomyownassets(){
+        var sourceid =  <?php echo json_encode(session("user_school")); ?>;
+        var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
+        $.ajax({
+        type: "POST",
+        url: "{{ route('shoot_univ_change_source') }}",
+        data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+        success: function(){
+          location.reload();
+        }
+        })
+    }
+
+
+ function changesource(control_obj){
+    var sourceid = $(control_obj).data("sourceid");
+    var sourcename = $(control_obj).data("sourcename");
+    $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_univ_change_source') }}",
+    data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
+    success: function(){
+      location.reload();
+    }
+    })
+    }
+
+      $("#searchss").change(function(){
+    var skey = $("#searchss").val();
+   $.ajax({
+    type: "POST",
+    url: "{{ route('search_asstov') }}",
+    data: {_token: "{{ csrf_token() }}",searchkey:skey},
+    success: function(data){
+      if(data == ""){
+          $("#search_narrative").html("No result found.");
+          $("#school_search_cont").css("display","none");
+          $("#search_narrative").css("display","block");
+      }else{
+          $("#school_search_cont").css("display","block");
+          $("#search_narrative").css("display","none");
+          $("#school_search_cont").html(data);
+      }
+      $("#searchss").val("");
+    }
+   })
+  })
 </script>
 
 @endsection

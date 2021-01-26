@@ -45,7 +45,8 @@ Innoventory  - Login
 			<small class="text-muted">A project of the Schools Division Office - Marikina City <br> for School Year 2020-2021</small>
 		</div>
 		<div class="col-sm-6 col-left">
-			<div class="card" style="box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
+			<div class="card" style="	box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);">
 				<div class="card-body">
 
 					<?php 

@@ -92,15 +92,10 @@ Inno... - Capital Outlay Upload Result
 						<tr>
 						  <th scope="col">Property Number</th>
 						  <th scope="col">Asset Item</th>
-						  <th scope="col">Asset Classification</th>
-						  <th scope="col">Current Condition</th>
-						  <th scope="col">Service Center</th>
-						  <th scope="col">Room</th>
-						  <th scope="col">Action</th>
 						</tr>
 					</thead>
 					<tbody>
-						<?php echo $_GET["om_logs"]; ?>
+						<?php echo gzuncompress($_GET["om_logs"]); ?>
 					</tbody>
 				</table>
 		  </div>

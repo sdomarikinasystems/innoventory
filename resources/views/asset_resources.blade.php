@@ -18,10 +18,8 @@ Innoventory - Resources
 		?>
 		<!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
 				<button class="btn btn-primary" href="#" data-toggle="modal" data-target="#modal_uploadfile"><i class="fas fa-file-import"></i> Upload Resource</button>
-
 			<?php } ?>
 </div>
-
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
@@ -31,9 +29,8 @@ Innoventory - Resources
       if(session("user_type") < "4" && session("user_type") != "2"){
     ?>
   <li class="nav-item">
-    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Others</a>
+    <a class="nav-link" id="profile-tab" onclick=" LoadAllReoucesByLatestUpload()" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Others</a>
   </li>
-
     <?php } ?>
 </ul>
 <div class="tab-content" id="myTabContent">
@@ -58,9 +55,8 @@ Innoventory - Resources
 
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-    
     <div class="mt-3">
-      <table class="table table-sm table-striped table-bordered" id="td_allres">
+      <table class="table table-striped table-bordered" id="td_allres">
         <thead>
           <tr>
             <th>Station</th>
@@ -132,12 +128,12 @@ Innoventory - Resources
 
 
 <script type="text/javascript">
-  LoadAllReoucesByLatestUpload();
-
+ 
+var hasloaded =false;
 
  function LoadAllReoucesByLatestUpload(){
 
-$.ajax({
+   $.ajax({
       type:"POST",
       url: "{{ route('getallreourcesbylatest') }}",
       data: {_token: "{{ csrf_token() }}"},
@@ -146,7 +142,11 @@ $.ajax({
            $("#td_allres").DataTable();
       }
     })
-
+   
+  if(hasloaded == false){
+    hasloaded = true;
+  }
+   
  }
 
 LoadResources();

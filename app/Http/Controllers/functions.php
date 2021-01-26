@@ -129,8 +129,56 @@ class functions extends Controller
 
     public function fire_univ_change_source(Request $req){
       session(['user_changesource_station'=>$req["new_source_id"]]);
-       session(['user_changesource_station_name'=>$req["new_source_name"]]);
+       session(['user_changesource_station_name'=>$this->fixWrongUTF8Encoding($req["new_source_name"])]);
       return "true";
+    }
+    public function fixWrongUTF8Encoding($inputString) {
+
+        // code source:  https://github.com/devgeniem/wp-sanitize-accented-uploads/blob/master/plugin.php#L152
+        // table source: http://www.i18nqa.com/debug/utf8-debug.html
+        
+        $fix_list = array(
+            // 3 char errors first
+            'â€š' => '‚', 'â€ž' => '„', 'â€¦' => '…', 'â€¡' => '‡',
+            'â€°' => '‰', 'â€¹' => '‹', 'â€˜' => '‘', 'â€™' => '’',
+            'â€œ' => '“', 'â€¢' => '•', 'â€“' => '–', 'â€”' => '—',
+            'â„¢' => '™', 'â€º' => '›', 'â‚¬' => '€',
+            // 2 char errors
+            'Ã‚'  => 'Â', 'Æ’'  => 'ƒ', 'Ãƒ'  => 'Ã', 'Ã„'  => 'Ä',
+            'Ã…'  => 'Å', 'â€'  => '†', 'Ã†'  => 'Æ', 'Ã‡'  => 'Ç',
+            'Ë†'  => 'ˆ', 'Ãˆ'  => 'È', 'Ã‰'  => 'É', 'ÃŠ'  => 'Ê',
+            'Ã‹'  => 'Ë', 'Å’'  => 'Œ', 'ÃŒ'  => 'Ì', 'Å½'  => 'Ž',
+            'ÃŽ'  => 'Î', 'Ã‘'  => 'Ñ', 'Ã’'  => 'Ò', 'Ã“'  => 'Ó',
+            'â€'  => '”', 'Ã”'  => 'Ô', 'Ã•'  => 'Õ', 'Ã–'  => 'Ö',
+            'Ã—'  => '×', 'Ëœ'  => '˜', 'Ã˜'  => 'Ø', 'Ã™'  => 'Ù',
+            'Å¡'  => 'š', 'Ãš'  => 'Ú', 'Ã›'  => 'Û', 'Å“'  => 'œ',
+            'Ãœ'  => 'Ü', 'Å¾'  => 'ž', 'Ãž'  => 'Þ', 'Å¸'  => 'Ÿ',
+            'ÃŸ'  => 'ß', 'Â¡'  => '¡', 'Ã¡'  => 'á', 'Â¢'  => '¢',
+            'Ã¢'  => 'â', 'Â£'  => '£', 'Ã£'  => 'ã', 'Â¤'  => '¤',
+            'Ã¤'  => 'ä', 'Â¥'  => '¥', 'Ã¥'  => 'å', 'Â¦'  => '¦',
+            'Ã¦'  => 'æ', 'Â§'  => '§', 'Ã§'  => 'ç', 'Â¨'  => '¨',
+            'Ã¨'  => 'è', 'Â©'  => '©', 'Ã©'  => 'é', 'Âª'  => 'ª',
+            'Ãª'  => 'ê', 'Â«'  => '«', 'Ã«'  => 'ë', 'Â¬'  => '¬',
+            'Ã¬'  => 'ì', 'Â®'  => '®', 'Ã®'  => 'î', 'Â¯'  => '¯',
+            'Ã¯'  => 'ï', 'Â°'  => '°', 'Ã°'  => 'ð', 'Â±'  => '±',
+            'Ã±'  => 'ñ', 'Â²'  => '²', 'Ã²'  => 'ò', 'Â³'  => '³',
+            'Ã³'  => 'ó', 'Â´'  => '´', 'Ã´'  => 'ô', 'Âµ'  => 'µ',
+            'Ãµ'  => 'õ', 'Â¶'  => '¶', 'Ã¶'  => 'ö', 'Â·'  => '·',
+            'Ã·'  => '÷', 'Â¸'  => '¸', 'Ã¸'  => 'ø', 'Â¹'  => '¹',
+            'Ã¹'  => 'ù', 'Âº'  => 'º', 'Ãº'  => 'ú', 'Â»'  => '»',
+            'Ã»'  => 'û', 'Â¼'  => '¼', 'Ã¼'  => 'ü', 'Â½'  => '½',
+            'Ã½'  => 'ý', 'Â¾'  => '¾', 'Ã¾'  => 'þ', 'Â¿'  => '¿',
+            'Ã¿'  => 'ÿ', 'Ã€'  => 'À',
+            // 1 char errors last
+            'Ã' => 'Á', 'Å' => 'Š', 'Ã' => 'Í', 'Ã' => 'Ï',
+            'Ã' => 'Ð', 'Ã' => 'Ý', 'Ã' => 'à', 'Ã­' => 'í'
+        );
+    
+        $error_chars = array_keys($fix_list);
+        $real_chars  = array_values($fix_list);     
+
+        return str_replace($error_chars, $real_chars, $inputString);
+
     }
     public function fire_clear_recovery_data(){
       session(['user_last_scansession_sc'=> ""]);
@@ -2889,7 +2937,82 @@ $colval = "";
             $orig = $this->sdmdec($res_2->getBody()->getContents());
             $output = json_decode($orig ,true);
             $toecho = "";
+
+            $system_suggestion = array("
+              <div class='alert alert-secondary pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-dark'>Suggestion</h5>
+              <p class='text-dark'>Let's learn these simple steps to kickstart how Innoventory works.</p>
+              <a href='/innoventory/how_to' class='btn btn-sm btn-primary'>Go to Tutorial</a>
+              </div>
+              ","
+              <div class='text-dark alert alert-secondary pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-primary'>Discover how you can post your own Announcement</h5>
+              <p class='text-muted'>If you are a Property Custodian or Property Admin, you can post your own reminder in Innoventory by going to the reminders page.</p>
+              <ul>
+                <li>See reminders, announcements posted by your Admin or Property Custodian</li>
+                <li>Let your station see your reminder, announcements</li>
+              <ul>
+              </div>
+              ",
+              "
+              <div class='text-dark alert alert-light pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-info mb-0'>Your omitted assets wont affect your rediness for inventory.</h5>
+              <hr>
+               <span class='text-muted'><i class='fas fa-info-circle'></i> Innoventory Infocard</span>
+              </div>
+              ",
+              "
+              <div class='text-dark alert alert-light pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-info mb-0'>You can download your previously uploaded CSV file from the resource page.</h5>
+              <hr>
+               <span class='text-muted'><i class='fas fa-info-circle'></i> Innoventory Infocard</span>
+              </div>
+              "
+              ,
+              "
+              <div class='text-dark alert alert-light pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-info mb-0'>Service Center name are case sensitive. make sure the service center name from your CSV matches the exact capitalizations in your Manage Service Centers page.</h5>
+              <hr>
+               <span class='text-muted'><i class='fas fa-info-circle'></i> Innoventory Infocard</span>
+              </div>
+              "
+              ,
+              "
+              <div class='text-dark alert alert-light pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-info mb-0'>Assets from LGU, Disposed is not included in QR Code generation.</h5>
+              <hr>
+               <span class='text-muted'><i class='fas fa-info-circle'></i> Innoventory Infocard</span>
+              </div>
+              ",
+              "
+              <div class='alert alert-light text-dark pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-primary mb-0'>SDO-Marikina Youtube Channel</h5>
+              <p class='text-muted'>Stay updated in the latest events in Schools Division Office - Marikina City.</p>
+               <a target='_blank' href='https://www.youtube.com/channel/UCWA9DPz2cxtahvaqjBwt82g' class='btn btn-danger btn-sm'><i class='fab fa-youtube'></i> Subscribe</a>
+              </div>
+              "
+            );
+
+            
+
+
+             $tips_chance = 40;
             for ($i=0; $i < count($output); $i++) { 
+
+             
+
+             if( $tips_chance < 90){
+                $tips_chance += ($i * rand(0,3));
+             }
+              if(count($system_suggestion) != 0){
+                $selected_systempost = rand(0,(count($system_suggestion) -1));
+              $has_system_post = rand(0,100);
+              if($has_system_post <  $tips_chance){
+                 $toecho .=  $system_suggestion[$selected_systempost];
+                 array_splice($system_suggestion,$selected_systempost);  
+              }
+              }
+              
 
               $remtype = $output[$i]["viewtype"];
               switch ( $remtype) {
@@ -2910,8 +3033,8 @@ $colval = "";
                   break;
               }
                 $toecho .= "
-                  <div class='card mb-3 announcement_card'>
-                    <div class='card-body'>
+                  <div class='card card-shadow mb-4 announcement_card'>
+                    <div class='card-body mt-3 mb-3'>
                     <p class='float-right'><small style='color:#007DFF;'><i class='fas fa-globe-asia'></i> " .strtoupper( $remtype) ."</small></p>
                       <p><strong><i class='fas fa-user-circle'></i> " . $output[$i]["username"] ."</strong>
                         <br><span class='text-muted' title='" . date("m/d/y g:i a",strtotime($output[$i]["dateposted"] ))  . "'>" . $this->DateExplainder($output[$i]["dateposted"]) . "</span>
@@ -3005,14 +3128,14 @@ $colval = "";
             session(['user_type'=>$output[0]["acc_type"]]);
             session(['user_depedemail'=>$output[0]["depedemail"]]);
             session(['user_school'=>$output[0]["station_id"]]);
-            session(['user_schoolname'=> $mynameschool]);
+            session(['user_schoolname'=> $this->fixWrongUTF8Encoding($mynameschool)]);
 
             session(['user_last_scansession_sc'=> ""]);
             session(['user_last_scansession'=> ""]);
             session(['user_last_schoolname'=> ""]);
 
             session(['user_changesource_station'=> $output[0]["station_id"]]);
-            session(['user_changesource_station_name'=>  $mynameschool]);
+            session(['user_changesource_station_name'=>  $this->fixWrongUTF8Encoding($mynameschool)]);
             //RIGHT CREDENTIALS
            return redirect()->route("dboard");
           }
@@ -3781,10 +3904,10 @@ $this->RecordLog("a02");
     echo $toecho;
     }
 
-    public function display_all_employees(){
+    public function display_all_employees(Request $req){
       $tag = $this->sdmenc("get_registered_user");
        $user_type = $this->sdmenc(session("user_type"));
-       $school_id = $this->sdmenc(session("user_school"));
+       $school_id = $this->sdmenc($req["user_school"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
         "tag"=>$tag,
@@ -3798,16 +3921,7 @@ $this->RecordLog("a02");
 
   }else{
   $usertype = "";
-
-//   $my_isverif = "";
-// switch ($output[$i]["is_verified"]) {
-//   case '0':
-//     $my_isverif  = "<span class='badge badge-warning'>Pending</span>";
-//     break;
-//     case '1':
-//     $my_isverif  =  "<span class='badge badge-success'>Verified</span>";
-//     break;
-// }
+  
   switch ($output[$i]["type"]) {
     case '0':
       $usertype = "Admin";
@@ -4316,36 +4430,37 @@ if( $isown){
             if($missinglog != ""){
                $mylogs .= "<tr><td>" . $getData[10] . "</td><td>" . $getData[5] . "</td><td>" .  $missinglog . "</td></tr>";
             }else if($has_cost_problem == true){
-              $logreason = "Not inserted. Cost of Aquisition (" .  $getData[14] . ") is below 15,000";
-                $mylogs .=    "<tr><td>" . $getData[10] . "</td><td>" . $getData[5] . "</td><td> " . $logreason . "</td></tr>";
+              $logreason = "Not inserted. Cost of Aquisition (" .  htmlentities($getData[14]) . ") is below 15,000";
+                $mylogs .=    "<tr><td>" . htmlentities($getData[10]) . "</td><td>" . htmlentities($getData[5]) . "</td><td> " . $logreason . "</td></tr>";
 
-                $data_structure = $this->sdmdec($office_type) . "<|next|>" . 
-                                  $this->sdmdec($office_name) . "<|next|>" . 
-                                  $this->sdmdec($asset_classification) . "<|next|>" . 
-                                  $this->sdmdec($asset_sub_class) . "<|next|>" . 
-                                  $this->sdmdec($uacs_object_code) . "<|next|>" . 
-                                  $this->sdmdec($asset_item) . "<|next|>" . 
-                                  $this->sdmdec($manufacturer) . "<|next|>" . 
-                                  $this->sdmdec($model) . "<|next|>" . 
-                                  $this->sdmdec($serial_number) . "<|next|>" . 
-                                  $this->sdmdec($specification) . "<|next|>" . 
-                                  $this->sdmdec($property_number) . "<|next|>" . 
-                                  $this->sdmdec($unit_of_measure) . "<|next|>" . 
-                                  $this->sdmdec($current_condition) . "<|next|>" . 
-                                  $this->sdmdec($source_of_fund) . "<|next|>" . 
-                                  $this->sdmdec($cost_of_acquisition) . "<|next|>" . 
-                                  $this->sdmdec($date_of_acquisition) . "<|next|>" . 
-                                  $this->sdmdec($estimated_total_life_years) . "<|next|>" . 
-                                  $this->sdmdec($name_of_accountable_officer) . "<|next|>" . 
-                                  $this->sdmdec($asset_location) . "<|next|>" . 
-                                  $this->sdmdec($service_center) . "<|next|>" . 
-                                  $this->sdmdec($room_number) . "<|next|>" . 
-                                  $this->sdmdec($remarks);
+            $data_structure = $this->sdmdec($office_type) . "<|next|>" . 
+                $this->sdmdec($office_name) . "<|next|>" . 
+                $this->sdmdec($asset_classification) . "<|next|>" . 
+                $this->sdmdec($asset_sub_class) . "<|next|>" . 
+                $this->sdmdec($uacs_object_code) . "<|next|>" . 
+                $this->sdmdec($asset_item) . "<|next|>" . 
+                $this->sdmdec($manufacturer) . "<|next|>" . 
+                $this->sdmdec($model) . "<|next|>" . 
+                $this->sdmdec($serial_number) . "<|next|>" . 
+                $this->sdmdec($specification) . "<|next|>" . 
+                $this->sdmdec($property_number) . "<|next|>" . 
+                $this->sdmdec($unit_of_measure) . "<|next|>" . 
+                $this->sdmdec($current_condition) . "<|next|>" . 
+                $this->sdmdec($source_of_fund) . "<|next|>" . 
+                $this->sdmdec($cost_of_acquisition) . "<|next|>" . 
+                $this->sdmdec($date_of_acquisition) . "<|next|>" . 
+                $this->sdmdec($estimated_total_life_years) . "<|next|>" . 
+                $this->sdmdec($name_of_accountable_officer) . "<|next|>" . 
+                $this->sdmdec($asset_location) . "<|next|>" . 
+                $this->sdmdec($service_center) . "<|next|>" . 
+                $this->sdmdec($room_number) . "<|next|>" . 
+                $this->sdmdec($remarks);
 
-                $this->send(["tag"=>"INSERT_NEW_NOT_INSERTED_DATUM_CO",
-                            "jsondata"=> $this->sdmenc($data_structure) ,
-                            "stationid"=>$this->sdmenc(session("user_school")),
-                            "subnote"=>$this->sdmenc(htmlentities($logreason))]);
+            $this->send(["tag"=>"INSERT_NEW_NOT_INSERTED_DATUM_CO",
+            "jsondata"=> $this->sdmenc($data_structure) ,
+            "stationid"=>$this->sdmenc(session("user_school")),
+            "subnote"=>$this->sdmenc(htmlentities($logreason))]);
+            $inserted_not ++;
 
             }else if($output == "1" &&   $hasinsertednew == false){
                 $inserted_new++;
@@ -4427,27 +4542,11 @@ $omitted_tbl = "";
           $out_res = json_decode($this->sdmdec(  $result->getBody()->getContents()),true);
           $omitted_tbl .="
         <tr>
-        <td>" . $out_res[0]["property_number"] . "</td>
-        <td>" . $out_res[0]["asset_item"] . "</td>
-        <td>" . $out_res[0]["asset_classification"] . "</td>
-        <td>" . $out_res[0]["current_condition"] . "</td>
-        <td>" . $out_res[0]["service_center"] . "</td>
-        <td>" . $out_res[0]["room_number"] . "</td>
-        <td>";
+        <td>" . htmlentities($out_res[0]["property_number"]) . "</td>
+        <td>" . htmlentities(substr($out_res[0]["asset_item"], 0,25)) . "...</td>
+        </tr>";
 
-          $omitted_tbl .= "
-          <div class='dropdown'>
-          <a class='btn btn-link btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-          Action
-          </a>
-
-          <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
-          <form action='" . route('asset_view') . "' method='GET' target='_blank'>
-          <input type='hidden' value='" . $out_res[0]["id"] . "' name='asset_id'>
-          <button class='dropdown-item' type='submit' target='_blank'><i class='fas fa-binoculars'></i> View</button>
-          </form>
-          </div>
-          </td>";
+          
      }
   }
          $guessExtension = $photo->getClientOriginalExtension();
@@ -4475,8 +4574,12 @@ $omitted_tbl = "";
               "st_id"=>$this->sdmenc(session("user_school"))
             ]]);
             $outx = $this->sdmdec($resultxm->getBody()->getContents());
-// $mylogs =""
+// $mylogs ="";
+            $omitted_tbl = gzcompress($omitted_tbl);
               $mylogs = gzcompress($mylogs);
+
+              // $omitted_tbl
+              // $mylogs
               // return $outx;
             Alert::success("Asset Uploaded.");
             return redirect()->route("assetuploadresult",["i_newly"=>$inserted_new,"i_existing"=>$inserted_alreadyexisting,"i_not"=>$inserted_not,"i_logs"=>$mylogs,"i_incomplete"=>$blankcols,"total_assets"=>$tots,"nothere"=>$nothere,"omcount"=>$omitted_count,"om_logs"=>$omitted_tbl]);

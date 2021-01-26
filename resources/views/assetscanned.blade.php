@@ -390,9 +390,7 @@ function UniversalLoaderSourceChange(stationID){
       url: "{{ route('shoot_univ_change_source') }}",
       data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
       success: function(){
-          UniversalLoaderSourceChange(sourceid);
-          $(".inp_filtepurpose_stationname").val(sourceid);
-          $("#sourcename").html(sourcename);
+        location.reload();
       }
     })
 
@@ -401,8 +399,8 @@ function UniversalLoaderSourceChange(stationID){
     is_filter_loaded = false;
     is_filter_loaded_semi = false;
 
- var sourceid = $(control_obj).data("sourceid");
-   var sourcename = $(control_obj).data("sourcename");
+  var sourceid = $(control_obj).data("sourceid");
+  var sourcename = $(control_obj).data("sourcename");
 
 
     $.ajax({
@@ -410,13 +408,8 @@ function UniversalLoaderSourceChange(stationID){
       url: "{{ route('shoot_univ_change_source') }}",
       data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
       success: function(){
-        if(sourceid != <?php echo session("user_school"); ?>){
-        $("#sourcename").html(sourcename);
-        }else{
-        $("#sourcename").html(sourcename);
-        }
-        $(".inp_filtepurpose_stationname").val(sourcename);
-        UniversalLoaderSourceChange(sourceid);
+        location.reload();
+       
       }
     })
 

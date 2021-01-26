@@ -260,6 +260,12 @@ Innoventory - Inventory Mode
 
 
 <script type="text/javascript">
+	if (window.IsDuplicate()) {
+	alert("QR Generator is currently in use in another tab, close that tab if you're done generating QR codes and try again.");
+	window.close();
+	}
+
+	
 	$("#chooseserv").hide();
 	$("#inp_qrfocus").focus();
 	var current_location_id = "";
@@ -360,21 +366,16 @@ Innoventory - Inventory Mode
 		})
 	}
 
-	function CheckRediness(){
+	async function CheckRediness(){
 	$.ajax({
   		type: "POST",
   		url: "{{ route('stole_checkready_specific') }}",
   		data: {_token: "{{ csrf_token() }}",user_school: current_station_id},
-  		success:function(data){
-  			// alert(data);
+  		success:async function(data){
   			currentlyready = data;
-  		
-  			setTimeout(function(){
-				ApplyScanningSettings();
-  			},600)
-  			setTimeout(function(){
-				LoadAllLocations();
-  			},800)
+			ApplyScanningSettings();
+			await x_timer(500);
+			LoadAllLocations();
   		}
   	})
 }
@@ -444,12 +445,12 @@ var single_data = data_fragment[i].split(col_XX);
 				var ss_timestamp = single_data[2];
 				var ss_asset_name = single_data[3];
 				var ss_assettype = single_data[4];
-		if(loaded_data_pausetime < 100){
+		if(loaded_data_pausetime < 35){
 			await x_timer(315);
 			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
 			loaded_data_pausetime++;
 		}else{
-			await x_timer(1000);
+			await x_timer(3000);
 			// alert("pausetime");
 			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
 			loaded_data_pausetime = 0;
@@ -458,10 +459,8 @@ var single_data = data_fragment[i].split(col_XX);
 			}
 		}
 	}
-
-
 	function AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype){
-		// setTimeout(function(){
+
 
 		if(currentlyready.includes(ss_assettype)){
 			$.ajax({
@@ -487,8 +486,7 @@ var single_data = data_fragment[i].split(col_XX);
 				Revisualize_percentage_transferUI();
 				$("#visual_data_representation").prepend("<span class='addtext_anim text-danger'>(" + ss_assettype + ") " + ss_assetcode + " -> " + ss_asset_name + " <i class='fas fa-check-circle'></i><span><br>");		
 		}
-		// },savetime)
-		// savetime += 555;
+
 	}
 	function x_timer(ms) { return new Promise(res => setTimeout(res, ms)); }
 
@@ -787,7 +785,7 @@ $("#chooseserv").show();
 		$("#inp_qrfocus").val("");
 
 	}
-	 function AddCodeToRawData(newdata){
+	 async function AddCodeToRawData(newdata){
 		 $("#inp_qrfocus").prop("placeholder","Proccessing....");
 		var currentdata = $("#rawdatatext").val();
 		if(currentdata != "" && currentdata != null){
@@ -797,7 +795,7 @@ $("#chooseserv").show();
 		
 		// GET SCANNED CODE INRMATION IF HAS EXISTING REFERENCE IN REGISTRY
 		var current_moreinfo = "";
-
+		await x_timer(351);
 		$.ajax({
 			type:"POST",
 			url: "{{ route('stole_scanned_item_details') }}",
@@ -874,7 +872,8 @@ $("#chooseserv").show();
 		})
 		
 	}
-	function SaveSession(){
+	async function SaveSession(){
+		await x_timer(351);
 		var current_raw = $("#rawdatatext").val();
 		$.ajax({
 			type:"POST",
@@ -976,9 +975,9 @@ $("#chooseserv").show();
 
 				if(!currentlyready.includes(single_data[4])){
 					if(single_data[4] == "co"){
-						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> This Capital Outlay is not ready for inventory so this will be ignored.</p>";
+						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> Capital Outlay is not ready for inventory so this will be ignored.</p>";
 					}else{
-						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> This Semi-Expendable is not ready for inventory so this will be ignored.</p>";
+						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> Semi-Expendable is not ready for inventory so this will be ignored.</p>";
 					}
 				}
 				newdt += "</div>" + 
