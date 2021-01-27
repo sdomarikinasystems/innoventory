@@ -78,9 +78,8 @@ Innoventory - User Management
   <thead>
     <tr>
       <th scope="col">Account Name</th>
-      <th scope="col">Usertype</th>
+      <th scope="col">Type</th>
       <th scope="col">Station</th>
-      <th scope="col">Last Transaction</th>
       <th scope="col">Action</th>
     </tr>
   </thead>
@@ -304,28 +303,38 @@ $cocoa =  random_strings(10);
 </form>
 
 <form action="{{ route('shoot_reset_account_password') }}" method="POST">
-  {{ csrf_field() }}
-  <div class="modal" tabindex="-1" role="dialog" id="m_resetpass">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Reset Account Password</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="theempid" name="employeeid">
-        <input type="hidden" id="theempnumber" name="employeenumber">
-        <p>Change password to default(Employee Number)?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-danger">Reset Password</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    {{ csrf_field() }}
+    <div class="modal" tabindex="-1" role="dialog" id="m_resetpass">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Reset Account Password</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="theempid" name="employeeid">
+          <input type="hidden" id="theempnumber" name="employeenumber">
+        <div class="mt-5 mb-5">
+            <h5>Change password to default?</h5>
+            <p class="mb-3 mt-0 text-muted">Once you click "Reset Password", this account must use this password below in his/her next login. Make sure the owner of the account is informed in this change.</p>
+          <div class="card card-shadow">
+            <div class="card-body">
+             <button onclick="CopyToClipboard('empnums')" class="btn float-right btn-secondary btn-sm " type="button"><i class="fas fa-copy"></i> Copy Password</button>
+              <h4 class="mt-0 mb-0" id="empnums"></h4>
+              
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Reset Password</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </form>
 
 
@@ -333,10 +342,23 @@ $cocoa =  random_strings(10);
   var curr_station_id = <?php echo json_encode(session("user_changesource_station")); ?>;
   var curr_station_name = <?php echo json_encode(session("user_changesource_station_name")); ?>;
 
+
+function CopyToClipboard(id)
+{
+var r = document.createRange();
+r.selectNode(document.getElementById(id));
+window.getSelection().removeAllRanges();
+window.getSelection().addRange(r);
+document.execCommand('copy');
+window.getSelection().removeAllRanges();
+alert("Password copied!");
+}
+
+
   function lod_resetpass(control_obj){
     $("#theempid").val($(control_obj).data("empid"));
     $("#theempnumber").val($(control_obj).data("empnumber"));
-    
+    $("#empnums").html($(control_obj).data("empnumber"));
   }
 function lod_editacc(control_obj){
   var theid_myval = $(control_obj).data("empid");
@@ -361,8 +383,8 @@ function lod_deleteacc(control_obj){
 $("#emp_id_del").val($(control_obj).data("empid"));
 
 }
-LoadAllSchoolsInSelection();
 
+LoadAllAccounts()
 function LoadAllAccounts(){
    $.ajax({
     type: "POST",
@@ -371,6 +393,7 @@ function LoadAllAccounts(){
     success: function(data){
       $("#tallemp").html(data);
        $("#tblu").DataTable();
+       LoadAllSchoolsInSelection();
     }
   })
 }
@@ -383,7 +406,6 @@ function LoadAllAccounts(){
     success: function(data){
       $("#all_sc_name").html(data);
       $("#all_sc_name_edit").html(data);
-LoadAllAccounts();
     }
   })
   }

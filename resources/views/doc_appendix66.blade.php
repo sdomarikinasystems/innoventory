@@ -59,17 +59,17 @@ table{
 </div>
 
 <script type="text/javascript">
-	var mypagecountx = 0;
+	
+var invyear = <?php echo json_encode($_GET["inv_year"]); ?>;
+var invmonth = <?php echo json_encode($_GET["inv_month"]); ?>;
+var mypagecountx = 0;
 
+var original_ID_room = <?php echo json_encode($_GET["my_room"]); ?>;
 
-	var original_ID_room = <?php echo json_encode($_GET["my_room"]); ?>;
-
-	var tru_roomId= "";
-	var tru_roomname= "";
+var tru_roomId= "";
+var tru_roomname= "";
 
 GetRoomInfo();
-
-
 function GetRoomInfo(){
 	$.ajax({
 		type:"POST",

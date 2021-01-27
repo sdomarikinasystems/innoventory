@@ -15,21 +15,27 @@ Generate Appendix 73 Report
 	</ol>
 </nav>
 
-<div class="row">
-	<div class="col-sm-6 mb-3">
-		<a class="btn btn-success" onclick="FetchSelectedPropertyNumbers()" href="#"><i class="fas fa-layer-group"></i> Group Selected</a>
-		<a class="btn btn-secondary" data-toggle="modal" data-target="#modal_printdoc" href="#"><i class="fas fa-print"></i> Print</a>
-	</div>
-</div>
 
-<div class="row">
-	<div class="col-sm-6 mb-3">
-		<h5>Room Number: <strong id="rnumbhtml"></strong></h5>
-        <h6><?php echo $_GET["my_category"]; ?></h6>
+<div class="card-deck mb-4">
+  <div class="card card-shadow">
+    <div class="card-body">
+    <p class="text-muted m-0 mb-2">Category</p>
+      <h5 class="m-0"><?php echo $_GET["my_category"]; ?></h5>
     </div>
-	<div class="col-sm-6 mb-3">
-	
-	</div>
+  </div>
+  <div class="card card-shadow">
+    <div class="card-body">
+      <p class="text-muted m-0 mb-2">Service Center</p>
+      <h5 class="m-0"><span id="rnumbhtml"></span></h5>
+    </div>
+  </div>
+  <div class="card card-shadow">
+    <div class="card-body">
+      <p class="text-muted m-0 mb-2">Actions</p>
+      <a class="btn btn-success btn-sm" onclick="FetchSelectedPropertyNumbers()" href="#"><i class="fas fa-layer-group"></i> Group Selected</a>
+    <a class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modal_printdoc" href="#"><i class="fas fa-print"></i> Print</a>
+    </div>
+  </div>
 </div>
 
 <table class="table table-hover table-bordered">
@@ -73,8 +79,8 @@ Generate Appendix 73 Report
         <input type="hidden" name="room_id" value="<?php echo $_GET['my_room']; ?>">
         <input type="hidden" name="roomnum" id="roonumreal" value="">
         <input type="hidden" name="assetactegory" value="<?php echo $_GET['my_category']; ?>">
-
-
+        <input type="hidden" id="htinp_invyear" name="inv_year">
+        <input type="hidden" id="htinp_invmonth" name="inv_month">
         <!-- // ROOM DISPLAY INFORMATION --> 
         <input type="hidden" name="roomname" id="room_name" value="">
 
@@ -151,11 +157,20 @@ Generate Appendix 73 Report
   </div>
 
 <script type="text/javascript">
+
+  var g_invyear = <?php echo json_encode($_GET["inv_year"]); ?>;
+  var g_invmonth = <?php echo json_encode($_GET["inv_month"]); ?>;
+
+  $("#htinp_invyear").val(g_invyear);
+  $("#htinp_invmonth").val(g_invmonth);
+
   var total_items_to_group = 0 ;
   var current_togroup = 0;
   var autoname = "";
   var room_numberreal = "";
-GetRealRoomNumber();
+
+  
+  GetRealRoomNumber();
   function GetRealRoomNumber(){
     $.ajax({
       type:"POST",
@@ -165,7 +180,7 @@ GetRealRoomNumber();
         // alert(data);
         data = JSON.parse(data);
         room_numberreal = data[0]["room_number"];
-        $("#rnumbhtml").html(room_numberreal);
+        $("#rnumbhtml").html(data[0]["office"] + "(" + room_numberreal + ")");
         $("#roonumreal").val(room_numberreal);
         $("#room_name").val(data[0]["office"]);
           LoadAssets();
@@ -198,17 +213,7 @@ GetRealRoomNumber();
     LoadAssets();
   }
 
-  function LoadGroupedAssets(){
-    $.ajax({
-      type : "POST",
-      url : "{{ route('viewassetgrouped') }}",
-      data : {_token: "{{ csrf_token() }}",rnum:room_numberreal,catname:<?php echo json_encode($_GET["my_category"]) ?>,station_id:<?php echo json_encode($_GET["station_id"]); ?>},
-      success : function(data){
-        // alert(data);
-        $("#myfiltered").append(data);
-      }
-    })
-  }
+ 
 
   function GroupAllSelectedDatum(){
   current_togroup = 0;
@@ -220,7 +225,9 @@ GetRealRoomNumber();
       $.ajax({
         type : "POST",
         url: "add_new_assgr",
-        data: {_token:"{{ csrf_token() }}",ass_gname:$("#group_name").val(),ass_propnum:$(this).data("val"),ass_roomnum:room_numberreal,ass_assclass: <?php echo json_encode($_GET["my_category"]); ?>,ass_balpercard:$("#group_bal_per").val()},
+        data: {_token:"{{ csrf_token() }}",ass_gname:$("#group_name").val(),ass_propnum:$(this).data("val"),ass_roomnum:room_numberreal,ass_assclass: <?php echo json_encode($_GET["my_category"]); ?>,ass_balpercard:$("#group_bal_per").val(),
+        inv_year:g_invyear,
+        inv_month:g_invmonth},
         success: function(data){
           current_togroup ++;
           if(total_items_to_group == current_togroup){
@@ -291,11 +298,29 @@ GetRealRoomNumber();
     $.ajax({
       type : "POST",
       url : "{{ route('lod_asset_filtered') }}",
-      data: {_token:"{{ csrf_token() }}",rnum:room_numberreal,catname:<?php echo json_encode($_GET["my_category"]) ?>},
+      data: {_token:"{{ csrf_token() }}",
+      rnum:room_numberreal,
+      catname:<?php echo json_encode($_GET["my_category"]) ?>,
+      inv_year: g_invyear,
+      inv_month: g_invmonth
+      },
       success: function(data){
-        // alert();
+        // alert(data);
         $("#myfiltered").html(data);
         LoadGroupedAssets();
+      }
+    })
+  }
+
+   function LoadGroupedAssets(){
+    $.ajax({
+      type : "POST",
+      url : "{{ route('viewassetgrouped') }}",
+      data : {_token: "{{ csrf_token() }}",rnum:room_numberreal,catname:<?php echo json_encode($_GET["my_category"]) ?>,station_id:<?php echo json_encode(session("user_school")); ?>,
+      inv_year: g_invyear,
+      inv_month: g_invmonth},
+      success : function(data){
+        $("#myfiltered").append(data);
       }
     })
   }

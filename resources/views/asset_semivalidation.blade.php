@@ -13,45 +13,44 @@ Inno... - Semi-Expendable Upload Result
   </ol>
 </nav>
 
-
 <div class="card-deck mb-3">
-  <div class="card">
+  <div class="card card-shadow">
     <div class="card-body">
       <h6 class="text-muted mt-0 mb-0">Total CSV Assets</h6>
     <h2 class="mt-0 mb-0">{{ $_GET['overallassets'] }}</h2>
     </div>
   </div>
-  <div class="card">
+  <div class="card card-shadow">
     <div class="card-body">
-        <h6 class="text-muted mt-0 mb-0">Inserted</h6>
+    <h6 class="text-muted mt-0 mb-0">Inserted</h6>
     <h2 class="mt-0 mb-0"> {{ $_GET['insertedassets'] }}</h2>
     </div>
   </div>
-  <div class="card">
+  <div class="card card-shadow">
     <div class="card-body">
        <h6 class="text-muted mt-0 mb-0">Not Inserted</h6>
     <h2 class="mt-0 mb-0">{{ $_GET['notinserted'] }}</h2>
     </div>
   </div>
-<div class="card">
+<div class="card card-shadow">
     <div class="card-body">
        <h6 class="text-muted mt-0 mb-0">Updated</h6>
     <h2 class="mt-0 mb-0">{{ $_GET['ass_updated'] }}</h2>
     </div>
   </div>
-  <div class="card">
+  <div class="card card-shadow">
     <div class="card-body">
        <h6 class="text-muted mt-0 mb-0">Not Changed</h6>
     <h2 class="mt-0 mb-0">{{ $_GET['exactsame'] }}</h2>
     </div>
   </div>
-  <div class="card">
+  <div class="card card-shadow">
     <div class="card-body">
       <h6 class="text-muted mt-0 mb-0">Incomplete</h6>
     <h2 class="mt-0 mb-0">{{ $_GET['missingcolumns'] }}</h2>
     </div>
   </div>
-  <div class="card">
+  <div class="card card-shadow">
     <div class="card-body">
       <h6 class="text-muted mt-0 mb-0">Omitted</h6>
     <h2 class="mt-0 mb-0">{{ $_GET['ass_omitted'] }}</h2>
@@ -72,7 +71,7 @@ Inno... - Semi-Expendable Upload Result
     </ul>
     <div class="tab-content" id="pills-tabContent">
       <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-<table class="table table-sm table-bordered table-striped " id="tbl_allregups">
+<table class="table table-bordered table-striped " id="tbl_allregups">
           <thead>
             <tr>
               <th>Row #</th>
@@ -87,29 +86,24 @@ Inno... - Semi-Expendable Upload Result
           </thead>
           <tbody>
             <?php
-             echo $_GET["ass_withdesc"]; 
+             echo gzuncompress($_GET["ass_withdesc"]); 
              ?>
           </tbody>
         </table>
       </div>
       <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-<table class="table table-sm table-bordered table-striped " id="tbl_allomitt">
+<table class="table table-bordered table-striped " id="tbl_allomitt">
           <thead>
             <tr>
               <th>No #</th>
               <th>Article</th>
               <th>Description</th>
               <th>Stock Number</th>
-              <th>Unit of Measure</th>
-              <th>Unit Value</th>
-              <th>Balance Per Card</th>
-              <th>On Hand Per Count</th>
-              <th>Remarks</th>
             </tr>
           </thead>
           <tbody>
             <?php
-             echo $_GET["ass_nofount"]; 
+             echo gzuncompress($_GET["ass_nofount"]); 
              ?>
           </tbody>
         </table>
@@ -119,4 +113,9 @@ Inno... - Semi-Expendable Upload Result
 
   </div>       
 </div>
+
+<script type="text/javascript">
+  $("#tbl_allregups").DataTable();
+$("#tbl_allomitt").DataTable();
+</script>
 @endsection

@@ -56,13 +56,17 @@ table{
 
 <script type="text/javascript">
 	var mypagecountx = 0;
+	
+	var invyear = <?php echo json_encode($_GET["inv_year"]); ?>;
+	var invmonth = <?php echo json_encode($_GET["inv_month"]); ?>;
+
 	var tru_roomId= <?php echo json_encode($_GET["room_id"]); ?>;
 	var tru_roomname= <?php echo json_encode($_GET["roomname"]); ?>;
-	// get_ass_pdf_pagecount
-		$.ajax({
+	
+	$.ajax({
 		type: "POST",
 		url: "{{ route('bionic_page_count') }}",
-		data: {_token: "{{ csrf_token() }}", rn:<?php echo json_encode($_GET["roomnum"]); ?>,cat:<?php echo json_encode($_GET["assetactegory"]); ?>},
+		data: {_token: "{{ csrf_token() }}", rn:<?php echo json_encode($_GET["roomnum"]); ?>,cat:<?php echo json_encode($_GET["assetactegory"]); ?>,inv_year:invyear ,inv_month: invmonth},
 		success: function(data){
 			data = parseInt(data);
 			mypagecountx = parseInt(data + 1);
@@ -74,11 +78,17 @@ table{
 		$.ajax({
 		type: "POST",
 		url: "{{ route('generate_asset_report_printout') }}",
-		data: {_token: "{{ csrf_token() }}", rn:<?php echo json_encode($_GET["roomnum"]); ?>,cat:<?php echo json_encode($_GET["assetactegory"]); ?>,roomname:tru_roomname},
+		data: {_token: "{{ csrf_token() }}",
+		rn:<?php echo json_encode($_GET["roomnum"]); ?>,
+		cat:<?php echo json_encode($_GET["assetactegory"]); ?>,
+		roomname:tru_roomname,
+		inv_year:invyear,
+		inv_month:invmonth,
+		station_id: <?php echo json_encode(session("user_school")); ?>
+		},
 		success: function(data){
-			// alert(data);
+			alert(data);
 			$("#mytbl").append(data);
-			// print_now();
 		}
 	})
 	}

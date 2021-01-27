@@ -16,43 +16,43 @@ Inno... - Capital Outlay Upload Result
 <div class="row">
 	<div class="col-sm-12">
 		<div class="card-deck mb-3">
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
 					<h6 class="text-muted mt-0 mb-0">Total CSV Assets</h6>
 					<h2 class="mb-0 mt-0">{{ $_GET['total_assets'] }}</h2>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
 					<h6 class="text-muted mt-0 mb-0">Inserted</h6>
 					<h2 class="mb-0 mt-0">{{ $_GET['i_newly'] }}</h2>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
 					<h6 class="text-muted mt-0 mb-0">Not Inserted</h6>
 					<h2 class="mb-0 mt-0">{{ $_GET['i_not'] }}</h2>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
 					<h6 class="text-muted mt-0 mb-0">Updated</h6>
 					<h2 class="mb-0 mt-0">{{ $_GET['i_existing'] }}</h2>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
 					<h6 class="text-muted mt-0 mb-0">Incomplete</h6>
 					<h2 class="mb-0 mt-0">{{ $_GET['i_incomplete'] }}</h2>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
 					<h6 class="text-muted mt-0 mb-0">Omitted</h6>
 					<h2 class="mb-0 mt-0">{{ $_GET['omcount'] }}</h2>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
 					<h6 class="text-muted mt-0 mb-0">New Service Center(s)</h6>
 					<h2 class="mb-0 mt-0"><a href="#" data-toggle="modal" data-target="#modal_newservice_centers" id="idnewfoundservicecentercount">0</a></h2>

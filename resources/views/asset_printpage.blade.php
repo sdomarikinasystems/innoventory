@@ -181,10 +181,7 @@
 	<div class="loadingui">
 		<div class="container">
 		<div style="margin:auto; width: 540px; margin-top: 35vh; ">
-			<div class="card" style="box-shadow: 		0px 2px 3px rgba(0,0,0,0.08),
-		0px 7px 10px rgba(0,0,0,0.02),
-		0px 8px 35px rgba(0,0,0,0.02),
-		0px 10px 60px rgba(0,0,0,0.08); border-radius: 10px !important;
+			<div class="card card-shadow" style=" border-radius: 10px !important;
 		animation-name: scale-in;
 		animation-duration: 0.3s;
 		overflow:hidden;
@@ -209,10 +206,10 @@
 
 <script type="text/javascript">
 
-	if (window.IsDuplicate()) {
-	alert("Inventory scanner page is already open in another tab.");
-	window.close();
-	}
+	// if (window.IsDuplicate()) {
+	// alert("Inventory scanner page is already open in another tab.");
+	// window.close();
+	// }
 
 	var doneload = false;
 	var totallod = 0;
@@ -230,11 +227,14 @@
 	var rname ="";
 	var rnum ="";
 	function dec_data(){
+		// alert();
+		lcx = loca_id[0].replace(" ", "+")
 		$.ajax({
 			type:"POST",
 			url: "{{ route('shoot_trans_sdm') }}",
-			data: {_token: "{{ csrf_token() }}",todec: loca_id[0]},
+			data: {_token: "{{ csrf_token() }}",todec: lcx},
 			success: function(data){
+				// alert(data);
 				loca_id[0] = data;
 				rname = loca_id[0];
 				rnum =loca_id[1];

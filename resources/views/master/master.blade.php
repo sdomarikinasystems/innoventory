@@ -342,6 +342,61 @@ background-color: #007DFF;
 		height: 400px;
 		overflow: scroll;
 	}
+			.hcover{
+			transition: 0.2s all;
+			display: inline-block;
+			padding: 10px;
+			border-radius: 15px;
+			background-color: #007DFF;
+			overflow: hidden;
+			height: 50px;
+			width: 50px;
+			color: white;
+			box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+			cursor: pointer;
+			margin-left: 5px;
+			margin-right: 5px;
+			color: white !important;
+		}
+		.hcover:hover{
+			transform: scale(1.3);
+			margin-top: -10px;
+			box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);
+		text-shadow: 0px 2px 5px rgba(0,0,0,0.4);
+		}
+		.dock_parent{
+			position: fixed;
+			display: flex;
+			justify-content: center;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			padding: 10px;
+			background-color: transparent;
+			border-radius: 15px;
+			margin-bottom: 5px !important;
+			width: 100%;
+		}
+		.dock_itself{
+			position: absolute;
+			display: flex;
+			justify-content: center;
+			height: 72px;
+			border: 1px solid rgba(0,0,0,0.1);
+			bottom: 0;
+			margin: auto;
+			padding: 10px;
+			padding-left: 7px;
+			padding-right: 7px;
+			background-color: white;
+			border-radius: 20px;
+			box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);
+			margin-bottom: 5px !important;
+			width: auto;
+		}
 </style>
 <script type="text/javascript">
 	function urlify(text) {
@@ -391,11 +446,11 @@ background-color: #007DFF;
 			<!-- START OF MENU -->
 			<h6>CORE</h6>
 			<ul class="list-group mb-3">
-				<li class="list-group-item"><a href="/innoventory/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+				<li class="list-group-item"><a href="{{ route('dboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
 				<li class="list-group-item"><a href="{{ route('assetregistry') }}"><i class="fas fa-clipboard-check"></i> Asset Registry</a></li>
 				<li class="list-group-item"><a href="{{ route('asset_scanned') }}"><i class="fas fa-search"></i> Inventory</a></li>
 				<li class="list-group-item" style="display: none;"><a href="{{ route('goto_issuances') }}"><i class="fas fa-file-alt"></i> Issuances</a></li>
-				<li class="list-group-item"><a href="/innoventory/asset/disposal"><i class="fas fa-trash"></i> Disposed Assets</a></li>
+				<li class="list-group-item"><a href="{{ route('asset_disposed') }}"><i class="fas fa-trash"></i> Disposed Assets</a></li>
 				<li class="list-group-item"><a data-toggle="collapse" href="#collapse1" onclick="GetServiceCentersForOption()"><i class="fas fa-chart-bar"></i> Reports <i class="float-right fas fa-sort-down"></i></a>
 					<div id="collapse1" class="panel-collapse collapse in">
 						<ul class="sub-list-group mb-3">
@@ -419,12 +474,8 @@ background-color: #007DFF;
 	</ul>
 	</div>
 	</li>
-	<li class="list-group-item"><a href="/innoventory/asset/resources"><i class="fas fa-folder"></i> Resources</a></li>
+	<li class="list-group-item"><a href="{{ route('asset_resources') }}"><i class="fas fa-folder"></i> Resources</a></li>
 	</ul>
-
-
-
-
  <!-- REPORT GENERATION MODAL FOR APPENDIX 73 -->
 		<form action="{{ route('group_asset') }}" method="GET">
   <div id="m_generatereport" class="modal" tabindex="-1" role="dialog">
@@ -438,22 +489,9 @@ background-color: #007DFF;
         </div>
         <div class="modal-body">
           {{ csrf_field() }}
-
-
-          
-          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-           <li class="nav-item">
-             <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#formgenapp733" role="tab" aria-controls="pills-home" aria-selected="true">Report Generation</a>
-           </li>
-           <li class="nav-item">
-             <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#assgenco_elp" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-info-circle"></i> Help</a>
-           </li>
-         </ul>
-         <div class="tab-content" id="pills-tabContent">
-           <div class="tab-pane fade show active" id="formgenapp733" role="tabpanel" aria-labelledby="pills-home-tab">
-           		 <input type='hidden' name='station_id' id='mygroupid'>
-
-   		  <div class="row">
+           <input type='hidden' name='station_id' id='mygroupid'>
+   		 <div class="form-group">
+   		 	 <div class="row">
           	<div class="col-sm-6">
           		<div>Year</div>
           		<select class="form-control" id="co_invyear" required="" name="inv_year"></select>
@@ -463,6 +501,7 @@ background-color: #007DFF;
           		<select class="form-control" id="co_invmonth" required="" name="inv_month"></select>
           	</div>
           </div>
+   		 </div>
 
           <div class="form-group">
             <label>Room</label>
@@ -476,20 +515,13 @@ background-color: #007DFF;
               <option>Sample</option>
             </select>
           </div>
-        <div class="form-group">
-         <label>Number of Assets to be Generated</label>
-         <h5 id="asstobegennum">0 Item(s)</h5>
-        </div>
-           </div>
-           <div class="tab-pane fade" id="assgenco_elp" role="tabpanel" aria-labelledby="pills-profile-tab">
-           		<h5>Why is my asset not appearing in the generation?</h5>
-            	<p class="mt-0">Only scanned Capital-Outlay assets will appear on the generation of appendix 73 report. Make sure you have no discrepancies left on your Capital-Outlay asset registry.</p>
-            	<h5 class="mt-3">My service center is not included in the selection</h5>
-            	<p class="mt-0">Make sure you added your service center in Manage Service Center page.</p>
-           </div>
         
-         </div>
-
+        <div class="card card-shadow mt-4 mb-4">
+        	<div class="card-body">
+        		 <label class="mt-0 mb-0 text-muted">Assets to be Generated</label>
+		         <p class="mb-0 mt-0" id="asstobegennum">0 Item(s)</p>
+        	</div>
+        </div>
         </div>
         <div class="modal-footer">
           <button type="submit" id="continueenrep_btn" class="btn btn-primary">Generate</button>
@@ -512,17 +544,8 @@ background-color: #007DFF;
             </button>
           </div>
           <div class="modal-body">
-           <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#upass66_home" role="tab" aria-controls="pills-home" aria-selected="true">Generate Report</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#upass66_ins" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-info-circle"></i> Help</a>
-            </li>
-          </ul>
-          <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="upass66_home" role="tabpanel" aria-labelledby="pills-home-tab">
-            	<div class="form-group">
+          	{{ csrf_field() }}
+           	<div class="form-group">
             		<div class="row">
             				<div class="col-sm-6">
           		<div>Year</div>
@@ -533,19 +556,13 @@ background-color: #007DFF;
           		<select class="form-control" id="se_invmonth" required="" name="inv_month"></select>
           	</div>
             		</div>
-            	</div>
- <div class="form-group">
-            <label>Room</label>
-            <select class="form-control allservicenterrooms" required="" name="my_room">
-              <option>Sample</option>
-            </select>
-          </div>
-            </div>
-            <div class="tab-pane fade" id="upass66_ins" role="tabpanel" aria-labelledby="pills-profile-tab">
-            	<h5>Why is my asset not appearing in the generation?</h5>
-            	<p class="mt-0">Only scanned Semi-Expendable assets will appear on the generation of appendix 66 report. Make sure you have no discrepancies left on your Semi-Expendable asset registry.</p>
-            </div>
-          </div>
+        	</div>
+			<div class="form-group">
+				<label>Room</label>
+				<select class="form-control allservicenterrooms" required="" name="my_room">
+				<option>Sample</option>
+				</select>
+			</div>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Generate</button>
@@ -563,7 +580,7 @@ background-color: #007DFF;
 			if(session("user_type") < "4" && session("user_type") != "2"){
 			?>
 			<!-- NOT FOR TEACHERS -->					
-			<li class="list-group-item"><a href="/innoventory/manage/users"><i class="fas fa-users"></i> Manage Users</a></li>
+			<li class="list-group-item"><a href="{{ route('usermanagement') }}"><i class="fas fa-users"></i> Manage Users</a></li>
 			<?php
 			}
 			if(session("user_type") == "0" || session("user_type") == "1"){
@@ -577,8 +594,8 @@ background-color: #007DFF;
 			if(session("user_type") < "4"){
 				?>
 				<!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-				<li class="list-group-item"> <a href="/innoventory/manage/service_centers"><i class="fas fa-warehouse"></i> Manage Service Centers</a></li>
-				<li class="list-group-item"> <a href="/innoventory/manage/reminders"><i class="fas fa-bell"></i> Reminders</a></li>
+				<li class="list-group-item"> <a href="{{ route('stationmy') }}"><i class="fas fa-warehouse"></i> Manage Service Centers</a></li>
+				<li class="list-group-item"> <a href="{{ route('manage_reminders') }}"><i class="fas fa-bell"></i> Reminders</a></li>
 				<li class="list-group-item"> <a href="{{ route('fetch_asset') }}"><i class="fas fa-qrcode"></i> QR Stickers</a></li>
 				<?php
 				}
@@ -709,7 +726,85 @@ background-color: #007DFF;
 		</div>
 	</div>
 	</div>
+
+<div class="dock_parent" style="display: none;">
+	<div  class="dock_itself">
+					<a class="hcover" data-placement="top" data-content="Station readiness, Announcements, Summaries" data-trigger="hover" title="Dashboard" href="{{ route('dboard') }}" style="background-color: #FF3A30;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-tachometer-alt"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Upload, Fix, Review Capital Outlay, Semi-Expendable, Supply asset(s)" data-trigger="hover" title="Asset Registry" href="{{ route('assetregistry') }}" style="background-color: #FF9400;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-clipboard-check"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Scan, Review Capital Outlay and Semi-Expendable inventory data" data-trigger="hover" title="Inventory" href="{{ route('asset_scanned') }}" style="background-color: #4DDB5E;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-search"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Recover or view all of your Capital Outlay and Semi-Expendable disposed assets" data-trigger="hover" title="Disposed Assets" href="{{ route('asset_disposed') }}" style="background-color: #F43A2B;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-trash"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Appendix 66 and 73, Figures, Registry Omissions, Returns to LGU, Missing Asset(s), Accountabilities" data-trigger="hover" title="Reports" href="" style="background-color: #5956D6;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-chart-bar"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Download and view all uploaded Capital Outlay, Semi-Expendable files" data-trigger="hover" title="Resources" href="{{ route('asset_resources') }}" style="background-color: #E46F00;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-folder"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Manage user account(s) of your station" data-trigger="hover" title="Manage Users" href="{{ route('usermanagement') }}" style="background-color: #0AB951;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-users"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Add, Delete and Manager your stations Service Centers" data-trigger="hover" title="Service Centers" href="{{ route('stationmy') }}" style="background-color: #025A56;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-warehouse"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Post reminders, announcements in Innoventory" data-trigger="hover" title="Reminders" href="{{ route('manage_reminders') }}" style="background-color: #FFB316;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-bell"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Generate QR Sticker printable" data-trigger="hover" title="QR Stickers" href="{{ route('fetch_asset') }}" style="background-color: #FF1B73;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-qrcode"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Access history logs of your Innoventory usage" data-trigger="hover" title="History" href="{{ route('ass_transhistory') }}" style="background-color: #1B8EF5;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-history"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Learn how to use Innoventory System" data-trigger="hover" title="How To?" href="{{ route('gohow') }}" style="background-color: #23C95B;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-question-circle"></i></span>
+					</center>
+					</a>
+					<a class="hcover" data-placement="top" data-content="Information about the system version and description" data-trigger="hover" title="About" href="{{ route('abouts_sys') }}" style="background-color: #D548DF;">
+					<center>
+						<span style="font-size: 20px;"><i class="fas fa-robot"></i></span>
+					</center>
+					</a>
+
+
+			</div>
+</div>
+
+
 	<script type="text/javascript">
+
+		$('.hcover').popover({
+    container: 'body'
+  })
 		
 		$(".modal-dialog").addClass("modal-dialog modal-dialog-centered");
 		var resizedx = false;
@@ -845,6 +940,9 @@ var sc_width = $( document ).width();
 			}
 			
 			function loadservicecentersall(){
+
+				var inp_co_invyear = $("#co_invyear").val();
+				var inp_co_invmonth = $("#co_invmonth").val();
 				$("#continueenrep_btn").css("display","none");
 				$("#asstobegennum").html("Getting reports, please wait...");
 				var inp_sc_id = <?php  echo json_encode(session("user_school")); ?>;
@@ -853,17 +951,21 @@ var sc_width = $( document ).width();
 
 
 				$.ajax({
-				type: "POST",
-				url: "{{ route('get_tobegen_repcount') }}",
-				data: {_token:"{{ csrf_token() }}",rn:roomnum,cc:category_class,station_id:inp_sc_id},
-				success: function(data){
-				if(data == "0"){
-				$("#continueenrep_btn").css("display","none");
-				$("#asstobegennum").html("The're no reports in the selected room and category.");
-				}else{
-				$("#continueenrep_btn").css("display","block");
-				$("#asstobegennum").html(data + " item(s) to be included.");
-				}
+					type: "POST",
+					url: "{{ route('get_tobegen_repcount') }}",
+					data: {_token:"{{ csrf_token() }}",rn:roomnum,
+														cc:category_class,
+														station_id:inp_sc_id,
+														inv_year:inp_co_invyear,
+														inv_month:inp_co_invmonth},
+					success: function(data){
+					if(data == "0"){
+					$("#continueenrep_btn").css("display","none");
+					$("#asstobegennum").html("The're no reports in the selected room and category.");
+					}else{
+					$("#continueenrep_btn").css("display","block");
+					$("#asstobegennum").html(data + " item(s) to be included.");
+					}
 				}})
 			}
 		  }

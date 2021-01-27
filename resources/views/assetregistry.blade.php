@@ -143,12 +143,27 @@ Innoventory - Asset Registry
             </div>
             <div class="modal-body">
 
-               <div id="lod_uploadsupp" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: white; display:none;">
-    <center>
-<img class="mt-5" src="https://icon-library.net/images/ajax-loading-icon/ajax-loading-icon-2.jpg" style="width: 40px; padding-top: 100px;">
-     <div class="container">
-        <h5 class="mt-3 card-title">Validating Records</h5>
-      <h6 class="card-subtitle text-muted">Please standby for a moment, this may take some time depending on your asset count.</h6></center>
+               <div id="lod_uploadsupp" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: #F8F9FA; border-radius:15px; display:none;">
+
+
+
+              <div style="margin:auto; width: 540px; margin-top: 35vh; ">
+      <div class="card card-shadow" style=" border-radius: 10px !important;
+    animation-name: scale-in;
+    animation-duration: 0.3s;
+    overflow:hidden;
+    border-color: #EEEEF2 !important;">
+        <div class="card-body">
+          <div class="mt-4 mb-4">
+    <h5 class="mb-0" ><img src="https://uploads.toptal.io/blog/image/122385/toptal-blog-image-1489082610696-459e0ba886e0ae4841753d626ff6ae0f.gif" style="width: 25px; margin-right: 10px;">Uploading & Validating Records</h5>
+    <p class="text-muted mt-0 mb-0" >Please wait while we upload your csv file and check for your records.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
      </div>
               <div class="row">
                  <div class="col-md-6">
@@ -281,12 +296,24 @@ Innoventory - Asset Registry
         <div class="modal-content">
 
 
-            <div id="lod_uploadsmi" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: white; display:none;">
-    <center>
-<img class="mt-5" src="https://icon-library.net/images/ajax-loading-icon/ajax-loading-icon-2.jpg" style="width: 40px; padding-top: 100px;">
-     <div class="container">
-        <h5 class="mt-3 card-title">Validating Records</h5>
-      <h6 class="card-subtitle text-muted">Please standby for a moment, this may take some time depending on your asset count.</h6></center>
+            <div id="lod_uploadsmi" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: #F8F9FA; border-radius:15px; display:none;">
+              <div style="margin:auto; width: 540px; margin-top: 35vh; ">
+      <div class="card card-shadow" style=" border-radius: 10px !important;
+    animation-name: scale-in;
+    animation-duration: 0.3s;
+    overflow:hidden;
+    border-color: #EEEEF2 !important;">
+        <div class="card-body">
+          <div class="mt-4 mb-4">
+    <h5 class="mb-0" ><img src="https://uploads.toptal.io/blog/image/122385/toptal-blog-image-1489082610696-459e0ba886e0ae4841753d626ff6ae0f.gif" style="width: 25px; margin-right: 10px;">Uploading & Validating Records</h5>
+    <p class="text-muted mt-0 mb-0" >Please wait while we upload your csv file and check for your records.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
      </div>
 
 
@@ -523,12 +550,27 @@ Innoventory - Asset Registry
   <div class="modal" tabindex="-1" id="uploadnewcsv" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
-         <div id="lod_uploadass" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: white; display:none;">
-    <center>
-<img class="mt-5" src="https://icon-library.net/images/ajax-loading-icon/ajax-loading-icon-2.jpg" style="width: 40px; padding-top: 100px;">
-     <div class="container">
-        <h5 class="mt-3 card-title">Validating Records</h5>
-      <h6 class="card-subtitle text-muted">Please standby for a moment, this may take some time depending on your asset count.</h6></center>
+         <div id="lod_uploadass" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: #F8F9FA; border-radius:15px; display:none;">
+
+
+
+              <div style="margin:auto; width: 540px; margin-top: 35vh; ">
+      <div class="card card-shadow" style=" border-radius: 10px !important;
+    animation-name: scale-in;
+    animation-duration: 0.3s;
+    overflow:hidden;
+    border-color: #EEEEF2 !important;">
+        <div class="card-body">
+          <div class="mt-4 mb-4">
+    <h5 class="mb-0" ><img src="https://uploads.toptal.io/blog/image/122385/toptal-blog-image-1489082610696-459e0ba886e0ae4841753d626ff6ae0f.gif" style="width: 25px; margin-right: 10px;">Uploading & Validating Records</h5>
+    <p class="text-muted mt-0 mb-0" >Please wait while we upload your csv file and check for your records.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
      </div>
 
         <div class="modal-header">

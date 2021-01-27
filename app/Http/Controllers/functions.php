@@ -1585,16 +1585,10 @@ $this->RecordLog("a02");
             $omittedass ++;
              $tbl_assetnofound .= "
                 <tr>
-                  <td>" .$omittedass  .  "</td>
-                  <td>" . $AllSemiExpendable[$i]["article"] .  "</td>
-                  <td>" . $AllSemiExpendable[$i]["description"] . "</td>
-                  <td>" . $AllSemiExpendable[$i]["stock_number"] . "</td>
-                  <td>" . $AllSemiExpendable[$i]["unit_of_mesure"] . "</td>
-                  <td>" . $AllSemiExpendable[$i]["unit_value"] . "</td>
-                  <td>" . $AllSemiExpendable[$i]["balance_per_card"] . "</td>
-                  <td>" . $AllSemiExpendable[$i]["on_hand_per_count"] . "</td>
-                  <td>" . $AllSemiExpendable[$i]["shortage_overage"] . "</td>
-                  <td>" . $AllSemiExpendable[$i]["remarks"] . "</td>
+                  <td>" .  $omittedass  .  "</td>
+                  <td>" .  htmlentities(substr($AllSemiExpendable[$i]["article"], 0,25)) . "..." .  "</td>
+                  <td>" . htmlentities(substr( $AllSemiExpendable[$i]["description"], 0,25)) . "..." . "</td>
+                  <td>" . htmlentities($AllSemiExpendable[$i]["stock_number"]) . "</td>
                 </tr>
              ";
              // INSERT OMITTED ASSETS TO DATABASE
@@ -1642,7 +1636,8 @@ $this->RecordLog("a02");
 
 
       $this->RecordLog("a01.1");
-
+      $tbl_discrepancies = gzcompress($tbl_discrepancies);
+      $tbl_assetnofound = gzcompress($tbl_assetnofound);
       return redirect()->route("goto_semi_expendable_validationpage",[
         "overallassets"=>$overall_assets,
         "perfectdata"=>$perfect_data,
@@ -2111,6 +2106,8 @@ $colval = "";
       "school_id"=>$station_id,
       "rn"=>$rn,
       "cc"=>$cc,
+      "inv_year"=> $this->sdmenc($req["inv_year"]),
+      "inv_month"=> $this->sdmenc($req["inv_month"])
       ]]);
 
       $output = $this->sdmdec($xresult->getBody()->getContents());
@@ -3318,7 +3315,9 @@ $colval = "";
         "tag"=>$tag,
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
-        "stat_id"=>$this->sdmenc(session("user_school"))
+        "stat_id"=>$this->sdmenc(session("user_school")),
+        "inv_year"=>$this->sdmenc($req["inv_year"]),
+        "inv_month"=>$this->sdmenc($req["inv_month"])
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3339,7 +3338,9 @@ $colval = "";
         "tag"=>$tag,
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
-        "station_id"=>$this->sdmenc(session("user_school"))
+        "station_id"=>$this->sdmenc(session("user_school")),
+        "inv_year"=>$this->sdmenc($req["inv_year"]),
+        "inv_month"=>$this->sdmenc($req["inv_month"])
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3348,7 +3349,7 @@ $colval = "";
       for ($i=0; $i < count($output); $i++) { 
           $lc_count++;
           if($lc_count > 16){
-$pagecount++;
+    $pagecount++;
         $lc_count = 0;
           }
       
@@ -3358,8 +3359,6 @@ $pagecount++;
     public function generate_asset_report_printout(Request $req){
       $rn = $this->sdmenc($req["rn"]);
       $cat = $this->sdmenc($req["cat"]);
-
-
       $asset_table_head = '
   <tr>
    <th rowspan="2">ARTICLE</th>
@@ -3382,7 +3381,9 @@ $pagecount++;
         "tag"=> $this->sdmenc("log_ass_filt"),
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
-        "stat_id"=>$this->sdmenc(session("user_school"))
+        "stat_id"=>$this->sdmenc(session("user_school")),
+        "inv_year"=>$this->sdmenc($req["inv_year"]),
+        "inv_month"=>$this->sdmenc($req["inv_month"])
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3439,8 +3440,8 @@ $pagecount++;
           $bal_per_card = $output[$i]['balance_per_card'];
           $on_hand_per_count = $output[$i]["physical_count"];
 
-           $short_ov_quantity = ($bal_per_card + $on_hand_per_count);
-          $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value'] ));
+           $short_ov_quantity = ($bal_per_card - $on_hand_per_count);
+          $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition'] ));
           $disp_onhandcount = "";
           if($on_hand_per_count == null || $on_hand_per_count == ""){
            $disp_onhandcount = "Missing Inv.";
@@ -3448,14 +3449,14 @@ $pagecount++;
             $disp_onhandcount =  $on_hand_per_count;
           }
           $toecho .= '</td>
-          <td></td>
+          <td>' . $output[$i]['property_number'] . '</td>
         
           <td>' . $output[$i]['unit_of_measure'] . '</td>
             <td style="text-align:right;">' . number_format($output[$i]['cost_of_acquisition'],2) . '</td>
-                 <td style="text-align:center;">1</td>
-                 <td style="text-align:center;">1</td>
-                   <td style="text-align:center;">0</td>
-                     <td style="text-align:right;"></td>
+                 <td style="text-align:center;">' .  $bal_per_card  . '</td>
+                 <td style="text-align:center;">' .  $disp_onhandcount . '</td>
+                   <td style="text-align:center;">' . $short_ov_quantity . '</td>
+                     <td style="text-align:center;">' . $short_ov_value . '</td>
                         <td>' . $output[$i]['remarks'] . '</td>
       </tr>';
     
@@ -3469,7 +3470,9 @@ $pagecount++;
         "tag"=>$this->sdmenc("view_ass_grouped"),
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
-        "station_id"=>$this->sdmenc(session("user_school"))
+        "station_id"=>$this->sdmenc(session("user_school")),
+        "inv_year"=>$this->sdmenc($req["inv_year"]),
+        "inv_month"=>$this->sdmenc($req["inv_month"])
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3490,27 +3493,39 @@ $pagecount++;
      
           }
 
-            $mysortage = (int)($output[$i]["quantity"] - $output[$i]["balance_per_card"]);
-            if($mysortage < 0){
-              $mysortage = 0;
-            }
 
-            $life_price = $this->compute_lifeprice($output[$i]["date_of_acquisition"],
-                                            $output[$i]["cost_of_acquisition"],
-                                            $mysortage,
-                                            $output[$i]["estimated_total_life_years"]);
+          $linecount = intval(strlen($output[$i]['assets_included']) / 101);
+          $lc_count += $linecount;
+
+
+
+            // $life_price = $this->compute_lifeprice($output[$i]["date_of_acquisition"],
+                                            // $output[$i]["cost_of_acquisition"],
+                                            // $mysortage,
+                                            // $output[$i]["estimated_total_life_years"]);
+
+          $quantity = (int)$output[$i]["quantity"];
+          $blpercard = (int)$output[$i]["balance_per_card"];
+             $short_ov_quantity = ($blpercard -  $quantity);
+          $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition'] ));
+          $disp_onhandcount = "";
+          if($on_hand_per_count == null || $on_hand_per_count == ""){
+           $disp_onhandcount = "Missing Inv.";
+          }else{
+            $disp_onhandcount =  $on_hand_per_count;
+          }
 
  $toecho .= "<tr>
            <td>"  . $output[$i]["uacs_object_code"] . "</td>
            <td>" . $output[$i]["group_name"] . "</td>
-          <td></td>
+          <td>" . $output[$i]["assets_included"] . "</td>
            
          <td>" . $output[$i]["unit_of_measure"] . "</td>
         <td style='text-align:right;'>" . number_format($output[$i]["cost_of_acquisition"],2) . "</td>          
-            <td style='text-align:center;'>" .  $output[$i]["balance_per_card"] . "</td>
-            <td style='text-align:center;'>" . $output[$i]["quantity"] . "</td>
-            <td  style='text-align:center;'>" .    $mysortage ."</td>
-            <td style='text-align:right;'>" . number_format($life_price,2) . "</td>
+            <td style='text-align:center;'>" .  $blpercard . "</td>
+            <td style='text-align:center;'>" .  $quantity . "</td>
+            <td  style='text-align:center;'>" .  $short_ov_quantity  ."</td>
+            <td style='text-align:center;'>" . $short_ov_value . "</td>
             <td></td>
       </tr>";
 
@@ -3582,6 +3597,8 @@ $this->RecordLog("a02");
         "fil_roomnum"=>$rnum,
         "fil_category"=>$catname,
         "station_id"=>$station_id,
+         "inv_year"=>$this->sdmenc($req["inv_year"]),
+        "inv_month"=>$this->sdmenc($req["inv_month"])
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3603,7 +3620,7 @@ $this->RecordLog("a02");
             <td>" . $output[$i]["quantity"] . "</td>
       </tr>";
       }
-      return         $toecho;
+      return $toecho;
     }
 
     public function add_new_asset_group(Request $req){
@@ -3622,6 +3639,8 @@ $this->RecordLog("a02");
         "ass_roomnum"=>$ass_roomnum,
         "ass_assclass"=>$ass_assclass,
         "ass_balpercard"=>$ass_ass_balpercard,
+        "inv_year"=>$this->sdmenc($req["inv_year"]),
+        "inv_month"=>$this->sdmenc($req["inv_month"])
       ]]);
         $output = $this->sdmdec($result->getBody()->getContents());
         return  $output;
@@ -3639,10 +3658,13 @@ $this->RecordLog("a02");
         "tag"=>$tag,
         "fil_roomnum"=>$rnum,
         "fil_category"=>$catname,
-        "stat_id"=> $station_id
+        "stat_id"=> $station_id,
+         "inv_year"=> $this->sdmenc($req["inv_year"]),
+          "inv_month"=> $this->sdmenc($req["inv_month"]),
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
+      // return $output;
       $output = json_decode($output,true);
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
@@ -3941,17 +3963,12 @@ $this->RecordLog("a02");
   }
   $toecho .= "<tr>
 
-    <td><small class='text-muted float-right'>#" . $output[$i]["employee_id"] . "</small>"  . $output[$i]["username"] . "</td>
+    <td><small class='text-muted float-right'>" . $output[$i]["employee_id"] . "</small>"  . $output[$i]["username"] . "</td>
     <td>"  . $usertype . "</td>
 <td>"  . $output[$i]["schoolname"] . "</td>
 
 ";
 
-if($output[$i]["scanned_date"] != ""){
-  $toecho .= "<td><small class='float-right text-muted'>" . $this->DateExplainder($output[$i]["scanned_date"]) . "</small>" . date("F d, Y g:i",strtotime($output[$i]["scanned_date"])) . "</td>";
-}else{
-   $toecho .= "<td class='text-muted'>No transaction</td>";
-}
 
 
 if(session("user_depedemail") == $output[$i]["depedemail"] || session("user_type") >= $output[$i]["type"]){
@@ -3959,12 +3976,14 @@ $toecho .="
 
 <td>" . 
  '
+  <center>
 <div class="dropdown ">
   <a class="btn disabled btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Action
   </a>
 
 </div>
+ </center>
  '
  . "</td>
 
@@ -3974,6 +3993,7 @@ $toecho .="
 
 <td>" . 
  '
+ <center>
 <div class="dropdown">
   <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Action
@@ -3987,6 +4007,7 @@ $toecho .="
     <a class="dropdown-item" data-empid="' . $output[$i]["acc_id"] . '" onclick="lod_deleteacc(this)" data-toggle="modal" data-target="#m_delete" href="#"><i class="fas fa-trash"></i> Delete</a>
   </div>
 </div>
+ </center>
  '
  . "</td>
 
