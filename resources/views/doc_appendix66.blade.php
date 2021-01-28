@@ -54,14 +54,13 @@ table{
 <div id="mytbl">
 </div>
 
-
-
 </div>
 
 <script type="text/javascript">
 	
 var invyear = <?php echo json_encode($_GET["inv_year"]); ?>;
 var invmonth = <?php echo json_encode($_GET["inv_month"]); ?>;
+
 var mypagecountx = 0;
 
 var original_ID_room = <?php echo json_encode($_GET["my_room"]); ?>;
@@ -77,6 +76,7 @@ function GetRoomInfo(){
 		data: {_token: "{{ csrf_token() }}",
 		service_center_id: original_ID_room},
 		success: function(data){
+			// alert(data);
 			data = JSON.parse(data);
 			tru_roomId = data[0]["station_id"];
 			tru_roomname = data[0]["office"];
@@ -89,7 +89,11 @@ function StartGennerationofAppendix66(){
 	$.ajax({
 		type: "POST",
 		url: "{{ route('stole_semi_pagecount') }}",
-		data: {_token: "{{ csrf_token() }}", lc_id:original_ID_room},
+		data: {_token: "{{ csrf_token() }}",
+		lc_id:original_ID_room,
+		inv_year: invyear,
+		inv_month: invmonth
+		},
 		success: function(data){
 			data = parseInt(data);
 			mypagecountx = parseInt(data + 1);
@@ -103,8 +107,10 @@ function StartGennerationofAppendix66(){
 		type: "POST",
 		url: "{{ route('stole_generate_se_app66_data') }}",
 		data: {_token: "{{ csrf_token() }}",
-											locationid: original_ID_room,
-											roomname: tru_roomname},
+				locationid: original_ID_room,
+				roomname: tru_roomname,
+				inv_year: invyear,
+				inv_month: invmonth},
 		success: function(data){
 			// alert(data);
 			$("#mytbl").append(data);

@@ -13,7 +13,7 @@ Inno... - Utilities
 </nav>
 
 <div class="card-deck mb-3">
-	<div class="card">
+	<div class="card card-shadow">
 		<div class="card-body">
 			<a href="" class="float-right" data-toggle="modal" data-target="#modal_miss"><i class="fas fa-question-circle"></i></a>
 		<div class="row">
@@ -39,7 +39,7 @@ Inno... - Utilities
 			<i class="fas fa-filter"></i> Filter
 		</div>
 	</div>
-	<div class="card" id="startinginfo">
+	<div class="card card-shadow" id="startinginfo">
 		<div class="card-body">	
 			<h6>You can <strong>Check All</strong> to print all QR Stickers for your asset(s) or individually select and filter them.</h6>
 		</div>
@@ -77,17 +77,21 @@ Inno... - Utilities
 </div>
 <div class="row">
 	<div class="col-sm-12 table-responsive">
-		<div id="warning" style="display: none;">
-			<div class="card">
+
+		<div class="jumbotron" id="warning" style="display: none;">
+			
+			<div class="card card-shadow mb-5 mt-5" style="margin: auto; width: 400px;">
 				<div class="card-body">
-					<h3 class="text-danger mt-4"><i class="fas fa-times"></i> <span id="asstypename"></span></h3>
+					<h5 class="text-danger mt-4"><i class="fas fa-times"></i> <span id="asstypename"></span></h5>
 					<p id="whattodo" class="mb-4"></p>
 				</div>
 				<div class="card-footer">
-					<a class="btn btn-secondary" href="{{ route('assetregistry') }}">Fix Discrepancies</a>
+					<a class="btn btn-secondary btn-sm" href="{{ route('assetregistry') }}">Fix Discrepancies</a>
 				</div>
 			</div>
+	
 		</div>
+		
 		<div id="thedistable">
 			<table class="table table-hover table-bordered" id="tbl_ass">
 		<thead>

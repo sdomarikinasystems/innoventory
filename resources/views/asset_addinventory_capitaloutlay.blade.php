@@ -821,13 +821,12 @@ $("#chooseserv").show();
 					asset_name = current_moreinfo[0]["description"];
 				}
 
-				
 				var semi_count_sep = col_s_COUNT;
 				// Pass data
 				var goodtogo = false;
 				if(asset_type == "se" && isNumeric(result) && result != ""){
 					// good semi-expendable data
-					if(parseInt(result) >= 1){
+					if(parseInt(result) >= 0){
 						goodtogo = true;
 					}else{
 						AddToErrorLogs("Given quantity to Semi-Expendable (" + htmlEntities(newdata) + ") can't be less than 1.");

@@ -38,19 +38,33 @@ Generate Appendix 73 Report
   </div>
 </div>
 
+ <div class="xload" style="display: none;" id="loadgdata">
+    <div class="container">
+    <div style="margin:auto; width: 540px; margin-top: 35vh; ">
+      <div class="card card-shadow">
+        <div class="card-body">
+          <div class="mt-4 mb-4">
+            <h4 id="percentagecounter" class="float-right text-primary"></h4>
+    <h4 ><img src="https://uploads.toptal.io/blog/image/122385/toptal-blog-image-1489082610696-459e0ba886e0ae4841753d626ff6ae0f.gif" style="width: 30px; margin-right: 10px;">Grouping Asset(s)</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
 <table class="table table-hover table-bordered">
   <thead>
     <tr>
       <th scope="col">Select</th>
-      <th scope="col">Asset Item</th>
-      <th scope="col">Property Number</th>
+      <th style="width: 20%;">Asset Item</th>
+      <th style="width: 20%;">Property Number</th>
 
       <th scope="col">Unit of Mesure</th>
-      <th scope="col">Date of Aquisition</th>
-      <th scope="col">Estimated Total Lifeyears</th>
+      <th style="width: 20%;">Date of Aquisition</th>
+      <th >Cost of Acquisition</th>
 
-      <th scope="col">Current Condition</th>
-      <th scope="col">Asset Location</th>
+      <th style="width: 20%;">Current Condition</th>
       <th scope="col">Count</th>
     </tr>
   </thead>
@@ -106,17 +120,27 @@ Generate Appendix 73 Report
           </button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
+
+          <div class="row">
+            <div class="col-lg-6">
+               <div class="form-group">
             <label>Group Name</label>
             <input type="text" class="form-control" placeholder="Type here..." id="group_name">
           </div>
-          <div class="form-group">
+            </div>
+             <div class="col-lg-6">
+              <div class="form-group">
             <label>Balance Per Card</label>
             <input type="number" value="0" class="form-control" placeholder="Type here..." id="group_bal_per">
           </div>
-          <table class="table table-sm">
+            </div>
+          </div>
+         
+          
+          <table class="table table-bordered">
             <thead>
               <tr>
+                 <th>#</th>
                 <th>Property Number</th>
                 <th>Asset Item</th>
               </tr>
@@ -147,6 +171,7 @@ Generate Appendix 73 Report
           <input type="hidden" id="inp_groupname">
            <input type="hidden" id="inp_groupnumber">
             <input type="hidden" id="inp_category">
+            <input type="hidden" id="inp_unik">
         </div>
         <div class="modal-footer">
           <button type="button" onclick="UngroupItems()" class="btn btn-primary">Ungroup</button>
@@ -155,6 +180,8 @@ Generate Appendix 73 Report
       </div>
     </div>
   </div>
+
+ 
 
 <script type="text/javascript">
 
@@ -183,7 +210,7 @@ Generate Appendix 73 Report
         $("#rnumbhtml").html(data[0]["office"] + "(" + room_numberreal + ")");
         $("#roonumreal").val(room_numberreal);
         $("#room_name").val(data[0]["office"]);
-          LoadAssets();
+          LoadGroupedAssets();
       }
     })
   }
@@ -192,11 +219,11 @@ Generate Appendix 73 Report
     var inp_groupname = $("#inp_groupname").val();
     var inp_groupnumber = $("#inp_groupnumber").val();
     var inp_category = $("#inp_category").val();
-
+    var inp_unik = $("#inp_unik").val();
     $.ajax({
       type : "POST",
-      url : "ung_ims",
-      data : {_token: "{{ csrf_token() }}",groupname:inp_groupname,groupnumber:inp_groupnumber,category:inp_category},
+      url : "{{ route('ungroup_items') }}",
+      data : {_token: "{{ csrf_token() }}",groupname:inp_groupname,groupnumber:inp_groupnumber,category:inp_category,idunik: inp_unik},
       success: function(data){
        SignalReload();
 
@@ -208,48 +235,69 @@ Generate Appendix 73 Report
     $("#inp_groupname").val($(control_obj).data("gname"));
     $("#inp_groupnumber").val($(control_obj).data("rnum"));
     $("#inp_category").val($(control_obj).data("assclass"));
+    $("#inp_unik").val($(control_obj).data("unik"));
   }
   function SignalReload(){
-    LoadAssets();
+    LoadGroupedAssets();
   }
 
- 
+ function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
 
   function GroupAllSelectedDatum(){
+
+    if($("#group_bal_per").val() > 0){
+var unik_id = IDGenerator();
   current_togroup = 0;
   $("#modalgroupitems").modal("hide");
   
     if($("#group_name").val() != "" && $("#group_bal_per").val() != ""){
           
-      $(".selected_datum").each(function(){
+      $(".selected_datum").each(async function(){
+         $("#loadgdata").css("display","block");
+        await timer(256);
       $.ajax({
         type : "POST",
-        url: "add_new_assgr",
+        url: "{{ route('add_new_asset_group') }}",
         data: {_token:"{{ csrf_token() }}",ass_gname:$("#group_name").val(),ass_propnum:$(this).data("val"),ass_roomnum:room_numberreal,ass_assclass: <?php echo json_encode($_GET["my_category"]); ?>,ass_balpercard:$("#group_bal_per").val(),
         inv_year:g_invyear,
-        inv_month:g_invmonth},
-        success: function(data){
+        inv_month:g_invmonth,
+        unikid: unik_id},
+        success:  async function(data){
+  await timer(256);
           current_togroup ++;
           if(total_items_to_group == current_togroup){
-        SignalReload();
+            SignalReload();
+              $("#loadgdata").css("display","none");
           }
           $("#group_bal_per").val("0");
+        
         }
       })
     })
     }else{
       alert("Please name this asset group first.");
     }
+    }else{
+      alert("Balance per card can't be zero (0) or less.");
+    }
+    
   }
+
+   function IDGenerator() {
+     return '_' + Math.random().toString(36).substr(2, 9);
+   }
+
+
   function FetchSelectedPropertyNumbers(){
 
     var id_of_conts_tovalidate = "";
     // CHECK IF ASSET IS VALID GROUPING TOGETHER
     var ccount =0;
+    var count_sel =0;
    $('.asset_item_check[type="checkbox"]:checked').each(function() {
        if(ccount == 0){
         // ENCODE BASIS
-         id_of_conts_tovalidate = $(this).data("dateofaq") + $(this).data("totlifey") + $(this).data("unitofmea");
+         id_of_conts_tovalidate = $(this).data("dateofaq") + $(this).data("itemname") + $(this).data("unitofmea") + $(this).data("aq_cost");
         ccount++;
        }
     });
@@ -260,7 +308,7 @@ Generate Appendix 73 Report
    $('.asset_item_check[type="checkbox"]:checked').each(function() {
       
         // ENCODE BASIS
-         var myidentity = $(this).data("dateofaq") + $(this).data("totlifey") + $(this).data("unitofmea");
+         var myidentity = $(this).data("dateofaq") + $(this).data("itemname") + $(this).data("unitofmea") + $(this).data("aq_cost");
          if(myidentity != id_of_conts_tovalidate){
           haserror = true;
          }
@@ -270,7 +318,7 @@ Generate Appendix 73 Report
 
    // PROCEED
    if(haserror){
-    alert("Items can't be grouped because preferences does not match.");
+    alert("Items can't be grouped because specifications do not match.");
    }else{
     $("#tbl_assets").html("");
     var countselection = 0;
@@ -281,7 +329,8 @@ Generate Appendix 73 Report
       if(autoname == ""){
         autoname = $(this).data("itemname");
       }
-     $("#tbl_assets").append("<tr><td class='selected_datum' data-itemname='" + $(this).data("itemname") + "' data-val='" + $(this).data("propnum") + "'>" + $(this).data("propnum") + "</td><td>" + $(this).data("assetitem") + "</td></tr>");
+      count_sel++;
+     $("#tbl_assets").append("<tr><td>" + count_sel + "</td><td class='selected_datum' data-itemname='" + $(this).data("itemname") + "' data-val='" + $(this).data("propnum") + "'>" + $(this).data("propnum") + "</td><td>" + $(this).data("assetitem") + "</td></tr>");
     });
     total_items_to_group = countselection;
     if(countselection >= 2){
@@ -306,8 +355,7 @@ Generate Appendix 73 Report
       },
       success: function(data){
         // alert(data);
-        $("#myfiltered").html(data);
-        LoadGroupedAssets();
+        $("#myfiltered").append(data);
       }
     })
   }
@@ -320,7 +368,8 @@ Generate Appendix 73 Report
       inv_year: g_invyear,
       inv_month: g_invmonth},
       success : function(data){
-        $("#myfiltered").append(data);
+        $("#myfiltered").html(data);
+        LoadAssets();
       }
     })
   }

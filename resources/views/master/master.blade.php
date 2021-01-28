@@ -56,8 +56,50 @@ if (session("user_uname") == "" || session("user_uname") == null) {
 	<link type="text/javascript" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css"></link>
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
 <style>
+	.btn-text{
+		padding: 0px !important;
+		margin: 0px !important;
+		min-width: 0px !important;
+		display: inline !important;
+	}
+	.xload{
+		left: 0;
+		right: 0;
+		top:0;
+		bottom: 0;
+		background-color: rgba(220, 221, 225,0.7);
+		z-index: 100;
+		width: 100%;
+		height: 100%;
+		position: fixed;
+	}
+	.card-body-sm{
+		padding: 10px;
+	}
+/* width */
+::-webkit-scrollbar {
+  width: 4px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+  background: white;
+  border: 1px solid  #ededed; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #e6e6e6; 
+}
 
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+.basic_link{
+	text-decoration: none;
+
+}
 
 span.deleteicon {
     position: absolute;
@@ -126,7 +168,6 @@ body {
 
 		}
 	}
-
 
 
 	.close { 
@@ -476,103 +517,7 @@ background-color: #007DFF;
 	</li>
 	<li class="list-group-item"><a href="{{ route('asset_resources') }}"><i class="fas fa-folder"></i> Resources</a></li>
 	</ul>
- <!-- REPORT GENERATION MODAL FOR APPENDIX 73 -->
-		<form action="{{ route('group_asset') }}" method="GET">
-  <div id="m_generatereport" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Generate Appendix 73</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          {{ csrf_field() }}
-           <input type='hidden' name='station_id' id='mygroupid'>
-   		 <div class="form-group">
-   		 	 <div class="row">
-          	<div class="col-sm-6">
-          		<div>Year</div>
-          		<select class="form-control" id="co_invyear" required="" name="inv_year"></select>
-          	</div>
-          	<div class="col-sm-6">
-          		<div>Month</div>
-          		<select class="form-control" id="co_invmonth" required="" name="inv_month"></select>
-          	</div>
-          </div>
-   		 </div>
 
-          <div class="form-group">
-            <label>Room</label>
-            <select class="form-control allservicenterrooms" id="co_service_center" onchange="getcountofgen()" name="my_room">
-              <option>Sample</option>
-            </select>
-          </div>
-             <div class="form-group">
-            <label>Category</label>
-            <select class="form-control" id="allcategoriesz" onchange="getcountofgen()" name="my_category">
-              <option>Sample</option>
-            </select>
-          </div>
-        
-        <div class="card card-shadow mt-4 mb-4">
-        	<div class="card-body">
-        		 <label class="mt-0 mb-0 text-muted">Assets to be Generated</label>
-		         <p class="mb-0 mt-0" id="asstobegennum">0 Item(s)</p>
-        	</div>
-        </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" id="continueenrep_btn" class="btn btn-primary">Generate</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-
-<!-- REPORT GENERATION OF APPENDIX 66 -->
-   	<form action="{{ route('goto_generate_appendix66') }}" method="GET">
-    	<div class="modal" tabindex="-1" id="m_generatesemireports" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Generate Appendix 66</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-          	{{ csrf_field() }}
-           	<div class="form-group">
-            		<div class="row">
-            				<div class="col-sm-6">
-          		<div>Year</div>
-          		<select class="form-control" id="se_invyear" required="" name="inv_year"></select>
-          	</div>
-          	<div class="col-sm-6">
-          		<div>Month</div>
-          		<select class="form-control" id="se_invmonth" required="" name="inv_month"></select>
-          	</div>
-            		</div>
-        	</div>
-			<div class="form-group">
-				<label>Room</label>
-				<select class="form-control allservicenterrooms" required="" name="my_room">
-				<option>Sample</option>
-				</select>
-			</div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Generate</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    </form>
 
 	<h6>ADD-ON</h6>
 	<ul class="list-group mb-3">
@@ -727,6 +672,120 @@ background-color: #007DFF;
 	</div>
 	</div>
 
+
+ <!-- REPORT GENERATION MODAL FOR APPENDIX 73 -->
+		<form action="{{ route('group_asset') }}" method="GET">
+  <div id="m_generatereport" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Generate Appendix 73</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ csrf_field() }}
+           <input type='hidden' name='station_id' id='mygroupid'>
+   		 <div class="form-group">
+   		 	<div class="card card-shadow">
+   		 		<div class="card-header">
+   		 			Inventory Date
+   		 		</div>
+   		 		<div class="card-body">
+   		 			 <div class="row">
+          	<div class="col-sm-6">
+          		<div>Year</div>
+          		<select class="form-control" id="co_invyear" required="" name="inv_year"></select>
+          	</div>
+          	<div class="col-sm-6">
+          		<div>Month</div>
+          		<select class="form-control" id="co_invmonth" required="" name="inv_month"></select>
+          	</div>
+          </div>
+   		 		</div>
+   		 	</div>
+   		 </div>
+
+          <div class="form-group">
+            <label>Room</label>
+            <select class="form-control allservicenterrooms" id="co_service_center" onchange="getcountofgen()" name="my_room">
+              <option>Sample</option>
+            </select>
+          </div>
+             <div class="form-group">
+            <label>Category</label>
+            <select class="form-control" id="allcategoriesz" onchange="getcountofgen()" name="my_category">
+              <option>Sample</option>
+            </select>
+          </div>
+        
+        <div class="card card-shadow mt-4 mb-4">
+        	<div class="card-body">
+        		 <label class="mt-0 mb-0 text-muted">Assets to be Generated</label>
+		         <p class="mb-0 mt-0" id="asstobegennum">0 Item(s)</p>
+        	</div>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" id="continueenrep_btn" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- REPORT GENERATION OF APPENDIX 66 -->
+   	<form action="{{ route('goto_generate_appendix66') }}" method="GET">
+    	<div class="modal" tabindex="-1" id="m_generatesemireports" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Generate Appendix 66</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          	{{ csrf_field() }}
+           	<div class="form-group">
+            	<div class="card card-shadow">
+            		<div class="card-header">
+            			Inventory Date
+            		</div>
+            		<div class="card-body">
+            				<div class="row">
+            				<div class="col-sm-6">
+          		<div>Year</div>
+          		<select class="form-control" id="se_invyear" required="" name="inv_year"></select>
+          	</div>
+          	<div class="col-sm-6">
+          		<div>Month</div>
+          		<select class="form-control" id="se_invmonth" required="" name="inv_month"></select>
+          	</div>
+            		</div>
+            		</div>
+            	</div>
+        	</div>
+			<div class="form-group">
+				<label>Room</label>
+				<select class="form-control allservicenterrooms" required="" name="my_room">
+				<option>Sample</option>
+				</select>
+			</div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Generate</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </form>
+
+
 <div class="dock_parent" style="display: none;">
 	<div  class="dock_itself">
 					<a class="hcover" data-placement="top" data-content="Station readiness, Announcements, Summaries" data-trigger="hover" title="Dashboard" href="{{ route('dboard') }}" style="background-color: #FF3A30;">
@@ -799,10 +858,12 @@ background-color: #007DFF;
 			</div>
 </div>
 
-
 	<script type="text/javascript">
 
 		$('.hcover').popover({
+    container: 'body'
+  })
+			$('.carddet').popover({
     container: 'body'
   })
 		
@@ -883,12 +944,14 @@ var sc_width = $( document ).width();
 
 			hasgetted = true;
 		}
-
+		var dontoverload = false;
 		function getcountofgen(){
 			var soul_default_station = <?php echo json_encode(session("user_school")); ?>;
-			getcoinyears();
+			
 
-			// GET CO INVENTORY YEARS
+			if(dontoverload == false){
+				getcoinyears();
+						// GET CO INVENTORY YEARS
 			function getcoinyears(){
 				$.ajax({
 					type:"POST",
@@ -934,10 +997,17 @@ var sc_width = $( document ).width();
 					data: {_token: "{{ csrf_token() }}", station_id: soul_default_station, date_year:prom_year },
 					success: function(data){
 						$("#se_invmonth").html(data);
+						dontoverload = true;
 						loadservicecentersall();
+
 					}
 				})
 			}
+			}else{
+				loadservicecentersall();
+			}
+
+		
 			
 			function loadservicecentersall(){
 

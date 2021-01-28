@@ -87,7 +87,6 @@ table{
 		station_id: <?php echo json_encode(session("user_school")); ?>
 		},
 		success: function(data){
-			alert(data);
 			$("#mytbl").append(data);
 		}
 	})

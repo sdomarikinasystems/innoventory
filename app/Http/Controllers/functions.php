@@ -126,7 +126,20 @@ class functions extends Controller
 
 
     // FUNCTIONS
-
+    public function look_semi_count_by_station(Request $req){
+      $out =  $this->send(["tag"=>"GET_SEMI_COUNT_REGISTRY_BY_STATION",
+        "stationid"=>$this->sdmenc($req["sd_id"])]);
+      return $out[0];
+    }
+    public function look_total_assets_of_station_specific(Request $req){
+      $client = new \GuzzleHttp\Client();
+      $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
+      "tag"=>$this->sdmenc("get_total_assets"),
+      "station_id"=> $this->sdmenc($req["station_number"]),
+      ]]);
+      $total_assets = $this->sdmdec($result->getBody()->getContents());
+      return $total_assets;
+    }
     public function fire_univ_change_source(Request $req){
       session(['user_changesource_station'=>$req["new_source_id"]]);
        session(['user_changesource_station_name'=>$this->fixWrongUTF8Encoding($req["new_source_name"])]);
@@ -284,7 +297,9 @@ class functions extends Controller
        $client = new \GuzzleHttp\Client();
         $output = $this->send(["tag"=>"GET_SEMI_ASSETS_BYFILTER",
         "loc_id"=>$loc_id,
-        "stat_id"=>$this->sdmenc(session("user_school"))
+        "stat_id"=>$this->sdmenc(session("user_school")),
+        "inv_year"=>$this->sdmenc($req["inv_year"]),
+        "inv_month"=>$this->sdmenc($req["inv_month"])
       ]);
          $lc_count = 0;
          $pagecount = 0;
@@ -349,15 +364,16 @@ if($on_hand_per_count != null && $on_hand_per_count != ""){
           //computation
           $bal_per_card = $output[$i]['balance_per_card'];
       
-           $short_ov_quantity = ($bal_per_card + $on_hand_per_count);
-          $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value'] ));
+           $short_ov_quantity = ($bal_per_card - $on_hand_per_count);
+          $output[$i]['unit_value'] =   str_replace(",", "", $output[$i]['unit_value']);
+          $output[$i]['unit_value'] =   str_replace(" ", "", $output[$i]['unit_value']);
+          $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value']));
           $disp_onhandcount = "";
           if($on_hand_per_count == null || $on_hand_per_count == ""){
            $disp_onhandcount = "Missing Inv.";
           }else{
             $disp_onhandcount =  $on_hand_per_count;
           }
-
           $toecho .= '
             <td>' . $output[$i]['stock_num'] . '</td>
             <td>' . $output[$i]['unit_of_mesure'] . '</td>
@@ -365,7 +381,7 @@ if($on_hand_per_count != null && $on_hand_per_count != ""){
             <td style="text-align:center;">' . $bal_per_card  . '</td>
             <td style="text-align:center;">' .   $disp_onhandcount. '</td>
             <td style="text-align:center;">' . $short_ov_quantity  .'</td>
-            <td style="text-align:right;">' . $short_ov_value  .'</td>
+            <td style="text-align:center;">' . $short_ov_value  .'</td>
             <td>' . $output[$i]['remarks'] . '</td>             
           </tr>';
           }
@@ -410,9 +426,10 @@ $this->RecordLog("a02");
 
      public function look_semi_pagecount(Request $req){
          $result = $this->send(["tag"=>"GET_SEMI_ASSETS_BYFILTER",
-          "loc_id"=>$this->sdmenc($req["lc_id"]),
-          "stat_id"=>$this->sdmenc(session("user_school"))]);  
-
+                                "loc_id"=>$this->sdmenc($req["lc_id"]),
+                                "stat_id"=>$this->sdmenc(session("user_school")),
+                                "inv_year"=>$this->sdmenc($req["inv_year"]),
+                                "inv_month"=>$this->sdmenc($req["inv_month"])]);  
         return  count($result);
     }
 
@@ -502,7 +519,7 @@ $this->RecordLog("a02");
         $toecho .= "<option>" . date("Y",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
        if( $toecho == ""){
-         $toecho .= "<option value='" . date("Y") . "' disabled selected>No Record</option>";
+         $toecho .= "<option value='" . date("Y") . "'  >No Record</option>";
        }
       return   $toecho;
     }
@@ -515,7 +532,7 @@ $this->RecordLog("a02");
         $toecho .= "<option value='" . date("m",strtotime($out[$i]["scanned_date"])) . "'>" . date("F",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
        if( $toecho == ""){
-         $toecho .= "<option value='" . date("m") . "' disabled selected>No Record</option>";
+         $toecho .= "<option value='" . date("m") . "'  >No Record</option>";
        }
       return   $toecho;
     }
@@ -528,7 +545,7 @@ $this->RecordLog("a02");
         $toecho .= "<option value='" . date("m",strtotime($out[$i]["scanned_date"])) . "'>" . date("F",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
        if( $toecho == ""){
-         $toecho .= "<option value='" . date("m") . "' disabled selected>No Record</option>";
+         $toecho .= "<option value='" . date("m") . "'  >No Record</option>";
        }
       return   $toecho;
     }
@@ -539,7 +556,7 @@ $this->RecordLog("a02");
         $toecho .= "<option>" . date("Y",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
        if( $toecho == ""){
-         $toecho .= "<option value='" . date("Y") . "' disabled selected>No Record</option>";
+         $toecho .= "<option value='" . date("Y") . "'  >No Record</option>";
        }
       return   $toecho;
     }
@@ -2411,7 +2428,7 @@ $colval = "";
       "station_id"=> $station_id,
       ]]);
       $total_assets = $this->sdmdec($result->getBody()->getContents());
-      $total_assets = number_format(  $total_assets);
+      $total_assets = number_format($total_assets);
       // GET ASSET DISCREPANCY COUNT
       $tag = $this->sdmenc("read_asset_discrepancy");
       $client = new \GuzzleHttp\Client();
@@ -3457,7 +3474,15 @@ $pagecount++;
                  <td style="text-align:center;">' .  $disp_onhandcount . '</td>
                    <td style="text-align:center;">' . $short_ov_quantity . '</td>
                      <td style="text-align:center;">' . $short_ov_value . '</td>
-                        <td>' . $output[$i]['remarks'] . '</td>
+                        <td>';
+
+             if($this->item_condition_validator_display($output[$i]["current_condition"])){
+              $toecho .= $output[$i]["current_condition"];
+        }
+
+           
+
+             $toecho .='</td>
       </tr>';
     
           }
@@ -3490,16 +3515,17 @@ $pagecount++;
 <table id="page_' .  $pagecount  . '" >
 ' . $asset_table_head  . '
         ';
-     
           }
 
-
-          $linecount = intval(strlen($output[$i]['assets_included']) / 101);
+          if(strlen($output[$i]['assets_included']) > strlen($output[$i]['group_name'])){
+             $linecount = intval(strlen($output[$i]['assets_included']) / 64);
           $lc_count += $linecount;
-
-
-
-            // $life_price = $this->compute_lifeprice($output[$i]["date_of_acquisition"],
+        }else{
+           $linecount = intval(strlen($output[$i]['group_name']) / 64);
+          $lc_count += $linecount;
+        }
+         
+          // $life_price = $this->compute_lifeprice($output[$i]["date_of_acquisition"],
                                             // $output[$i]["cost_of_acquisition"],
                                             // $mysortage,
                                             // $output[$i]["estimated_total_life_years"]);
@@ -3508,17 +3534,11 @@ $pagecount++;
           $blpercard = (int)$output[$i]["balance_per_card"];
              $short_ov_quantity = ($blpercard -  $quantity);
           $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition'] ));
-          $disp_onhandcount = "";
-          if($on_hand_per_count == null || $on_hand_per_count == ""){
-           $disp_onhandcount = "Missing Inv.";
-          }else{
-            $disp_onhandcount =  $on_hand_per_count;
-          }
 
  $toecho .= "<tr>
            <td>"  . $output[$i]["uacs_object_code"] . "</td>
            <td>" . $output[$i]["group_name"] . "</td>
-          <td>" . $output[$i]["assets_included"] . "</td>
+          <td>" . $this->ProNumSeparator($output[$i]["assets_included"]) . "</td>
            
          <td>" . $output[$i]["unit_of_measure"] . "</td>
         <td style='text-align:right;'>" . number_format($output[$i]["cost_of_acquisition"],2) . "</td>          
@@ -3526,7 +3546,7 @@ $pagecount++;
             <td style='text-align:center;'>" .  $quantity . "</td>
             <td  style='text-align:center;'>" .  $short_ov_quantity  ."</td>
             <td style='text-align:center;'>" . $short_ov_value . "</td>
-            <td></td>
+            <td>" . $this->group_words_count($output[$i]["assets_conditions"]). "</td>
       </tr>";
 
       
@@ -3580,6 +3600,7 @@ $this->RecordLog("a02");
         "groupname"=>$groupname,
         "groupnumber"=>$groupnumber,
         "category"=>$category,
+        "unikid"=>$this->sdmenc($req["idunik"])
       ]]);
 
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3610,20 +3631,71 @@ $this->RecordLog("a02");
             data-gname='" . $output[$i]["group_name"] . "'
             data-rnum='" . $output[$i]["room_number"] . "'
             data-assclass='" . $output[$i]["asset_classification"] . "'
-             data-toggle='modal' data-target='#ungroup_modal'>Ungroup</a></td>
+             data-unik='" . $output[$i]["unik_id"] . "'
+             data-toggle='modal' data-target='#ungroup_modal' title='Ungroup'><i class='fas fa-sort-amount-down-alt'></i></a></td>
            <td>" . $output[$i]["group_name"] . "</td>
-          <td>" . $output[$i]["assets_included"]. "</td>
+          <td>" . $this->ProNumSeparator($output[$i]["assets_included"]) . "</td>
            
-         <td></td>
-        <td></td>          
-            <td></td>
+          <td>" .  $output[$i]["unit_of_measure"] . "</td>
+          <td>" .  date("F d, Y",strtotime($output[$i]["date_of_acquisition"])) . "<br><span class='text-muted'>" . $this->DateExplainder($output[$i]["date_of_acquisition"]) ."</span>" . "</td>
+          <td>" . number_format($output[$i]["cost_of_acquisition"],2) . "</td>       
+          <td>" .  $this->group_words_count($output[$i]["assets_conditions"]) . "</td>          
             <td>" . $output[$i]["quantity"] . "</td>
       </tr>";
       }
       return $toecho;
     }
+    public function ProNumSeparator($property_number){
+      $to_ret = "";
+      $property_number = explode("<|next|>", $property_number);
+      for ($i=0; $i <  count( $property_number ); $i++) { 
+         $to_ret .= " (" . $property_number[$i] . ") ,";
+      }
+      $to_ret= rtrim($to_ret, ",");
+      return $to_ret;
+    }
+    public function group_words_count($txt_words){
+      $existing_words = array();
+      $existing_counter = array();
+      $frag = explode(", ", $txt_words);
+      for ($i=0; $i < count($frag); $i++) { 
+       if(!in_array($frag[$i], $existing_words)){
+        array_push($existing_words , $frag[$i]);
+        array_push($existing_counter, $frag[$i] . "<|count|>1");
+       }else{
+        for ($x=0; $x < count($existing_counter); $x++) { 
+         if(strpos ($existing_counter[$x], $frag[$i] . "<|count|>") !== false){
+          $current_existing = explode("<|count|>", $existing_counter[$x]);
+          $existing_counter[$x] = $current_existing[0] . "<|count|>" . ($current_existing[1] + 1);
+         }
+        }
+       }
+      }
+      //reword
+      $toecho = "";
+      for ($i=0; $i < count($existing_counter); $i++) { 
+        $ff = explode("<|count|>", $existing_counter[$i]);
+        if($this->item_condition_validator_display($ff[0])){
+            $toecho .= $ff[0] . " - " . $ff[1] . " <br>";
+        }
+          
+      }
+      $toecho = preg_replace('~\\s+\\S+$~', ' <br>', $toecho);
+      return  $toecho ;
+    }
+
+    public function item_condition_validator_display($condition){
+      $condition = strtolower($condition);
+      if(strpos($condition, "good") !== false && strpos($condition, "condition") !== false){
+        return false;
+      }else{
+        return true;
+      }
+    } 
 
     public function add_new_asset_group(Request $req){
+
+
       $tag = $this->sdmenc("add_new_group");
       $ass_gname = $this->sdmenc(strtoupper(htmlentities($req["ass_gname"])));
       $ass_propnum = $this->sdmenc($req["ass_propnum"]);
@@ -3640,7 +3712,9 @@ $this->RecordLog("a02");
         "ass_assclass"=>$ass_assclass,
         "ass_balpercard"=>$ass_ass_balpercard,
         "inv_year"=>$this->sdmenc($req["inv_year"]),
-        "inv_month"=>$this->sdmenc($req["inv_month"])
+        "inv_month"=>$this->sdmenc($req["inv_month"]),
+        "station_id"=>$this->sdmenc(session("user_school")),
+        "unikid"=>$this->sdmenc($req["unikid"])
       ]]);
         $output = $this->sdmdec($result->getBody()->getContents());
         return  $output;
@@ -3678,7 +3752,7 @@ $this->RecordLog("a02");
          data-dateofaq='" . $output[$i]["date_of_acquisition"]  . "'
          data-totlifey='" . $output[$i]["estimated_total_life_years"]  . "'
          data-unitofmea='" . $output[$i]["unit_of_measure"]  . "'
-
+         data-aq_cost='" . $output[$i]["cost_of_acquisition"]  . "'
           data-itemname='" . $output[$i]["asset_item"]  . "' data-propnum='" . $output[$i]["property_number"] . "' data-assetitem='" . $output[$i]["asset_item"] . "'>";
           }else{
             //DISPOSED
@@ -3690,12 +3764,11 @@ $this->RecordLog("a02");
           <td>" . $output[$i]["property_number"] . "</td>
         
           <td>" . $output[$i]["unit_of_measure"] . "</td>
-          <td>" . date("F d, Y",strtotime($output[$i]["date_of_acquisition"])) . "</td>
-          <td>" . $output[$i]["estimated_total_life_years"] . "</td>
+          <td>" . date("F d, Y",strtotime($output[$i]["date_of_acquisition"])) . "<br><span class='text-muted'>" . $this->DateExplainder($output[$i]["date_of_acquisition"]) ."</span>" . "</td>
+          <td>" . number_format($output[$i]["cost_of_acquisition"],2) . "</td>
 
 
             <td>" . $output[$i]["current_condition"] . "</td>
-                 <td>" . $output[$i]["service_center"] . "</td>
                  <td>1</td>
       </tr>";
       }

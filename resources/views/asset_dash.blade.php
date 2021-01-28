@@ -6,7 +6,6 @@ Innoventory - Dashboard
 
 @section('contents')
 
-<h5 class="text-muted">Dashboard</h5>
 <!--REMINDERS-->
 <div class="row">
 	<div class="col-sm-7">
@@ -17,54 +16,51 @@ Innoventory - Dashboard
 </div>
 <div class="card-deck mb-3 mobiletext" id="statbar" style="display: none;">
 		<div class="card">
-			<div class="card-body">
-				<p class="mb-0 mt-0">Asset <small class="text-muted">(CO-SE)</small></p>
-				<h3 class="mb-0 mt-0" id="count_ass_reg"></h3>
-			</div>
-			<div class="card-footer">
-				<div class="float-left"><a href="/innoventory/asset/registry"><span class="hideinmobile">Manage</span></a></div>
-				<div class="float-right"><a href="/innoventory/asset/registry"><i class="fas fa-arrow-circle-right"></i></a></div>
+			<div class="card-body card-body-sm carddet" data-placement="bottom" data-content="Total uploaded assets (Capital Outlay - Semi-Expendable)" data-trigger="hover" style='text-align:center;'>
+
+				<a href="{{ route('assetregistry') }}" class='basic_link text-dark m-0'>
+					<p class="mb-0 mt-0 text-primary"><i class="fas fa-clipboard-check"></i> <small class="text-muted"></small></p>
+				<h5 class="mb-0 mt-0" id="count_ass_reg"></h5>
+				</a>
+				
 			</div>
 		</div>
-
 		<div class="card">
-			<div class="card-body">
-				<p class="mb-0 mt-0">Inventory <small class="text-muted">(CO-SE)</small></p>
-				<h3 class="mb-0 mt-0" id="count_sc_assets"></h3>
-			</div>
-			<div class="card-footer">
-				<div class="float-left"><a href="/innoventory/asset/inventory"><span class="hideinmobile">Show All</span></a></div>
-				<div class="float-right"><a href="/innoventory/asset/inventory"><i class="fas fa-arrow-circle-right"></i></a></div>
+			<div class="card-body card-body-sm carddet" data-placement="bottom" data-content="Total scanned inventory data (Capital Outlay - Semi-Expendable) " data-trigger="hover" style='text-align:center;'>
+				<a href="{{ route('asset_scanned') }}"  class='basic_link text-dark m-0'>
+					<p class="mb-0 mt-0 text-success"><i class="fas fa-search"></i> <small class="text-muted"></small></p>
+				<h5 class="mb-0 mt-0" id="count_sc_assets"></h5>
+				</a>
 			</div>
 		</div>		
 <div class="w-100 d-none d-sm-block d-lg-none"></div>
 		<div class="card">
-			<div class="card-body">
-				<p class="mb-0 mt-0">Disposed <small class="text-muted">(CO-SE)</small></p>
-				<h3 class="mb-0 mt-0" id="count_ass_disposed">0</h3>
+			<div class="card-body card-body-sm carddet" data-placement="bottom" data-content="Total disposed assets (Capital Outlay - Semi-Expendable)" data-trigger="hover" style='text-align:center;'>
+				<a href="{{ route('asset_disposed') }}"  class='basic_link text-dark m-0'>
+					<p class="mb-0 mt-0 text-danger"><i class="fas fa-trash"></i> <small class="text-muted"></small></p>
+				<h5 class="mb-0 mt-0" id="count_ass_disposed">0</h5>
+				</a>
 			</div>
-			<div class="card-footer">
-				<a href="/innoventory/asset/disposal" class="float-right"><i class="fas fa-hand-point-right"></i> <span class="hideinmobile">View</span></a>
-			</div>
+
 		</div>
 
 		<div class="card">
-			<div class="card-body">
-				<p class="mb-0 mt-0">Service Centers</p>
-				<h3 class="mb-0 mt-0" id="count_ass_servicecenters">0</h3>
-			</div>
-			<div class="card-footer">
-				<a href="/innoventory/manage/service_centers" class="float-right"><i class="fas fa-hand-point-right"></i> <span class="hideinmobile">View</span></a>
+			<div class="card-body card-body-sm carddet" data-placement="bottom" data-content="Service Centers on your location" data-trigger="hover" style='text-align:center;'>
+				<a href="{{ route('stationmy') }}" class='basic_link text-dark m-0'>
+					<p class="mb-0 mt-0 text-info"><i class="fas fa-warehouse"></i></p>
+				<h5 class="mb-0 mt-0" id="count_ass_servicecenters">0</h5>
+				</a>
+				
 			</div>
 		</div>
 	
 </div>
-		<a href="{{ route('manage_reminders') }}" class="float-right"><i class="fas fa-hand-point-right"></i> See All</a>
-		<h5 class="text-muted">Announcements</h5>
+		
 		<div class="announcement_card_body" style="padding:0;" >	
 				<div id="newann" style="margin: 20px;">
 					
 				</div>
+				<a href="{{ route('manage_reminders') }}" class="btn btn-light btn-block"><i class="fas fa-hand-point-right"></i> See All Announcements</a>
 			</div>
 	</div>
 

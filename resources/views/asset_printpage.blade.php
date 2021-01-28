@@ -15,7 +15,10 @@
 </head>
 <style type="text/css">
 	
-
+	.card-shadow{
+		box-shadow:0px 2px 3px rgba(0,0,0,0.08),
+		0px 10px 30px rgba(0,0,0,0.08);
+	}
 	.qrcode {
 		display: inline-block;
 		width: 310px;
@@ -192,7 +195,7 @@
 		<h4 ><img src="https://uploads.toptal.io/blog/image/122385/toptal-blog-image-1489082610696-459e0ba886e0ae4841753d626ff6ae0f.gif" style="width: 30px; margin-right: 10px;">Generating QR Stickers</h4>
 		<progress value="" style="width: 100%;" id="xproggen" max=""></progress>
 		<p class="text-muted mb-0" id="txt_okstat" style="display: none;"><span id="currs">0</span> out of <span id="totss">0</span> QR code has been successfully generated.</p>
-		<p class="text-muted mb-0" id="warmuptxt">Warming up...</p>
+		<p class="text-muted mb-0" id="warmuptxt">Preparing data...</p>
 					</div>
 				</div>
 			</div>
@@ -206,10 +209,10 @@
 
 <script type="text/javascript">
 
-	// if (window.IsDuplicate()) {
-	// alert("Inventory scanner page is already open in another tab.");
-	// window.close();
-	// }
+	if (window.IsDuplicate()) {
+		alert("Inventory scanner page is already open in another tab.");
+		window.close();
+	}
 
 	var doneload = false;
 	var totallod = 0;

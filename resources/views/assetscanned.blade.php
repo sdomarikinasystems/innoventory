@@ -91,50 +91,40 @@ Innoventory - Inventory
     <?php } ?>
 
     <div class="card-deck">
-      <div class="card">
+
+      
+       <div class="card card-shadow">
         <div class="card-body">
-          <h2 id="itms_total"></h2>
-        </div>
-        <div class="card-footer">
-          Total Scanned
+           <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#m_capoutdatefilter">Change Date</button>
+          <h5 id="mytimeline" class="mb-0 mt-0"></h5>
         </div>
       </div>
-      <div class="card">
-        <div class="card-body">
-          <h2 id="notextsum"></h2>
-        </div>
-        <div class="card-footer">
-           <form action="{{ route('view_all_unencludedassets') }}" method="get" target="_blank">
-            <input type="hidden" name="station_name"  class="inp_filtepurpose_stationname" value="">
+
+       <div class="card card-shadow">
+            <div class="card-body ">
+              <h5 class="float-right text-primary" id="co_nowprecentage">0%</h5>
+              <h5>Total Scanned Capital Outlay</h5>
+              <progress value="" max="" id="co_prog" style="width: 100%;"></progress>
+              <form action="{{ route('view_all_unencludedassets') }}" style="display: flex;" method="get" target="_blank" ><input type="hidden" name="station_name"  class="inp_filtepurpose_stationname" value="">
             <input type="hidden" name="myschool_id" id="inp_sc_id" value="">
             <input type="hidden" name="selected_year" id="inp_co_selyear" value="">
             <input type="hidden" name="selected_month" id="inp_co_selmonth" value="">
             <input type="hidden" name="fromto_html" id="inp_co_htmlof_fromto" value="">
-            <button type="submit" class="btn btn-info btn-sm float-right" id="view_button_cap_out_missing">View</button>
+            <button type="submit" class="btn btn-link btn-sm btn-text text-muted" id="view_button_cap_out_missing"><span class="text-primary" id="itms_total"></span>/<span id="totalassets_co"> </span> total scanned Capital Outlay</button>
             </form>
-          Missing Asset(s)
-        </div>
-      </div>
-       <div class="card">
-        <div class="card-body">
-          <span id="mytimeline"></span>
-        </div>
-        <div class="card-footer">
-          <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#m_capoutdatefilter">Filter</button>
-          From - To
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-         <h5>Start Inventory</h5>
-        </div>
-        <div class="card-footer">
-         <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
+            </div>
+          </div>
+
+
+      <div class="card card-shadow">
+        <div class="card-body ">
+           <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
             <input type="hidden" name="station_full_name" class="inp_filtepurpose_stationname">
             <input type="hidden" name="station_id" id="inp_sc_id_inv" value="">
             <button type="submit"  id="btn_capital_startinv" class="btn btn-danger btn-sm float-right">Start</button>
          </form>
-          Inventory
+         <h5>Start Inventory</h5>
+         <p class="mt-0 mb-0 text-muted">Conduct inventory in this station so you can generate appendix 66/73.</p>
         </div>
       </div>
     </div>
@@ -172,50 +162,42 @@ Innoventory - Inventory
       </div>
        <div class="col-sm-12">
          <div class="card-deck">
-      <div class="card">
+         
+
+         <div class="card card-shadow">
         <div class="card-body">
-          <h2 id="semisum_totalscanned"></h2>
-        </div>
-        <div class="card-footer">
-          Total Scanned
+          <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal_filterdateofsemi">Change Date</button>
+          <h5 id="semisum_fromto" class="m-0"></h5>
         </div>
       </div>
-      <div class="card">
+
+      <div class="card card-shadow">
         <div class="card-body">
-          <h2 id="semisum_itemsnotfound"></h2>
-        </div>
-        <div class="card-footer">
-          <form action="{{ route('goto_missing_scanned_semi') }}" method="get" target="_blank">
+          <h5 class="float-right text-primary" id="semiscanninf_percentage_txt">0%</h5>
+          <h5 class="mt-0">Total Scanned Semi-Expendable</h5>
+          <progress value="" max="" id="semiscanninf_percentage" style="width: 100%;"></progress>
+         
+            <form action="{{ route('goto_missing_scanned_semi') }}" method="get" target="_blank">
             <input type="hidden" name="station_name"  class="inp_filtepurpose_stationname" value="">
             <input type="hidden" name="myschool_id" id="inp_sc_id_semi" value="">
              <input type="hidden" name="selected_year" id="inp_se_selyear" value="">
               <input type="hidden" name="selected_month" id="inp_se_selmonth" value="">
                <input type="hidden" name="fromto_html" id="inp_se_htmlof_fromto" value="">
-            <button type="submit" class="btn btn-sm btn-info float-right" id="view_butt_semi_missing">View</button>
+            <button type="submit" class="btn btn-sm btn-link text-muted btn-text m-0 p-0" id="view_butt_semi_missing"><span class="text-primary" id="semisum_totalscanned"></span>/<span id="semisum_itemsnotfound"></span></button>
           </form>
-         Missing Asset(s)
+
         </div>
       </div>
-       <div class="card">
+       
+      <div class="card card-shadow">
         <div class="card-body">
-          <span id="semisum_fromto"></span>
-        </div>
-        <div class="card-footer">
-          <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal_filterdateofsemi">Filter</button>
-          From - To
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-         <h5>Start Inventory</h5>
-        </div>
-        <div class="card-footer">
-         <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
+          <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
             <input type="hidden" name="station_full_name" class="inp_filtepurpose_stationname">
             <input type="hidden" name="station_id" id="inp_sc_id_inv_2" value="">
             <button type="submit"  id="btn_semi_startinv" class="btn btn-danger btn-sm float-right">Start</button>
          </form>
-          Inventory
+         <h5 class="mt-0">Start Inventory</h5>
+         <p class="mt-0 mb-0 text-muted">Conduct inventory in this station so you can generate appendix 66/73.</p>
         </div>
       </div>
     </div>
@@ -416,6 +398,8 @@ function UniversalLoaderSourceChange(stationID){
 
 
   }
+
+  var total_scanned_semiex = 0;
       function GetSemiScannedAsset(schoolid){
 
         var yy = $("#semiexpe_filter_year").val();
@@ -427,7 +411,10 @@ function UniversalLoaderSourceChange(stationID){
           url: "{{ route('shoot_show_uploaded_semi_expendable_scanneddata') }}",
           data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
           success: function(data){
+             $("#tbl_scannnedsemi").DataTable().destroy();
             $("#tbl_scanned_semiexpendableasset").html(data);
+            
+             $("#tbl_scannnedsemi").DataTable();
             GetSemi_TotalScanned(schoolid,yy,mm);
           }
         })
@@ -440,6 +427,9 @@ function UniversalLoaderSourceChange(stationID){
           data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
           success: function(data){
            $("#semisum_totalscanned").html(data);
+           total_scanned_semiex = data;
+
+
            GetSemi_FromTo(schoolid,yy,mm);
           }
         })
@@ -459,16 +449,16 @@ function UniversalLoaderSourceChange(stationID){
       function GetSemi_ItemsNotFound(schoolid,yy,mm){
         $.ajax({
           type: "POST",
-          url: "{{ route('stole_getsemisum_itemsnotfound') }}",
+          url: "{{ route('stole_semi_count_by_station') }}",
           data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
           success: function(data){
-            if(data == "0"){
-                $("#semisum_itemsnotfound").html("No items missing");
-                 $("#view_butt_semi_missing").css("display","none");
-            }else{
-                $("#semisum_itemsnotfound").html(data);
-                $("#view_butt_semi_missing").css("display","block");
-            }
+            $("#semisum_itemsnotfound").html(data);
+             var scanned_semi = total_scanned_semiex;
+           var percentage_text = ((scanned_semi / data) *  100).toFixed(0);
+
+           $("#semiscanninf_percentage").prop("max",data);
+            $("#semiscanninf_percentage").val(total_scanned_semiex);
+            $("#semiscanninf_percentage_txt").html(percentage_text + "%");  
            
           }
         })
@@ -581,7 +571,7 @@ GetScannedCapital();
     }
   })
    }
-
+   var totalscanned_co = 0;
    function GetScannedCapitalTotal(){
      $.ajax({
     type: "POST",
@@ -589,6 +579,8 @@ GetScannedCapital();
     data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
     success: function(data){
       $("#itms_total").html(data);
+      totalscanned_co = data;
+
       GetNotScannedItems_Capital();
     }
   })
@@ -597,19 +589,23 @@ GetScannedCapital();
    function GetNotScannedItems_Capital(){
     $.ajax({
     type: "POST",
-    url: "{{ route('get_noscitems') }}",
+    url: "{{ route('stole_total_assets_of_station_specific') }}",
     data: {_token:"{{ csrf_token() }}",
     "station_number":sc_id,
     selyear:choosen_year,
     selmonth:choosen_month},
     success: function(data){
-      if(data == "0"){
- $("#notextsum").html("No items missing");
- $("#view_button_cap_out_missing").css("display","none");
-      }else{
-         $("#notextsum").html(data);
-         $("#view_button_cap_out_missing").css("display","block");
-      }
+   
+        var computedmax = data;
+        var perc_total = ((totalscanned_co / computedmax) * 100).toFixed(0); 
+
+        $("#co_nowprecentage").html(perc_total + "%");
+        $("#totalassets_co").html(computedmax);
+
+        $("#co_prog").prop("max",computedmax);
+        $("#co_prog").val(totalscanned_co);
+         // $("#view_button_cap_out_missing").css("display","block");
+      
      GetScannedDates_Capital();
     }
   })
@@ -628,20 +624,5 @@ GetScannedCapital();
         }
 
   }
-  var utype = <?php echo json_encode(session("user_type")); ?>;
-  $.ajax({
-    type: "POST",
-    url: "../../getallscnames",
-    data : {_token: "{{ csrf_token() }}"},
-    success: function(data){
-      if(utype == "0" || utype == "1"){
- $("#scnamesselection").html("<option value='all'>Show All</option>");
-      }
-      
-      
-      $("#scnamesselection").append(data);
-   $("#scnamesselection").val(<?php echo json_encode(session("user_school")); ?>);
-    }
-  })
 </script>
 @endsection

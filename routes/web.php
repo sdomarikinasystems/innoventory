@@ -215,6 +215,9 @@ Route::get("/innoventory/issuances",["uses"=>"functions@fly_issuances","as"=>"go
 // UNIVERSAL
 Route::post("/get_last_logdate",["uses"=>"functions@look_last_date_ofcode","as"=>"stole_last_date_ofcode"]);
 Route::post("/uni_change_source",["uses"=>"functions@fire_univ_change_source","as"=>"shoot_univ_change_source"]);
+Route::post("/get_asset_count_of_a_station",["uses"=>"functions@look_total_assets_of_station_specific","as"=>"stole_total_assets_of_station_specific"]);
+Route::post("/get_asset_semi_count_bystation",["uses"=>"functions@look_semi_count_by_station","as"=>"stole_semi_count_by_station"]);
+
 
 
 // user_changesource_station
