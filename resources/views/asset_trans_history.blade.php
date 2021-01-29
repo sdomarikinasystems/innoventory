@@ -54,11 +54,15 @@ Inno... - Transaction History
 
           <tr>
             <td>a02</td>
-            <td>Generated Report</td>
+            <td>Generated Report Appendix 73</td>
+          </tr>
+          <tr>
+            <td>a02.1</td>
+            <td>Generated Report Appendix 66</td>
           </tr>
           <tr>
             <td>a03</td>
-            <td>Disposed an asset</td>
+            <td>Disposed an asset CO</td>
           </tr>
            <tr>
             <td>a04</td>
@@ -74,7 +78,7 @@ Inno... - Transaction History
           </tr>
           <tr>
             <td>a07</td>
-            <td>Restored an Asset</td>
+            <td>Restored an Asset CO</td>
           </tr>
          </tbody>
         </table>
@@ -88,7 +92,6 @@ Inno... - Transaction History
     url: "{{ route('get_trhisto') }}",
     data: {_token:"{{ csrf_token() }}"},
     success: function(data){
-      // alert(data);
       $("#alltranstbl").html(data);
       $("#tbl_tra").DataTable();
     }

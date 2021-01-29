@@ -14,136 +14,136 @@ Use Alert;
 class functions extends Controller
 {
     public function usermanagement(){
-      return view("usermanagement");
+      return view('usermanagement');
     }
     public function assetregistry(){
-        return view("assetregistry");
+        return view('assetregistry');
     }
     public function assetuploadresult(){
-        return view("assetuploadresult");
+        return view('assetuploadresult');
     }
     public function asset_disposed(){
-       return view("asset_disposed");
+       return view('asset_disposed');
     }
     public function asset_view(){
-      return view("assetview");
+      return view('assetview');
     }
     public function group_asset(){
-      return view("assetgrouping");
+      return view('assetgrouping');
     }
     public function printapp66(){
-      return view("doc_appendix73");
+      return view('doc_appendix73');
     }
       public function asset_scanned(){
-      return view("assetscanned");
+      return view('assetscanned');
     }
     public function view_all_unencludedassets(){
-      return view("asset_noentry");
+      return view('asset_noentry');
     }
     public function asklogin(){
-       return view("login");
+       return view('login');
     }
     public function proc_logout(){
       session()->flush();
       return redirect('/');
     }
     public function dboard(){
-      return view("asset_dash");
+      return view('asset_dash');
     }
     public function stationmy(){
-       return view("mystation");
+       return view('mystation');
     }
     public function manstat(){
-      return view("managestations");
+      return view('managestations');
     }
     public function lod_discrep_indetail(){
-       return view("asset_discrepancies");
+       return view('asset_discrepancies');
     }
     public function ass_transhis(){
-      return view("asset_trans_history");
+      return view('asset_trans_history');
     }
     public function sta_amanagement(){
-      return view("asset_stations");
+      return view('asset_stations');
     }
     public function go_abouts(){
-      return view("asset_abouts");
+      return view('asset_abouts');
     }
     public function myaccount(){
-      return view("myaccount");
+      return view('myaccount');
     }
     public function asset_resources(){
-      return view("asset_resources");
+      return view('asset_resources');
     }
 
     public function manage_utilities(){
-      return view("asset_utilities");
+      return view('asset_utilities');
     }
     public function manage_reports(){
-      return view("asset_reports");
+      return view('asset_reports');
     }
     public function manage_reminders(){
-      return view("asset_reminders");
+      return view('asset_reminders');
     }
     public function goto_assetdl(){
-       return view("asset_reportdownload");
+       return view('asset_reportdownload');
     }
     public function goto_omitts(){
-        return view("asset_omitted");
+        return view('asset_omitted');
     }
     public function goto_howto(){
-      return view("asset_howto");
+      return view('asset_howto');
     }
     public function goto_regoms(){
-       return view("asset_omissionreport");
+       return view('asset_omissionreport');
     }
     public function fly_semi_expendable_validationpage(){
-      return view("asset_semivalidation");
+      return view('asset_semivalidation');
     }
     public function fly_semiexpendable_discrepancies(){
-       return view("asset_semidiscrepancies");
+       return view('asset_semidiscrepancies');
     }
     public function fly_semiexpedable_omitted(){
-      return view("asset_semi_omitted");
+      return view('asset_semi_omitted');
     }
     public function fly_issuances(){
-      return view("asset_issuances");
+      return view('asset_issuances');
     }
     public function fly_supply_validationpage(){
-       return view("asset_supply_validation");
+       return view('asset_supply_validation');
     }
     public function fly_missing_scanned_semi(){
-       return view("assets_missing_semi_scanned");
+       return view('assets_missing_semi_scanned');
     }
     public function fly_semi_expendable_item_view(){
-       return view("asset_view_semi_single");
+       return view('asset_view_semi_single');
     }
     public function fly_inventory_co(){
-       return view("asset_addinventory_capitaloutlay");
+       return view('asset_addinventory_capitaloutlay');
     }
     public function fly_generate_appendix66(){
-       return view("doc_appendix66");
+       return view('doc_appendix66');
     }
 
 
     // FUNCTIONS
     public function look_semi_count_by_station(Request $req){
-      $out =  $this->send(["tag"=>"GET_SEMI_COUNT_REGISTRY_BY_STATION",
-        "stationid"=>$this->sdmenc($req["sd_id"])]);
+      $out =  $this->send(['tag'=>'GET_SEMI_COUNT_REGISTRY_BY_STATION',
+        'stationid'=>$this->sdmenc($req['sd_id'])]);
       return $out[0];
     }
     public function look_total_assets_of_station_specific(Request $req){
       $client = new \GuzzleHttp\Client();
-      $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$this->sdmenc("get_total_assets"),
-      "station_id"=> $this->sdmenc($req["station_number"]),
+      $result = $client->request('POST',WEBSERVICE_URL,['form_params'=>[
+      'tag'=>$this->sdmenc('get_total_assets'),
+      'station_id'=> $this->sdmenc($req['station_number']),
       ]]);
       $total_assets = $this->sdmdec($result->getBody()->getContents());
       return $total_assets;
     }
     public function fire_univ_change_source(Request $req){
-      session(['user_changesource_station'=>$req["new_source_id"]]);
-       session(['user_changesource_station_name'=>$this->fixWrongUTF8Encoding($req["new_source_name"])]);
-      return "true";
+      session(['user_changesource_station'=>$req['new_source_id']]);
+       session(['user_changesource_station_name'=>$this->fixWrongUTF8Encoding($req['new_source_name'])]);
+      return 'true';
     }
     public function fixWrongUTF8Encoding($inputString) {
 
@@ -194,15 +194,15 @@ class functions extends Controller
 
     }
     public function fire_clear_recovery_data(){
-      session(['user_last_scansession_sc'=> ""]);
-      session(['user_last_scansession'=> ""]);
-      session(['user_last_schoolname'=> ""]);
+      session(['user_last_scansession_sc'=> '']);
+      session(['user_last_scansession'=> '']);
+      session(['user_last_schoolname'=> '']);
       return "deleted";
     }
     public function look_not_inserted_recent_co_data(Request $req){
-      $out =  $this->send(["tag"=>"GET_RECENT_NOT_ADDED_ASSET_CO",
-        "stationid"=>$this->sdmenc($req["current_station"])]);
-      $toecho = "";
+      $out =  $this->send(['tag'=>'GET_RECENT_NOT_ADDED_ASSET_CO',
+        'stationid'=>$this->sdmenc($req['current_station'])]);
+      $toecho = '';
       for ($i=0; $i < count($out); $i++) { 
 
         //office_type ---- 0
@@ -254,9 +254,9 @@ class functions extends Controller
       return "saved";
     }
     public function fire_remove_last_session(){
-      session(['user_last_scansession_sc'=> ""]);
-      session(['user_last_scansession'=> ""]);
-      session(['user_last_schoolname'=> ""]);
+      session(['user_last_scansession_sc'=> '']);
+      session(['user_last_scansession'=> '']);
+      session(['user_last_schoolname'=> '']);
       return "deleted";
     }
     public function look_last_session(){
@@ -268,7 +268,7 @@ class functions extends Controller
       }
     }
     public function fire_delete_specific_assetdata_all(Request $req){
-        $result = $this->send(["tag"=>"DELETE_DATA_ASSET_BYSTATION_TYPE",
+        $result = $this->send(['tag'=>"DELETE_DATA_ASSET_BYSTATION_TYPE",
           "station_id"=>$this->sdmenc($req["station_id"]),
           "asset_type"=>$this->sdmenc($req["asset_type"])]);  
 
@@ -295,7 +295,7 @@ class functions extends Controller
   </tr>
       ';
        $client = new \GuzzleHttp\Client();
-        $output = $this->send(["tag"=>"GET_SEMI_ASSETS_BYFILTER",
+        $output = $this->send(['tag'=>"GET_SEMI_ASSETS_BYFILTER",
         "loc_id"=>$loc_id,
         "stat_id"=>$this->sdmenc(session("user_school")),
         "inv_year"=>$this->sdmenc($req["inv_year"]),
@@ -369,11 +369,17 @@ if($on_hand_per_count != null && $on_hand_per_count != ""){
           $output[$i]['unit_value'] =   str_replace(" ", "", $output[$i]['unit_value']);
           $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value']));
           $disp_onhandcount = "";
-          if($on_hand_per_count == null || $on_hand_per_count == ""){
+          if($on_hand_per_count == null || $on_hand_per_count == ''){
            $disp_onhandcount = "Missing Inv.";
           }else{
             $disp_onhandcount =  $on_hand_per_count;
           }
+
+          if($short_ov_value < 0){
+            $short_ov_value = '(' . $short_ov_value . ')';
+            $short_ov_quantity = '(' . $short_ov_quantity . ')';
+          }
+
           $toecho .= '
             <td>' . $output[$i]['stock_num'] . '</td>
             <td>' . $output[$i]['unit_of_mesure'] . '</td>
@@ -419,13 +425,13 @@ if($on_hand_per_count != null && $on_hand_per_count != ""){
   </table>
       ';
 
-$this->RecordLog("a02");
+$this->RecordLog("a02.1");
       return  $toecho;
     }
 
 
      public function look_semi_pagecount(Request $req){
-         $result = $this->send(["tag"=>"GET_SEMI_ASSETS_BYFILTER",
+         $result = $this->send(['tag'=>"GET_SEMI_ASSETS_BYFILTER",
                                 "loc_id"=>$this->sdmenc($req["lc_id"]),
                                 "stat_id"=>$this->sdmenc(session("user_school")),
                                 "inv_year"=>$this->sdmenc($req["inv_year"]),
@@ -439,7 +445,7 @@ $this->RecordLog("a02");
     $station_id = $this->sdmenc($req["user_school"]);
     $client = new \GuzzleHttp\Client();
     $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-    "tag"=>$tag,
+    'tag'=>$tag,
     "station_id"=> $station_id,
     ]]);
 
@@ -474,7 +480,7 @@ $this->RecordLog("a02");
       $timesp = $req["timesp"];
       $ass_type = $req["ass_type"];
 
-      $out = $this->send(["tag"=>"UNI_ADD_INVENTORY_DATA",
+      $out = $this->send(['tag'=>"UNI_ADD_INVENTORY_DATA",
                           "loc_id"=>$this->sdmenc( $loc_id),
                           "ass_cd"=>$this->sdmenc($ass_cd),
                           "timesp"=>$this->sdmenc($timesp),
@@ -486,24 +492,24 @@ $this->RecordLog("a02");
       return json_encode($out);
     }
     public function look_get_max_values_of_CoSe(Request $req){
-      $out = $this->send(["tag"=>"GET_MAX_VALUES_OF_CAPITAL_X_SEMI",
+      $out = $this->send(['tag'=>"GET_MAX_VALUES_OF_CAPITAL_X_SEMI",
                           "station_id"=>$this->sdmenc($req["sta_id"]),
                           "center_id"=>$this->sdmenc($req["service_centerid"])]);
       return $out[0];
     }
     public function look_scanned_item_details(Request $req){
-       $out = $this->send(["tag"=>"GET_SINGLE_SCANNED_ASSET_DETAILS",
+       $out = $this->send(['tag'=>"GET_SINGLE_SCANNED_ASSET_DETAILS",
                           "station_id"=>$this->sdmenc($req["sta_id"]),
                           "code"=>$this->sdmenc($req["scanned_cod"]),
                           "loc_id"=>$this->sdmenc($req["location_id"])]);
        return json_encode($out);
     }
     public function look_single_service_center_data_byid(Request $req){
-       $out = $this->send(["tag"=>"GET_SERVICE_CENTER_INFO_BYID","loc_id"=>$this->sdmenc($req["service_center_id"])]);
+       $out = $this->send(['tag'=>"GET_SERVICE_CENTER_INFO_BYID","loc_id"=>$this->sdmenc($req["service_center_id"])]);
        return json_encode($out);
     }
     public function look_getallservicecenters(Request $req){
-       $out = $this->send(["tag"=>"GET_ALL_SERVICE_CENTERS_MYSTATION","station_id"=>$this->sdmenc($req["station_id"])]);
+       $out = $this->send(['tag'=>"GET_ALL_SERVICE_CENTERS_MYSTATION","station_id"=>$this->sdmenc($req["station_id"])]);
        $toecho = "";
        for ($i=0; $i < count($out); $i++) { 
           $toecho .= "
@@ -513,62 +519,62 @@ $this->RecordLog("a02");
        return  $toecho;
     }
     public function look_all_years_with_inventory_semiexpendable(Request $req){
-     $out = $this->send(["tag"=>"GET_INVENTORY_YEARS_SEMI_EXPENDABLE","station_id"=>$this->sdmenc($req["station_id"])]);
+     $out = $this->send(['tag'=>"GET_INVENTORY_YEARS_SEMI_EXPENDABLE","station_id"=>$this->sdmenc($req["station_id"])]);
       $toecho = "";
       for ($i=0; $i < count($out); $i++) { 
         $toecho .= "<option>" . date("Y",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
-       if( $toecho == ""){
+       if( $toecho == ''){
          $toecho .= "<option value='" . date("Y") . "'  >No Record</option>";
        }
       return   $toecho;
     }
     public function look_inventory_month_semiexpendable(Request $req){
-     $out = $this->send(["tag"=>"GET_INVENTORY_MONTH_SEMI_EXPENDABLE_BYYEAR",
+     $out = $this->send(['tag'=>"GET_INVENTORY_MONTH_SEMI_EXPENDABLE_BYYEAR",
                           "station_id"=>$this->sdmenc($req["station_id"]),
                           "year_promised"=>$this->sdmenc($req["date_year"])]);
       $toecho = "";
       for ($i=0; $i < count($out); $i++) { 
         $toecho .= "<option value='" . date("m",strtotime($out[$i]["scanned_date"])) . "'>" . date("F",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
-       if( $toecho == ""){
+       if( $toecho == ''){
          $toecho .= "<option value='" . date("m") . "'  >No Record</option>";
        }
       return   $toecho;
     }
     public function look_inventory_month_capital_outlay(Request $req){
-      $out = $this->send(["tag"=>"GET_INVENTORY_MONTH_CAP_OUTLAY_BYYEAR",
+      $out = $this->send(['tag'=>"GET_INVENTORY_MONTH_CAP_OUTLAY_BYYEAR",
                           "station_id"=>$this->sdmenc($req["station_id"]),
                           "year_promised"=>$this->sdmenc($req["date_year"])]);
       $toecho = "";
       for ($i=0; $i < count($out); $i++) { 
         $toecho .= "<option value='" . date("m",strtotime($out[$i]["scanned_date"])) . "'>" . date("F",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
-       if( $toecho == ""){
+       if( $toecho == ''){
          $toecho .= "<option value='" . date("m") . "'  >No Record</option>";
        }
       return   $toecho;
     }
     public function look_all_years_with_inventory_capitaloutlay(Request $req){
-      $out = $this->send(["tag"=>"GET_INVENTORY_YEARS_CAPITAL_OUTLAY","station_id"=>$this->sdmenc($req["station_id"])]);
+      $out = $this->send(['tag'=>"GET_INVENTORY_YEARS_CAPITAL_OUTLAY","station_id"=>$this->sdmenc($req["station_id"])]);
       $toecho = "";
       for ($i=0; $i < count($out); $i++) { 
         $toecho .= "<option>" . date("Y",strtotime($out[$i]["scanned_date"])) . "</option>";
       }
-       if( $toecho == ""){
+       if( $toecho == ''){
          $toecho .= "<option value='" . date("Y") . "'  >No Record</option>";
        }
       return   $toecho;
     }
     public function look_single_semi_expenable(Request $req){
-      $out = $this->send(["tag"=>"GET_SINGLE_SEMI_EXPENDABLE","data_id"=>$this->sdmenc($req["d_id"])]);
+      $out = $this->send(['tag'=>"GET_SINGLE_SEMI_EXPENDABLE","data_id"=>$this->sdmenc($req["d_id"])]);
       if(count( $out) != 0){
          $out[0]["unit_value"] = number_format($out[0]["unit_value"],2);
       }
       return json_encode( $out);
     }
     public function look_get_semi_expendable_not_scanned(Request $req){
-     $output = $this->send(["tag"=>"GET_MISSING_SCANNED_SEMI_DATA",
+     $output = $this->send(['tag'=>"GET_MISSING_SCANNED_SEMI_DATA",
       "station_id"=>$this->sdmenc($req["station_info"]),
       "cho_year"=>$this->sdmenc($req["selyear"]),
       "cho_month"=>$this->sdmenc($req["selmonth"])
@@ -597,7 +603,7 @@ $this->RecordLog("a02");
      return $toecho;
     }
     public function look_getsemisum_totalscanned(Request $req){
-      $output = $this->send(["tag"=>"GET_TOTAL_SCANNED_SEMIEXPENDABLE",
+      $output = $this->send(['tag'=>"GET_TOTAL_SCANNED_SEMIEXPENDABLE",
         "station_id"=>$this->sdmenc($req["sd_id"]),
         "yy"=>$this->sdmenc($req["selyear"]),
         "mm"=>$this->sdmenc($req["selmonth"])
@@ -605,7 +611,7 @@ $this->RecordLog("a02");
       return $output[0];
     }
     public function look_getsemisum_fromto(Request $req){
-      $output = $this->send(["tag"=>"GET_SEMI_FROM_TO_DATES",
+      $output = $this->send(['tag'=>"GET_SEMI_FROM_TO_DATES",
         "station_id"=>$this->sdmenc($req["sd_id"]),
         "yy"=>$this->sdmenc($req["selyear"]),
         "mm"=>$this->sdmenc($req["selmonth"])
@@ -630,7 +636,7 @@ $this->RecordLog("a02");
       return  $toecho;
     }
     public function look_getsemisum_itemsnotfound(Request $req){
-      $output = $this->send(["tag"=>"GET_SEMI_ITEMS_NOT_FOUND",
+      $output = $this->send(['tag'=>"GET_SEMI_ITEMS_NOT_FOUND",
         "station_id"=>$this->sdmenc($req["sd_id"]),
         "yy"=>$this->sdmenc($req["selyear"]),
         "mm"=>$this->sdmenc($req["selmonth"])
@@ -651,7 +657,7 @@ $this->RecordLog("a02");
           $dt_datacode = htmlentities($getData[3]);
           if($dt_date != "" && $dt_time != "" && $dt_datatype != "" && $dt_datacode != ""){
 
-             $AllSemiExpendable = $this->send(["tag"=>"IS_EXISITING_PROPNUMB",
+             $AllSemiExpendable = $this->send(['tag'=>"IS_EXISITING_PROPNUMB",
                                 "stocknumb"=>$this->sdmenc($dt_datacode)]);
              if(count($AllSemiExpendable) == "1"){
               // return "is_existing";
@@ -660,7 +666,7 @@ $this->RecordLog("a02");
               //ADD COMPILED DATE TIME
               $scanned_date_and_time = date("Y-m-d H:i:s",strtotime($dt_date . " " . $dt_time));
               
-               $SemiExFullInfo = $this->send(["tag"=>"GET_CAPITALOUTLAY_FULLINFO_SINGLE",
+               $SemiExFullInfo = $this->send(['tag'=>"GET_CAPITALOUTLAY_FULLINFO_SINGLE",
                                   "stock_number"=>$this->sdmenc($dt_datacode)]);
 
               $property_num = $dt_datacode;
@@ -669,7 +675,7 @@ $this->RecordLog("a02");
               $school_id = session("user_school");
               $origin_id = session("user_eid");
 
-              $send_semi_ex_scanneddata = $this->send(["tag"=>"UPLOAD_CAPITAL_OUTLAY_SCANNED_DATA",
+              $send_semi_ex_scanneddata = $this->send(['tag'=>"UPLOAD_CAPITAL_OUTLAY_SCANNED_DATA",
                                   "property_number"=>$this->sdmenc($property_num),
                                   "scanned_date"=>$this->sdmenc($scanned_date_and_time),
                                   "location"=>$this->sdmenc($location),
@@ -683,7 +689,7 @@ $this->RecordLog("a02");
       return $this->quick_result([true],"asset_scanned");
     }
     public function look_show_uploaded_semi_expendable_scanneddata(Request $req){
-      $out = $this->send(["tag"=>"GET_SEMI_SCANNED_DATA",
+      $out = $this->send(['tag'=>"GET_SEMI_SCANNED_DATA",
         "stationid"=>$this->sdmenc($req["sd_id"]),
         "yy"=>$this->sdmenc($req["selyear"]),
         "mm"=>$this->sdmenc($req["selmonth"])
@@ -721,7 +727,7 @@ $this->RecordLog("a02");
           $dt_datacode = htmlentities($getData[3]);
           if($dt_date != "" && $dt_time != "" && $dt_datatype != "" && $dt_datacode != ""){
 
-             $AllSemiExpendable = $this->send(["tag"=>"IS_EXISITING_STOCKNUM",
+             $AllSemiExpendable = $this->send(['tag'=>"IS_EXISITING_STOCKNUM",
               "stocknumb"=>$this->sdmenc($dt_datacode)]);
 
              if(count($AllSemiExpendable) == "1"){
@@ -731,7 +737,7 @@ $this->RecordLog("a02");
               $scanned_date_and_time = date("Y-m-d H:i:s",strtotime($dt_date . " " . $dt_time));
               
 
-               $SemiExFullInfo = $this->send(["tag"=>"GET_SEMI_EXPEN_FULLINFO_SINGLE",
+               $SemiExFullInfo = $this->send(['tag'=>"GET_SEMI_EXPEN_FULLINFO_SINGLE",
               "stock_number"=>$this->sdmenc($dt_datacode)]);
 
               $stock_number = $dt_datacode;
@@ -740,7 +746,7 @@ $this->RecordLog("a02");
               $school_id = session("user_school");
               $origin_id = session("user_eid");
 
-              $send_semi_ex_scanneddata = $this->send(["tag"=>"ADD_ASSET_SEMI_SCANNEDDATA",
+              $send_semi_ex_scanneddata = $this->send(['tag'=>"ADD_ASSET_SEMI_SCANNEDDATA",
                                   "stock_number"=>$this->sdmenc($stock_number),
                                   "scanned_date"=>$this->sdmenc($scanned_date_and_time),
                                   "location"=>$this->sdmenc($location),
@@ -759,7 +765,7 @@ $this->RecordLog("a02");
       $file = fopen($upload_CSVFILE, "r");
       $toecho = "";
       // SELECT ALL EXISTING SEMI EXPENDABLE
-      $AllSemiExpendable = $this->send(["tag"=>"GET_ALL_SUPPLY_BY_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
+      $AllSemiExpendable = $this->send(['tag'=>"GET_ALL_SUPPLY_BY_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
 
       $tbl_discrepancies = "";
       $tbl_assetnofound = "";
@@ -838,32 +844,32 @@ $this->RecordLog("a02");
         }
 
         
-        if($sem_article == "" || $sem_article == null){
+        if($sem_article == '' || $sem_article == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Article" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_description == "" || $sem_description == null){
+        if($sem_description == '' || $sem_description == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Description" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_stocknumber == "" || $sem_stocknumber == null){
+        if($sem_stocknumber == '' || $sem_stocknumber == null){
           $hasmiss = true;
           $discrepancyList .=  "<strong>Missing Stock Number (Not Inserted)</strong>" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+        if($sem_unitofmesure == '' || $sem_unitofmesure == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Unit of Mesure" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_unitval == "" || $sem_unitval == null){
+        if($sem_unitval == '' || $sem_unitval == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Unit value" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_balpercard == "" || $sem_balpercard == null){
+        if($sem_balpercard == '' || $sem_balpercard == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Balance per Card" . "<br>";
         }
@@ -873,27 +879,27 @@ $this->RecordLog("a02");
           $tbl_discrepancies .= "<tr>
             <td>" . ($rot_count +1) ."</td>
             <td>";
-            if($sem_article == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_article == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
             }else{ $tbl_discrepancies .= $sem_article; } $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_description == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_description == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_description; }
              $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_stocknumber == ""){ 
+            if($sem_stocknumber == ''){ 
                $acceptable = false;
                $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_stocknumber; }
              $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_unitofmesure == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_unitofmesure == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_unitofmesure; }
              $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_unitval == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_unitval == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_unitval; }
             $tbl_discrepancies .= "</td>
-             <td>"; if($sem_balpercard == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+             <td>"; if($sem_balpercard == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_balpercard; }$tbl_discrepancies .= "</td>
             <td>" . $discrepancyList ."</td>
           </tr>";
@@ -921,7 +927,7 @@ $this->RecordLog("a02");
           // INSERT DATA
            if($has_existing_stock_number){
             // UPDATE DATA ONLY
-             $insert_assetdata = $this->send(["tag"=>"UPDATE_SUPPLY_DATA",
+             $insert_assetdata = $this->send(['tag'=>"UPDATE_SUPPLY_DATA",
                                               "sem_article"=>$this->sdmenc($sem_article),
                                               "sem_description"=>$this->sdmenc($sem_description),
                                               "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
@@ -936,7 +942,7 @@ $this->RecordLog("a02");
              $asset_updated++;
            }else{
             // ADD NEW DATA TO SEMI EXPENDABLE
-             $insert_assetdata = $this->send(["tag"=>"ADD_NEW_SUPPLY_DATA",
+             $insert_assetdata = $this->send(['tag'=>"ADD_NEW_SUPPLY_DATA",
                                               "sem_article"=>$this->sdmenc($sem_article),
                                               "sem_description"=>$this->sdmenc($sem_description),
                                               "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
@@ -960,7 +966,7 @@ $this->RecordLog("a02");
 
       if(count($AllSemiExpendable) != 0){
         //DELETE ALL OMITTED
-        $this->send(["tag"=>"RESET_OMITTED_SUPPLY","station_id"=>$this->sdmenc(session("user_school"))]);
+        $this->send(['tag'=>"RESET_OMITTED_SUPPLY","station_id"=>$this->sdmenc(session("user_school"))]);
       }
             for ($i=0; $i < count($AllSemiExpendable); $i++) { 
         $hmat = true;
@@ -987,7 +993,7 @@ $this->RecordLog("a02");
                 </tr>
              ";
              // INSERT OMITTED ASSETS TO DATABASE
-              $omission_insert = $this->send(["tag"=>"INSERT_SUPPLY_ASSET_OMITTED",
+              $omission_insert = $this->send(['tag'=>"INSERT_SUPPLY_ASSET_OMITTED",
               "sem_article"=>$this->sdmenc($AllSemiExpendable[$i]["article"] ),
               "sem_description"=>$this->sdmenc($AllSemiExpendable[$i]["description"]),
               "sem_stocknumber"=>$this->sdmenc($AllSemiExpendable[$i]["stock_number"]),
@@ -1005,7 +1011,7 @@ $this->RecordLog("a02");
       $origname = $upload_CSVFILE->getClientOriginalName();
       $NewFileName = str_replace(" ", "",session("user_school")) . "--" . date("F_d_Y-g_i_a") . "." . $guessExtension;
 
-      $ResourceFileUpload = $this->send(["tag"=>"index_upload_asset_csv",
+      $ResourceFileUpload = $this->send(['tag'=>"index_upload_asset_csv",
                                               "file_name"=>$this->sdmenc($NewFileName),
                                               "st_id"=>$this->sdmenc(session("user_school")),
                                               "empid"=>$this->sdmenc(session("user_eid")),
@@ -1051,7 +1057,7 @@ $this->RecordLog("a02");
              $previewcount++;
            }
 
-           if($toecho == ""){
+           if($toecho == ''){
          $toecho = "
           <tr>
           <td>Supply CSV file is not valid.</td>
@@ -1094,7 +1100,7 @@ $this->RecordLog("a02");
            return $toecho;
     }
     public function look_all_of_my_supply_data(Request $req){
-        $semiex = $this->send(["tag"=>"GET_ALL_OFMY_SUPPLYDATA",
+        $semiex = $this->send(['tag'=>"GET_ALL_OFMY_SUPPLYDATA",
         "station_id"=>$this->sdmenc($req["station_id"])]);
         $toecho = "";
 
@@ -1130,7 +1136,7 @@ $this->RecordLog("a02");
         return $toecho;
     }
     public function look_last_date_ofcode(Request $req){
-      $out = $this->send(["tag"=>"GET_LAST_DATE_CODEOF",
+      $out = $this->send(['tag'=>"GET_LAST_DATE_CODEOF",
         "station_id"=>$this->sdmenc($req["station_id"]),
         "logcode"=>$this->sdmenc($req["givencode"])]);
 
@@ -1143,14 +1149,14 @@ $this->RecordLog("a02");
       }
     }
     public function fire_reset_account_password(Request $req){
-      $reset_account_password = $this->send(["tag"=>"RESET_ACCOUNT_PASSWORD_BYADMIN",
+      $reset_account_password = $this->send(['tag'=>"RESET_ACCOUNT_PASSWORD_BYADMIN",
         "accid"=>$this->sdmenc($req["employeeid"]),
         "empnum"=>$this->sdmenc($req["employeenumber"])]);
       return $this->quick_result($reset_account_password,"usermanagement");
     }
 
     public function look_semi_expendable_omitted(Request $req){
-      $omitt = $this->send(["tag"=>"GET_OMITTED_ASSET_IN_SCHOOL","station_id"=>$this->sdmenc($req["station_id"]),true]);
+      $omitt = $this->send(['tag'=>"GET_OMITTED_ASSET_IN_SCHOOL","station_id"=>$this->sdmenc($req["station_id"]),true]);
 
       $toecho = "";
       switch($req["layout"]){
@@ -1198,7 +1204,7 @@ $this->RecordLog("a02");
       return  $toecho;
     }
     public function look_my_semiexpendable_descrepancies(Request $req){
-        $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"]),"location_id"=>$this->sdmenc("all")]);
+        $semiex = $this->send(['tag'=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"]),"location_id"=>$this->sdmenc("all")]);
 
       $toecho = "";
       $desccount = 0;
@@ -1215,27 +1221,27 @@ $this->RecordLog("a02");
         $sem_balpercard = htmlentities($semiex[$i]["balance_per_card"]);
         $sem_onhandper = htmlentities($semiex[$i]["on_hand_per_count"]);
         $sem_remarks = htmlentities($semiex[$i]["remarks"]);
-        if($sem_article == "" || $sem_article == null){
+        if($sem_article == '' || $sem_article == null){
         $has_desc = true;
         }
         else{$existing = true;}
-        if($sem_description == "" || $sem_description == null){
+        if($sem_description == '' || $sem_description == null){
         $has_desc = true;
         }
         else{$existing = true;}
-        if($sem_stocknumber == "" || $sem_stocknumber == null){
+        if($sem_stocknumber == '' || $sem_stocknumber == null){
           $has_desc = true;
         }
         else{$existing = true;}
-        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+        if($sem_unitofmesure == '' || $sem_unitofmesure == null){
           $has_desc = true;
         }
         else{$existing = true;}
-        if($sem_unitval == "" || $sem_unitval == null){
+        if($sem_unitval == '' || $sem_unitval == null){
         $has_desc = true;
         }
         else{$existing = true;}
-        if($sem_balpercard == "" || $sem_balpercard == null){
+        if($sem_balpercard == '' || $sem_balpercard == null){
           $has_desc = true;
         }
         else{$existing = true;}
@@ -1265,27 +1271,27 @@ $this->RecordLog("a02");
         $sem_balpercard = htmlentities($semiex[$i]["balance_per_card"]);
         $sem_onhandper = htmlentities($semiex[$i]["on_hand_per_count"]);
         $sem_remarks = htmlentities($semiex[$i]["remarks"]);
-        if($sem_article == "" || $sem_article == null){
+        if($sem_article == '' || $sem_article == null){
         $discrepancyList .=  "Missing Article" . "<br>";
         }
         else{$existing = true;}
-        if($sem_description == "" || $sem_description == null){
+        if($sem_description == '' || $sem_description == null){
         $discrepancyList .=  "Missing Description" . "<br>";
         }
         else{$existing = true;}
-        if($sem_stocknumber == "" || $sem_stocknumber == null){
+        if($sem_stocknumber == '' || $sem_stocknumber == null){
         $discrepancyList .=  "<strong>Missing Stock Number (Not Inserted)</strong>" . "<br>";
         }
         else{$existing = true;}
-        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+        if($sem_unitofmesure == '' || $sem_unitofmesure == null){
         $discrepancyList .=  "Missing Unit of Mesure" . "<br>";
         }
         else{$existing = true;}
-        if($sem_unitval == "" || $sem_unitval == null){
+        if($sem_unitval == '' || $sem_unitval == null){
         $discrepancyList .=  "Missing Unit value" . "<br>";
         }
         else{$existing = true;}
-        if($sem_balpercard == "" || $sem_balpercard == null){
+        if($sem_balpercard == '' || $sem_balpercard == null){
         $discrepancyList .=  "Missing Balance per Card" . "<br>";
         }
         else{$existing = true;}
@@ -1293,28 +1299,28 @@ $this->RecordLog("a02");
        if($discrepancyList != ""){
           $toecho .= "<tr>
             <td>";
-            if($sem_article == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_article == ''){ $toecho .= "<i class='invalidcolor'>Missing</i>";
             }else{ $toecho .= $sem_article; } $toecho .= "</td>
             <td>";
-            if($sem_description == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_description == ''){ $toecho .= "<i class='invalidcolor'>Missing</i>";
           }else{ $toecho .= $sem_description; }
              $toecho .= "</td>
             <td>";
-            if($sem_stocknumber == ""){ 
+            if($sem_stocknumber == ''){ 
                $acceptable = false;
                $toecho .= "<i class='invalidcolor'>Missing</i>";
           }else{ $toecho .= $sem_stocknumber; }
              $toecho .= "</td>
             <td>";
 
-            if($sem_unitofmesure == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_unitofmesure == ''){ $toecho .= "<i class='invalidcolor'>Missing</i>";
           }else{ $toecho .= $sem_unitofmesure; }
              $toecho .= "</td>
             <td>";
-            if($sem_unitval == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_unitval == ''){ $toecho .= "<i class='invalidcolor'>Missing</i>";
           }else{ $toecho .= $sem_unitval; }
             $toecho .= "</td>
-             <td>"; if($sem_balpercard == ""){ $toecho .= "<i class='invalidcolor'>Missing</i>";
+             <td>"; if($sem_balpercard == ''){ $toecho .= "<i class='invalidcolor'>Missing</i>";
           }else{ $toecho .= $sem_balpercard; }$toecho .= "</td>
             <td>" . $discrepancyList ."</td>
           </tr>";
@@ -1326,7 +1332,7 @@ $this->RecordLog("a02");
       return $toecho;
     }
     public function look_semi_expendable_bystation(Request $req){
-      $semiex = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"]),"location_id"=>$this->sdmenc("all")]);
+      $semiex = $this->send(['tag'=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc($req["station_id"]),"location_id"=>$this->sdmenc("all")]);
 
       $toecho = "";
 
@@ -1372,7 +1378,7 @@ $this->RecordLog("a02");
       return $toecho;
     }
     public function look_all_ofmy_service_center(Request $req){
-      $out = $this->send(["tag"=>"GET_ALL_SERVICE_CENTERS_MYSTATION","station_id"=>$this->sdmenc($req["station_id"])]);
+      $out = $this->send(['tag'=>"GET_ALL_SERVICE_CENTERS_MYSTATION","station_id"=>$this->sdmenc($req["station_id"])]);
       $toecho = "";
 
       $toecho .= "<option value='' disabled selected>Choose here...</option>";
@@ -1388,7 +1394,7 @@ $this->RecordLog("a02");
       $file = fopen($upload_CSVFILE, "r");
       $toecho = "";
       // SELECT ALL EXISTING SEMI EXPENDABLE
-      $AllSemiExpendable = $this->send(["tag"=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc(session("user_school")),"location_id"=>$this->sdmenc($req["service_center_id"])]);
+      $AllSemiExpendable = $this->send(['tag'=>"GET_ALL_SEMI_EXPENDIBLE_BY_STATION","station_id"=>$this->sdmenc(session("user_school")),"location_id"=>$this->sdmenc($req["service_center_id"])]);
 
       $tbl_discrepancies = "";
       $tbl_assetnofound = "";
@@ -1466,32 +1472,32 @@ $this->RecordLog("a02");
         }
 
         
-        if($sem_article == "" || $sem_article == null){
+        if($sem_article == '' || $sem_article == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Article" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_description == "" || $sem_description == null){
+        if($sem_description == '' || $sem_description == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Description" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_stocknumber == "" || $sem_stocknumber == null){
+        if($sem_stocknumber == '' || $sem_stocknumber == null){
           $hasmiss = true;
           $discrepancyList .=  "<strong>Missing Stock Number (Not Inserted)</strong>" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_unitofmesure == "" || $sem_unitofmesure == null){
+        if($sem_unitofmesure == '' || $sem_unitofmesure == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Unit of Mesure" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_unitval == "" || $sem_unitval == null){
+        if($sem_unitval == '' || $sem_unitval == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Unit value" . "<br>";
         }
         else{$existing = true;$datacount++;}
-        if($sem_balpercard == "" || $sem_balpercard == null){
+        if($sem_balpercard == '' || $sem_balpercard == null){
           $hasmiss = true;
           $discrepancyList .=  "Missing Balance per Card" . "<br>";
         }
@@ -1501,27 +1507,27 @@ $this->RecordLog("a02");
           $tbl_discrepancies .= "<tr>
             <td>" . ($rot_count +1) ."</td>
             <td>";
-            if($sem_article == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_article == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
             }else{ $tbl_discrepancies .= $sem_article; } $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_description == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_description == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_description; }
              $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_stocknumber == ""){ 
+            if($sem_stocknumber == ''){ 
                $acceptable = false;
                $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_stocknumber; }
              $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_unitofmesure == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_unitofmesure == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_unitofmesure; }
              $tbl_discrepancies .= "</td>
             <td>";
-            if($sem_unitval == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+            if($sem_unitval == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_unitval; }
             $tbl_discrepancies .= "</td>
-             <td>"; if($sem_balpercard == ""){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
+             <td>"; if($sem_balpercard == ''){ $tbl_discrepancies .= "<i class='invalidcolor'>Missing</i>";
           }else{ $tbl_discrepancies .= $sem_balpercard; }$tbl_discrepancies .= "</td>
             <td>" . $discrepancyList ."</td>
           </tr>";
@@ -1549,7 +1555,7 @@ $this->RecordLog("a02");
           // INSERT DATA
            if($has_existing_stock_number){
             // UPDATE DATA ONLY
-             $insert_assetdata = $this->send(["tag"=>"UPDATE_SEMI_EXPENDABLE_DATA",
+             $insert_assetdata = $this->send(['tag'=>"UPDATE_SEMI_EXPENDABLE_DATA",
                                               "sem_article"=>$this->sdmenc($sem_article),
                                               "sem_description"=>$this->sdmenc($sem_description),
                                               "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
@@ -1564,7 +1570,7 @@ $this->RecordLog("a02");
              $asset_updated++;
            }else{
             // ADD NEW DATA TO SEMI EXPENDABLE
-             $insert_assetdata = $this->send(["tag"=>"ADD_NEW_SEMI_EXPENDABLE",
+             $insert_assetdata = $this->send(['tag'=>"ADD_NEW_SEMI_EXPENDABLE",
                                               "sem_article"=>$this->sdmenc($sem_article),
                                               "sem_description"=>$this->sdmenc($sem_description),
                                               "sem_stocknumber"=>$this->sdmenc($sem_stocknumber),
@@ -1588,7 +1594,7 @@ $this->RecordLog("a02");
 
       if(count($AllSemiExpendable) != 0){
         //DELETE ALL OMITTED
-        $this->send(["tag"=>"RESET_OMITTED_ASSETS_OF_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
+        $this->send(['tag'=>"RESET_OMITTED_ASSETS_OF_STATION","station_id"=>$this->sdmenc(session("user_school"))]);
       }
             for ($i=0; $i < count($AllSemiExpendable); $i++) { 
         $hmat = true;
@@ -1609,7 +1615,7 @@ $this->RecordLog("a02");
                 </tr>
              ";
              // INSERT OMITTED ASSETS TO DATABASE
-              $omission_insert = $this->send(["tag"=>"INSERT_SEMI_OMITTED_ASSET",
+              $omission_insert = $this->send(['tag'=>"INSERT_SEMI_OMITTED_ASSET",
               "sem_article"=>$this->sdmenc($AllSemiExpendable[$i]["article"] ),
               "sem_description"=>$this->sdmenc($AllSemiExpendable[$i]["description"]),
               "sem_stocknumber"=>$this->sdmenc($AllSemiExpendable[$i]["stock_number"]),
@@ -1627,7 +1633,7 @@ $this->RecordLog("a02");
       $origname = $upload_CSVFILE->getClientOriginalName();
       $NewFileName = str_replace(" ", "",session("user_school")) . "--" . date("F_d_Y-g_i_a") . "." . $guessExtension;
 
-      $ResourceFileUpload = $this->send(["tag"=>"index_upload_asset_csv",
+      $ResourceFileUpload = $this->send(['tag'=>"index_upload_asset_csv",
                                               "file_name"=>$this->sdmenc($NewFileName),
                                               "st_id"=>$this->sdmenc(session("user_school")),
                                               "empid"=>$this->sdmenc(session("user_eid")),
@@ -1639,13 +1645,13 @@ $this->RecordLog("a02");
       // VALIDATE REDINESS
       if($miss_col == "0"){
         // READY
-        $this->send(["tag"=>"UPDATE_SEMI_EXPENDABLE_STATUS",
+        $this->send(['tag'=>"UPDATE_SEMI_EXPENDABLE_STATUS",
         "station_id"=>$this->sdmenc(session("user_school")),
         "status"=>$this->sdmenc("Ready"),
         "pref_name"=>$this->sdmenc("Inventory Status Semi")]);
       }else{
         // NOT READY
-        $this->send(["tag"=>"UPDATE_SEMI_EXPENDABLE_STATUS",
+        $this->send(['tag'=>"UPDATE_SEMI_EXPENDABLE_STATUS",
         "station_id"=>$this->sdmenc(session("user_school")),
         "status"=>$this->sdmenc("Not Ready"),
         "pref_name"=>$this->sdmenc("Inventory Status Semi")]);
@@ -1692,7 +1698,7 @@ $this->RecordLog("a02");
              $previewcount++;
            }
 
-           if($toecho == ""){
+           if($toecho == ''){
          $toecho = "
           <tr>
           <td>Semi Expendable CSV file is not valid.</td>
@@ -1736,7 +1742,7 @@ $this->RecordLog("a02");
 
     }
     public function fire_add_new_semi_expendable_registry(){
-      $toret = $this->send(["tag"=>"ADD_NEW_SEMI_EXPENDABLE"]);
+      $toret = $this->send(['tag'=>"ADD_NEW_SEMI_EXPENDABLE"]);
     }
     public function rep_all_om_ass(Request $req){
     $tag = $this->sdmenc("report_all_omitted_assets");
@@ -1756,7 +1762,7 @@ $this->RecordLog("a02");
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
         "reason"=>$reason,
          "propertynumber"=>$propertynumber,
           "remarks"=>$remarks,
@@ -1775,7 +1781,7 @@ $this->RecordLog("a02");
       $usertype = $this->sdmenc(session("user_type"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "mystation"=>$mystation,
             "usertype"=>$usertype,
         ]]);
@@ -1856,7 +1862,7 @@ switch ($output[$i]["om_reason"]) {
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
        "idofassetinregistry"=>$idofassetinregistry,
         "reason"=>$reason,
          "propertynumber"=>$propertynumber,
@@ -1873,7 +1879,7 @@ switch ($output[$i]["om_reason"]) {
        $tag = $this->sdmenc("getstastatus");
    $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       ]]);
       $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
  $toecho = "";
@@ -1885,7 +1891,7 @@ switch ($output[$i]["om_reason"]) {
            $isready_capital  = '<span style="color: #c23616;"><i class="fas fa-times"></i></span>';
         }
 
-        $outx = $this->send(["tag"=>"GET_STATUS_SEMI","station_id"=>$this->sdmenc( $output[$i]["pref_station_id"])]);
+        $outx = $this->send(['tag'=>"GET_STATUS_SEMI","station_id"=>$this->sdmenc( $output[$i]["pref_station_id"])]);
 
         $isready_semiexpendable = "";
 
@@ -1907,7 +1913,7 @@ switch ($output[$i]["om_reason"]) {
   $tag = $this->sdmenc("get_ser_fqrs");
    $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
       $output = json_decode($this->sdmdec($xresult->getBody()->getContents()),true);
@@ -1927,7 +1933,7 @@ switch ($output[$i]["om_reason"]) {
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "station_id"=>$this->sdmenc(session("user_school")),
         "service_center"=>$service_center,
         "room_number"=>$room_number,
@@ -1987,7 +1993,7 @@ switch ($output[$i]["om_reason"]) {
       $columnname = $this->sdmenc($req["columnname"]);
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "colname"=>$columnname,
       "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
@@ -2039,7 +2045,7 @@ $colval = "";
       $column_value = $this->sdmenc($req["column_value"]);
          $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "school_id"=>$this->sdmenc(session("user_school")),
       "column_name"=>$column_name,
       "column_value"=>$column_value,
@@ -2119,7 +2125,7 @@ $colval = "";
 
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "school_id"=>$station_id,
       "rn"=>$rn,
       "cc"=>$cc,
@@ -2135,7 +2141,7 @@ $colval = "";
        $tag = $this->sdmenc("findservicecenternew");
          $client = new \GuzzleHttp\Client();
         $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
 
@@ -2158,7 +2164,7 @@ $colval = "";
        $tag = $this->sdmenc("importallservice_centers");
          $client = new \GuzzleHttp\Client();
           $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
         $output = $this->sdmdec($xresult->getBody()->getContents());
@@ -2181,7 +2187,7 @@ $colval = "";
       if($newpas == $renewpas){
         $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "empid"=>$this->sdmenc(session("user_eid")),
         "olpas"=>$olpas,
          "newpas"=>$newpas,
@@ -2204,7 +2210,7 @@ $colval = "";
       $tag = $this->sdmenc("count_allcreated_assloc");
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "school_id"=>$this->sdmenc(session("user_school")),
       ]]);
      $output = $this->sdmdec($xresult->getBody()->getContents());
@@ -2214,7 +2220,7 @@ $colval = "";
       $tag = $this->sdmenc("editscinf");
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "st_id"=>$this->sdmenc($req["st_id"]),
          "school_id"=>$this->sdmenc($req["school_id"]),
           "st_name"=>$this->sdmenc($req["st_name"]),
@@ -2229,7 +2235,7 @@ $colval = "";
       $st_id =  $this->sdmenc($req["st_id"]);
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "st_id"=>$st_id,
       ]]);
      $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
@@ -2240,7 +2246,7 @@ $colval = "";
       $tag = $this->sdmenc("view_all_station_names");
       $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
       ]]);
      $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
       return $mynameschool;
@@ -2253,7 +2259,7 @@ $colval = "";
 
             $client = new \GuzzleHttp\Client();
             $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "st_name"=>$st_name,
         "st_id"=>$st_id,
       ]]);
@@ -2274,7 +2280,7 @@ $colval = "";
       $tag = $this->sdmenc("get_sc_name");
             $client = new \GuzzleHttp\Client();
             $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "sc_id"=>$sc_id,
       ]]);
       $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
@@ -2286,7 +2292,7 @@ $colval = "";
      $search_keyword = $this->sdmenc($req["searchkey"]);
      $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "search_keyword"=> $search_keyword,
       ]]);
       $result = $this->sdmdec( $result->getBody()->getContents());
@@ -2297,7 +2303,7 @@ $colval = "";
       $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       "employee_id"=>$this->sdmenc(session("user_eid")),
       ]]);
@@ -2325,7 +2331,7 @@ $colval = "";
       $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       "employee_id"=>$this->sdmenc(session("user_eid")),
       ]]);
@@ -2349,7 +2355,7 @@ $colval = "";
       $station_id = $this->sdmenc($req["stationid"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       ]]);
       $toecho = $this->sdmdec($result->getBody()->getContents());
@@ -2361,7 +2367,7 @@ $colval = "";
     $station_id = $this->sdmenc(session("user_school"));
     $client = new \GuzzleHttp\Client();
     $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-    "tag"=>$tag,
+    'tag'=>$tag,
     "station_id"=> $station_id,
     ]]);
 
@@ -2424,7 +2430,7 @@ $colval = "";
       // $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       ]]);
       $total_assets = $this->sdmdec($result->getBody()->getContents());
@@ -2433,14 +2439,14 @@ $colval = "";
       $tag = $this->sdmenc("read_asset_discrepancy");
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       ]]);
       $discrepancies = $this->sdmdec($result->getBody()->getContents());
       // GET LAST LOGIN TO THE SYSTEM 
       if($re["selected_realid"]  == session("user_school")){
 
-        $out = $this->send(["tag"=>"GET_LAST_DATE_CODEOF",
+        $out = $this->send(['tag'=>"GET_LAST_DATE_CODEOF",
         "station_id"=>$this->sdmenc(session("user_school")),
         "logcode"=>$this->sdmenc("a01")]);
 
@@ -2458,7 +2464,7 @@ $colval = "";
       $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       "employee_id"=>$this->sdmenc(session("user_eid")),
       ]]);
@@ -2472,7 +2478,7 @@ $colval = "";
         $tag = $this->sdmenc("get_omitted_count");
          $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "st_id"=>$this->sdmenc($re["selected_realid"]),
       ]]);
 
@@ -2484,15 +2490,15 @@ $colval = "";
     }else{
     $is_own = false;
     }
-      if($last_login == ""){
+      if($last_login == ''){
         $last_login = "No Record";
       }
-      if($last_trans == ""){
+      if($last_trans == ''){
         $last_trans = "No Record";
       }
 
 
-    $not_inserted_co_count = $this->send(["tag"=>"GET_RECENT_NOT_ADDED_ASSET_CO_COUNT",
+    $not_inserted_co_count = $this->send(['tag'=>"GET_RECENT_NOT_ADDED_ASSET_CO_COUNT",
                                     "stationid"=>$this->sdmenc($re["selected_realid"])]);
 
 
@@ -2526,7 +2532,7 @@ $colval = "";
       $station_id = $this->sdmenc($req["sid"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       ]]);
       $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
@@ -2574,7 +2580,7 @@ $colval = "";
        $asset_id = $this->sdmenc($req["asset_id"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       "asset_id"=>$asset_id,
       ]]);
@@ -2593,7 +2599,7 @@ $colval = "";
       $station_id = $this->sdmenc(session("user_school"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=> $station_id,
       ]]);
 
@@ -2611,7 +2617,7 @@ $colval = "";
         $station_id = $this->sdmenc(session("user_school"));
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "station_id"=> $station_id,
         ]]);
         
@@ -2631,7 +2637,7 @@ $colval = "";
         $loc_id = $this->sdmenc($req["loc_id"]);
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "loc_id"=>$loc_id,
         ]]);
         
@@ -2655,7 +2661,7 @@ $colval = "";
 
         $client = new \GuzzleHttp\Client();
         $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "xstation"=> $xstation,
         "xoffice"=> $xoffice,
         "xroomnum"=>$xroomnum,
@@ -2679,7 +2685,7 @@ $colval = "";
         $tag = $this->sdmenc("get_last_import_log");
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "st_name"=> $st_name,
         "st_id"=> $st_id,
         ]]);
@@ -2690,7 +2696,7 @@ $colval = "";
       $tag = $this->sdmenc("get_last_import_log");
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-      "tag"=>$tag,
+      'tag'=>$tag,
       "station_id"=>$this->sdmenc(session("user_school")),
       ]]);
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -2708,7 +2714,7 @@ $colval = "";
       $st_id = $this->sdmenc($req["st_id"]);
        $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "st_name"=> $st_name,
         "st_id"=> $st_id,
       ]]);
@@ -2721,7 +2727,7 @@ $colval = "";
       $sc_id_todelete = $this->sdmenc($req["sc_id_todel"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "sc_id_todel"=> $sc_id_todelete,
       ]]);
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -2732,7 +2738,7 @@ $colval = "";
       $tag = $this->sdmenc("lod_all_enc_station");
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
       ]]);
           $output = $this->sdmdec($result->getBody()->getContents());
           $output  = json_decode($output,true);
@@ -2754,7 +2760,7 @@ $colval = "";
       $user_type =  $this->sdmenc(session("user_type"));
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "user_school"=>$station_id,
         "user_type"=>$user_type,
       ]]);
@@ -2763,7 +2769,7 @@ $colval = "";
           $toecho = "";
           for($i = 0 ;$i < count($output);$i++){
             $scname = $output[$i]["name"];
-            if($scname == ""){
+            if($scname == ''){
               $scname = "Unknown";
             }
               $toecho .= "<tr>
@@ -2775,13 +2781,13 @@ $colval = "";
                   $tag = $this->sdmenc("get_employeename_byeid");
                   $client = new \GuzzleHttp\Client();
                   $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-                  "tag"=>$tag,
+                  'tag'=>$tag,
                   "empid"=>$this->sdmenc($output[$i]["incharge_eid"]),
                    "station_id"=>$station_id,
                   ]]);
 
                   $out_2 = $this->sdmdec($res_2->getBody()->getContents());
-                  if($out_2 == ""){
+                  if($out_2 == ''){
                      $toecho .= "<span class='text-muted'>(none)<span>";
                   }else{
                      $toecho .=  $out_2 ;
@@ -2820,7 +2826,7 @@ $colval = "";
          $edit_roomnumber = $this->sdmenc(htmlentities($req["edit_roomnumber"]));
       $client = new \GuzzleHttp\Client();
       $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "id_of_something"=> $id_of_something,
         "incharge"=>$incharge,
         "edit_servicenter"=>$edit_servicenter,
@@ -2849,7 +2855,7 @@ $colval = "";
       $reminderorigineid = $this->sdmenc(session("user_eid"));
             $client = new \GuzzleHttp\Client();
             $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-                  "tag"=>$tag,
+                  'tag'=>$tag,
                   "remindertitle"=>$title,
                   "reminderdeadline"=>$desc,
                   "reminderdescription"=>$deadline,
@@ -2871,7 +2877,7 @@ $colval = "";
       $reminderorigineid = $this->sdmenc(session("user_eid"));
             $client = new \GuzzleHttp\Client();
             $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-                  "tag"=>$tag,
+                  'tag'=>$tag,
                   "reminderorigineid"=>$reminderorigineid,
             ]]);
             $output = json_decode($this->sdmdec($res_2->getBody()->getContents()),true);
@@ -2931,7 +2937,7 @@ $colval = "";
     $tag = $this->sdmenc("getservicecentercount");
     $client = new \GuzzleHttp\Client();
     $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "station_id"=>$this->sdmenc(session("user_school")),
     ]]);
     $output = $this->sdmdec($res_2->getBody()->getContents());
@@ -2943,7 +2949,7 @@ $colval = "";
       $typeofget = $this->sdmenc($req["typeofget"]);
             $client = new \GuzzleHttp\Client();
             $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-                  "tag"=>$tag,
+                  'tag'=>$tag,
                   "reminderorigineid"=>$reminderorigineid,
                   "typeofget"=>$typeofget,
                   "userid"=>$this->sdmenc(session("user_eid"))
@@ -3059,6 +3065,13 @@ $colval = "";
                   </div>
                 ";
             }
+             $toecho .= "
+                 <div class='alert alert-light text-dark pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              <h5 class='text-primary mb-0'>More Announcements?</h5>
+              <p class='text-muted'>View, Manage announcements of your station.</p>
+              <a href=" . route('manage_reminders') . " class='btn btn-primary btn-sm'><i class='fas fa-hand-point-right'></i> See All Announcements</a>
+              </div>
+             ";
            return $toecho;
    }
    public function delremthis(Request $req){
@@ -3067,7 +3080,7 @@ $colval = "";
       $reminderid = $this->sdmenc($req["reminderidx"]);
             $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-                  "tag"=>$tag,
+                  'tag'=>$tag,
                   "reminderid"=>$reminderid,
             ]]);
            $output = $this->sdmdec($result->getBody()->getContents());
@@ -3086,7 +3099,7 @@ $colval = "";
            $tag = $this->sdmenc("get_station_acc_names");
                   $client = new \GuzzleHttp\Client();
                   $res_2 = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-                  "tag"=>$tag,
+                  'tag'=>$tag,
                   "station_id"=>$station_id,
                   ]]);
  $out_2 = $this->sdmdec($res_2->getBody()->getContents());
@@ -3113,7 +3126,7 @@ $colval = "";
         $user_employee_password = $this->sdmenc($req["user_employee_password"]);
          $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "empid"=> $user_employee_id,
         "emppass"=> $user_employee_password,
       ]]);
@@ -3133,7 +3146,7 @@ $colval = "";
                $tag = $this->sdmenc("get_sc_name");
             $client = new \GuzzleHttp\Client();
             $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "sc_id"=> $this->sdmenc($output[0]["station_id"])
       ]]);
             $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
@@ -3144,9 +3157,9 @@ $colval = "";
             session(['user_school'=>$output[0]["station_id"]]);
             session(['user_schoolname'=> $this->fixWrongUTF8Encoding($mynameschool)]);
 
-            session(['user_last_scansession_sc'=> ""]);
-            session(['user_last_scansession'=> ""]);
-            session(['user_last_schoolname'=> ""]);
+            session(['user_last_scansession_sc'=> '']);
+            session(['user_last_scansession'=> '']);
+            session(['user_last_schoolname'=> '']);
 
             session(['user_changesource_station'=> $output[0]["station_id"]]);
             session(['user_changesource_station_name'=>  $this->fixWrongUTF8Encoding($mynameschool)]);
@@ -3165,7 +3178,7 @@ $colval = "";
     public function get_asc_not_included(Request $req){
               $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$this->sdmenc("get_asc_not_inc"),
+        'tag'=>$this->sdmenc("get_asc_not_inc"),
         "sn"=> $this->sdmenc($req["station_info"]),
         "yy"=>$this->sdmenc($req["selyear"]),
         "mm"=> $this->sdmenc($req["selmonth"])
@@ -3215,7 +3228,7 @@ $colval = "";
         $station_number = $this->sdmenc($req["station_number"]);
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "sn"=> $station_number,
         "choosenYear"=> $this->sdmenc($req["selyear"]),
         "choosenMonth"=> $this->sdmenc($req["selmonth"])
@@ -3227,7 +3240,7 @@ $colval = "";
      public function g_sca_ttitms(Request $req){
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$this->sdmenc("g_sca_ttitmsxx"),
+        'tag'=>$this->sdmenc("g_sca_ttitmsxx"),
         "sn"=>$this->sdmenc($req["station_number"]),
         "choosenYear"=> $this->sdmenc($req["selyear"]),
         "choosenMonth"=> $this->sdmenc($req["selmonth"])
@@ -3241,7 +3254,7 @@ $colval = "";
         $station_number = $this->sdmenc($req["station_number"]);
         $client = new \GuzzleHttp\Client();
          $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "sn"=> $station_number,
         "choosenYear"=> $this->sdmenc($req["selyear"]),
         "choosenMonth"=> $this->sdmenc($req["selmonth"])
@@ -3271,7 +3284,7 @@ $colval = "";
         $station_number = $this->sdmenc($req["station_number"]);
          $client = new \GuzzleHttp\Client();
         $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "sn"=> $station_number,
         "choosenYear"=> $this->sdmenc($req["selyear"]),
         "choosenMonth"=> $this->sdmenc($req["selmonth"])
@@ -3329,7 +3342,7 @@ $colval = "";
       $tag = $this->sdmenc("log_ass_filt");
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
         "stat_id"=>$this->sdmenc(session("user_school")),
@@ -3352,7 +3365,7 @@ $colval = "";
       $tag = $this->sdmenc("view_ass_grouped");
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
         "station_id"=>$this->sdmenc(session("user_school")),
@@ -3395,7 +3408,7 @@ $colval = "";
       ';
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=> $this->sdmenc("log_ass_filt"),
+        'tag'=> $this->sdmenc("log_ass_filt"),
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
         "stat_id"=>$this->sdmenc(session("user_school")),
@@ -3460,10 +3473,14 @@ $pagecount++;
            $short_ov_quantity = ($bal_per_card - $on_hand_per_count);
           $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition'] ));
           $disp_onhandcount = "";
-          if($on_hand_per_count == null || $on_hand_per_count == ""){
+          if($on_hand_per_count == null || $on_hand_per_count == ''){
            $disp_onhandcount = "Missing Inv.";
           }else{
             $disp_onhandcount =  $on_hand_per_count;
+          }
+          if($short_ov_quantity < 0){
+            $short_ov_quantity = '(' . $short_ov_quantity . ')';
+            $short_ov_value = '(' . $short_ov_value . ')';
           }
           $toecho .= '</td>
           <td>' . $output[$i]['property_number'] . '</td>
@@ -3492,7 +3509,7 @@ $pagecount++;
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$this->sdmenc("view_ass_grouped"),
+        'tag'=>$this->sdmenc("view_ass_grouped"),
         "fil_roomnum"=>$rn,
         "fil_category"=>$cat,
         "station_id"=>$this->sdmenc(session("user_school")),
@@ -3596,7 +3613,7 @@ $this->RecordLog("a02");
 
       $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "groupname"=>$groupname,
         "groupnumber"=>$groupnumber,
         "category"=>$category,
@@ -3614,7 +3631,7 @@ $this->RecordLog("a02");
         
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "fil_roomnum"=>$rnum,
         "fil_category"=>$catname,
         "station_id"=>$station_id,
@@ -3627,12 +3644,12 @@ $this->RecordLog("a02");
       $toecho = "";
       for ($i=0; $i < count($output); $i++) { 
        $toecho .= "<tr>
-           <td><a href='#' onclick='OpenUngroupItems(this)'
+           <td><a style='font-size:20px;' href='#' onclick='OpenUngroupItems(this)'
             data-gname='" . $output[$i]["group_name"] . "'
             data-rnum='" . $output[$i]["room_number"] . "'
             data-assclass='" . $output[$i]["asset_classification"] . "'
              data-unik='" . $output[$i]["unik_id"] . "'
-             data-toggle='modal' data-target='#ungroup_modal' title='Ungroup'><i class='fas fa-sort-amount-down-alt'></i></a></td>
+             data-toggle='modal' data-target='#ungroup_modal' title='Ungroup'><i class='fas fa-clone'></i></a></td>
            <td>" . $output[$i]["group_name"] . "</td>
           <td>" . $this->ProNumSeparator($output[$i]["assets_included"]) . "</td>
            
@@ -3705,7 +3722,7 @@ $this->RecordLog("a02");
 
       $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "ass_gname"=>$ass_gname,
         "ass_propnum"=>$ass_propnum,
         "ass_roomnum"=>$ass_roomnum,
@@ -3729,7 +3746,7 @@ $this->RecordLog("a02");
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "fil_roomnum"=>$rnum,
         "fil_category"=>$catname,
         "stat_id"=> $station_id,
@@ -3747,7 +3764,7 @@ $this->RecordLog("a02");
 
           if($output[$i]["status"] == "0"){
             //NORMAL
-            $toecho .= "<input type='checkbox' class='asset_item_check' data-oid='" . $output[$i]["id"]  . "' 
+            $toecho .= "<input style=' transform:scale(2, 2);' type='checkbox' class='asset_item_check' data-oid='" . $output[$i]["id"]  . "' 
 
          data-dateofaq='" . $output[$i]["date_of_acquisition"]  . "'
          data-totlifey='" . $output[$i]["estimated_total_life_years"]  . "'
@@ -3790,7 +3807,7 @@ $this->RecordLog("a02");
       if($x_pass == $x_repass){
          $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "x_username"=>$x_username,
         "x_selectedschool"=>$x_selectedschool,
         "x_empid"=>$x_empid,
@@ -3833,7 +3850,7 @@ $this->RecordLog("a02");
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "asset_id"=>$asset_id,
         "asset_archive_type"=>$asset_archive_type,
       ]]);
@@ -3854,7 +3871,7 @@ $this->RecordLog("a02");
         $school_id = $this->sdmenc($req["school_id"]);
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "station_id"=>$school_id,
       ]]);
 
@@ -3872,7 +3889,7 @@ $this->RecordLog("a02");
         $school_id = $this->sdmenc($req["school_id"]);
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "station_id"=>$school_id,
       ]]);
 
@@ -3892,7 +3909,7 @@ $this->RecordLog("a02");
 
        $client = new \GuzzleHttp\Client();
        $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "asset_id"=>$asset_id,
       ]]);
 
@@ -3911,7 +3928,7 @@ $this->RecordLog("a02");
     $emp_id = $this->sdmenc($req["emp_id"]);
          $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "emp_id"=>$emp_id,
       ]]);
 
@@ -3933,7 +3950,7 @@ $this->RecordLog("a02");
 
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "x_username"=>$x_username,
         "x_selectedschool"=>$x_selectedschool,
         "x_empid"=>$x_empid,
@@ -3965,7 +3982,7 @@ $this->RecordLog("a02");
       $tag = $this->sdmenc("user_delete");
        $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "x_userid"=>$empid,
       ]]);
       $output = $this->sdmdec($result->getBody()->getContents());
@@ -3979,7 +3996,7 @@ $this->RecordLog("a02");
   $tag = $this->sdmenc("load_all_sc_names");
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
       ]]);
       $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
 
@@ -4005,7 +4022,7 @@ $this->RecordLog("a02");
        $school_id = $this->sdmenc($req["user_school"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "user_type"=>$user_type,
         "school_id"=>$school_id,
       ]]);
@@ -4096,7 +4113,7 @@ $toecho .="
  $id_of_something = $this->sdmenc($req["id_of_something"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "id_of_something"=>$id_of_something,
         ]]);
       $output = json_decode($this->sdmdec($result->getBody()->getContents() ),true);
@@ -4220,7 +4237,7 @@ $toecho .="
       $asset_id = $this->sdmenc($req["asset_id"]);
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "asset_id"=>$asset_id,
       ]]);
 
@@ -4235,7 +4252,7 @@ $toecho .="
       $usertype = $this->sdmenc(session("user_type"));
       $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "mystation"=>$mystation,
             "usertype"=>$usertype,
         ]]);
@@ -4323,7 +4340,7 @@ if( $isown){
       $colval = $this->sdmenc($req["colval"]);
        $client = new \GuzzleHttp\Client();
       $xresult = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-        "tag"=>$tag,
+        'tag'=>$tag,
         "column_name"=>$columnname,
         "column_value"=>$colval,
         "school_id"=>$this->sdmenc(session("user_school")),
@@ -4345,7 +4362,7 @@ if( $isown){
 
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-              "tag"=>$tag,
+              'tag'=>$tag,
               "file_name"=>$this->sdmenc($newfilename),
               "st_id"=>$this->sdmenc(session("user_school")),
               "empid"=>$this->sdmenc(session("user_eid")),
@@ -4380,14 +4397,14 @@ if( $isown){
 
 
 
-      $this->send(["tag"=>"RESET_MY_NOT_INSERTED_DEFINITION_IN_CO",
+      $this->send(['tag'=>"RESET_MY_NOT_INSERTED_DEFINITION_IN_CO",
                   "stationid"=>$this->sdmenc(session("user_school"))]);
 
       $tag = $this->sdmenc("get_all_pn_in_ir");
             // GET EXISITING ASSETS 
              $client = new \GuzzleHttp\Client();
       $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "station_id"=>$this->sdmenc(session("user_school")),
         ]]);
       $output = json_decode($this->sdmdec($result->getBody()->getContents() ),true);
@@ -4426,7 +4443,7 @@ if( $isown){
         $fieldwithvals = 0;
         $has_cost_problem = false;
         for($i =0; $i < count($fieldsx);$i++){
-          if($getData[$i] == "" || $getData[$i] == null ){
+          if($getData[$i] == '' || $getData[$i] == null ){
             if($fieldsx[$i] != "Remarks" && $fieldsx[$i] != "Cost of Acquisition"){
                $missinglog .= "Missing " . $fieldsx[$i] . "<br>";
                $has_disc = true;
@@ -4439,7 +4456,7 @@ if( $isown){
             }
           }
           if($i == 10){
-            if($getData[10] == "" || $getData[10] == null ){
+            if($getData[10] == '' || $getData[10] == null ){
               $has_propertynum = false;
             }else{
               $has_propertynum = true;
@@ -4478,7 +4495,7 @@ if( $isown){
         if($has_cost_problem == false){
             $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "property_number"=>$property_number,
             "asset_item"=>$asset_item,
             "office_type"=>$office_type,
@@ -4550,7 +4567,7 @@ if( $isown){
                 $this->sdmdec($room_number) . "<|next|>" . 
                 $this->sdmdec($remarks);
 
-            $this->send(["tag"=>"INSERT_NEW_NOT_INSERTED_DATUM_CO",
+            $this->send(['tag'=>"INSERT_NEW_NOT_INSERTED_DATUM_CO",
             "jsondata"=> $this->sdmenc($data_structure) ,
             "stationid"=>$this->sdmenc(session("user_school")),
             "subnote"=>$this->sdmenc(htmlentities($logreason))]);
@@ -4578,7 +4595,7 @@ if( $isown){
            $fieldwithvals++;
           }
           if($i == 10){
-            if($getData[10] == "" || $getData[10] == null ){
+            if($getData[10] == '' || $getData[10] == null ){
             $has_propertynum = false;
           }else{
             $has_propertynum = true;
@@ -4600,7 +4617,7 @@ if( $isown){
            //ADD TO LOG HISTORY
           $client = new \GuzzleHttp\Client();
           $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-          "tag"=>$tag,
+          'tag'=>$tag,
           "lg_total_csv"=>$this->sdmenc($tots),
           "lg_inserted"=>$this->sdmenc($inserted_new),
           "lg_update"=>$this->sdmenc($inserted_alreadyexisting),
@@ -4629,7 +4646,7 @@ $omitted_tbl = "";
             // GET EXISITING ASSETS 
           $client = new \GuzzleHttp\Client();
           $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-          "tag"=>$tag,
+          'tag'=>$tag,
           "data_id"=>$this->sdmenc($item_id),
           "station_id"=>$this->sdmenc(session("user_school")),
           ]]);
@@ -4651,7 +4668,7 @@ $omitted_tbl = "";
   $tag = $this->sdmenc("index_upload_asset_csv");
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "file_name"=>$this->sdmenc($newfilename),
             "st_id"=>$this->sdmenc(session("user_school")),
              "empid"=>$this->sdmenc(session("user_eid")),
@@ -4664,7 +4681,7 @@ $omitted_tbl = "";
             $tag = $this->sdmenc("run_separation_tech");
             $client = new \GuzzleHttp\Client();
               $resultxm = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-              "tag"=>$tag,
+              'tag'=>$tag,
               "st_id"=>$this->sdmenc(session("user_school"))
             ]]);
             $outx = $this->sdmdec($resultxm->getBody()->getContents());
@@ -4683,7 +4700,7 @@ $omitted_tbl = "";
       $tag = $this->sdmenc("get_uploaded_assets_allstation_bylatest");
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
         ]]);
 
       $output = json_decode($this->sdmdec($result->getBody()->getContents()),true);
@@ -4718,7 +4735,7 @@ $omitted_tbl = "";
            <td>";
 
 
-           if ($output[$i]["username"] == "") {
+           if ($output[$i]["username"] == '') {
               $toecho .= "Not Available";
            }else{
             $toecho .= $output[$i]["username"];
@@ -4737,7 +4754,7 @@ $omitted_tbl = "";
       $tag = $this->sdmenc("get_uploaded_assets");
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "st_id"=>$this->sdmenc(session("user_school")),
         ]]);
 
@@ -4789,7 +4806,7 @@ $omitted_tbl = "";
        $id_of_something = $this->sdmenc($req["id_of_something"]);
         $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "id_of_something"=>$id_of_something,
         ]]);
 
@@ -4838,29 +4855,29 @@ $omitted_tbl = "";
 
       $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
-            "property_number"=>$property_number,
-            "asset_item"=>$asset_item,
-            "office_type"=>$office_type,
-            "office_name"=>$office_name,
-            "asset_classification"=>$asset_classification,
-            "asset_sub_class"=>$asset_sub_class,
-            "uacs_object_code"=>$uacs_object_code,
-            "manufacturer"=>$manufacturer,
-            "model"=>$model,
-            "serial_number"=>$serial_number,
-            "specification"=>$specification,
-            "current_condition"=>$current_condition,
-            "source_of_fund"=>$source_of_fund,
-            "cost_of_acquisition"=>$cost_of_acquisition,
-            "date_of_acquisition"=>$date_of_acquisition,
-            "estimated_total_life_years"=>$estimated_total_life_years,
-            "name_of_accountable_officer"=>$name_of_accountable_officer,
-            "asset_location"=>$asset_location,
-            "remarks"=>$remarks,
-            "unit_of_measure"=>$unit_of_measure,
-            "service_center"=>$service_center,
-            "room_number"=>$room_number,
+            'tag'=>$tag,
+            'property_number'=>$property_number,
+            'asset_item'=>$asset_item,
+            'office_type'=>$office_type,
+            'office_name'=>$office_name,
+            'asset_classification'=>$asset_classification,
+            'asset_sub_class'=>$asset_sub_class,
+            'uacs_object_code'=>$uacs_object_code,
+            'manufacturer'=>$manufacturer,
+            'model'=>$model,
+            'serial_number'=>$serial_number,
+            'specification'=>$specification,
+            'current_condition'=>$current_condition,
+            'source_of_fund'=>$source_of_fund,
+            'cost_of_acquisition'=>$cost_of_acquisition,
+            'date_of_acquisition'=>$date_of_acquisition,
+            'estimated_total_life_years'=>$estimated_total_life_years,
+            'name_of_accountable_officer'=>$name_of_accountable_officer,
+            'asset_location'=>$asset_location,
+            'remarks'=>$remarks,
+            'unit_of_measure'=>$unit_of_measure,
+            'service_center'=>$service_center,
+            'room_number'=>$room_number,
 
         ]]);
 
@@ -4884,7 +4901,7 @@ $omitted_tbl = "";
        $tag = $this->sdmenc("addlogs");
        $client = new \GuzzleHttp\Client();
             $result = $client->request("POST",WEBSERVICE_URL,["form_params"=>[
-            "tag"=>$tag,
+            'tag'=>$tag,
             "station_id"=>$station_id,
             "account_id"=>$account_id,
             "action_code"=>$logcode,
@@ -5010,7 +5027,7 @@ return $years . ",".  $months;
     }
      public function send($contents, $free_result = false)
     {
-        $contents["tag"] = $this->sdmenc($contents["tag"]);
+        $contents['tag'] = $this->sdmenc($contents['tag']);
         $client = new \GuzzleHttp\Client();
         $res = $client->request("POST", WEBSERVICE_URL, ["form_params" => $contents]);
 
@@ -5071,8 +5088,8 @@ return $years . ",".  $months;
             $months = number_format((round($datediff / (60 * 60 * 24))) / 30);
             if($result == 0){
 
-            $time1 = date("H:i",strtotime($starting_time));
-            $time2 = date("H:i");
+            $time1 = date('H:i',strtotime($starting_time));
+            $time2 = date('H:i');
 
             $diff = abs(strtotime($time1) - strtotime($time2));
 
@@ -5081,52 +5098,79 @@ return $years . ",".  $months;
             $hours = floor($tmins/60);
 
             $mins = $tmins%60;
-            if($mins == "0" && $hours =="0"){
-            return "Just now"; 
-            }else if($mins == "1" && $hours =="0"){
-            return "1 min ago"; 
+            if($mins == '0' && $hours =='0'){
+            return 'Just now'; 
+            }else if($mins == '1' && $hours =='0'){
+            return '1 min ago'; 
             } else{
-            if($hours == "0"){
+            if($hours == '0'){
             return "$mins mins ago";  
-            }else if($hours == "1"){
-            return "an hour ago";  
+            }else if($hours == '1'){
+            return 'an hour ago';  
             }else{
             return "$hours hours ago";  
             }
-
             }
-
             }else{
-            if($result == "1"){
-            return "yesterday";
+            if($result == '1'){
+            return 'yesterday';
+            }else if($months > 12){
+                $yearcount =  number_format(($months / 12),"0");
+
+                if($yearcount == "1"){
+                  return "a year ago";
+                }else if($yearcount < 10){
+                   return $yearcount . " years ago";
+                }else if($yearcount > 10)
+                {
+                  $decades = number_format(($yearcount / 10),0);
+
+                  if($decades == 1){
+                     return "a decade ago";
+                  }else{
+                     return  $decades . " decades ago";
+                  }
+                 
+                }
             }else if($result > 30){
 
               if($months == 1){
-                 return "last month";
+                 return 'last month';
               }else{
-                 return $months . " months ago";
+                 return $months . ' months ago';
               }
             
             }else{
-            return round($datediff / (60 * 60 * 24)) . " days ago";
+              $daysago = round($datediff / (60 * 60 * 24));
+              if($daysago > 7){
+                $weeks = number_format(($daysago / 7),0);
+                if($weeks == 1){
+                     return "a week ago";
+                }else{
+                     return $weeks . " weeks ago";
+                }
+               
+              }else{
+                return $daysago . " days ago";
+              }
             }
             }
         }
 
     public function sdmenc($data){
-      $keycode = openssl_digest(utf8_encode(PKEY),"sha512",true);
+      $keycode = openssl_digest(utf8_encode(PKEY),'sha512',true);
       $string = substr($keycode, 10,24);
       $utfData = utf8_encode($data);
-      $encryptData = openssl_encrypt($utfData, "DES-EDE3", $string, OPENSSL_RAW_DATA,'');
+      $encryptData = openssl_encrypt($utfData, 'DES-EDE3', $string, OPENSSL_RAW_DATA,'');
       $base64Data = base64_encode($encryptData);
       return $base64Data;
     }
 
     public function sdmdec($data){
-      $keycode = openssl_digest(utf8_encode(PKEY),"sha512",true);
+      $keycode = openssl_digest(utf8_encode(PKEY),'sha512',true);
       $string = substr($keycode, 10,24);
       $utfData = base64_decode($data);
-      $decryptData = openssl_decrypt($utfData, "DES-EDE3", $string, OPENSSL_RAW_DATA,'');
+      $decryptData = openssl_decrypt($utfData, 'DES-EDE3', $string, OPENSSL_RAW_DATA,'');
       return $decryptData;
     }
 

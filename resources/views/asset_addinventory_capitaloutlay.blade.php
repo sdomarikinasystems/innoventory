@@ -15,7 +15,7 @@ Innoventory - Inventory Mode
 <div id="session_restore" style="display: none;">
 	<div class="container">
 		<div style="margin-top: 25vh;">
-			<div class="card card-shadow" style="margin: auto; width: 600px;">
+			<div class="card card-shadow heightwise">
 				<div class="card-body">
 					<div class="mt-3 mb-3">
 						<h5 class="mb-2">Continue your last session in<br><?php echo $_GET["station_full_name"]; ?>?</h5>
@@ -34,7 +34,7 @@ Innoventory - Inventory Mode
 <div id="select_service_center_page" style="display: none;">
 	<div class="container">
 		<div style="margin-top: 25vh;">
-			<div class="card card-shadow" style="margin: auto; width: 600px;">
+			<div class="card card-shadow heightwise">
 				<div class="card-body">
 					<div class="mt-3 mb-3">
 						<h5 class="mb-2">Service Center to begin with</h5>
@@ -100,7 +100,7 @@ Innoventory - Inventory Mode
 	</div>
 	<div class="col-sm-6">
 		<div class="card-deck">
-			<div class="card " style="border : none !important; border-radius: 0px !important;" onclick="filtershow_all()">
+			<div class="card card-shadow card-filred" onclick="filtershow_all()">
 				<div class="clickablething ff_all" style="border: 2px solid transparent; border-radius: 10px;">
 					<div class="card-body">
 						<h5 class="m-0 float-right" ><span id="allscannedassets"></span>/<span id="allscannedassets_max"></span></h5>
@@ -109,7 +109,7 @@ Innoventory - Inventory Mode
 			</div>
 				</div>
 		</div>
-		<div class="card" style="border : none !important; border-radius: 0px !important;" onclick="filtershow_co()">
+		<div class="card card-shadow card-filred" onclick="filtershow_co()">
 			<div class="clickablething ff_co" style="border: 2px solid transparent; border-radius: 10px;">
 				<div class="card-body">
 					<h5 class="m-0 float-right"><span id="allscannedassets_capitaloutlay"></span>/<span id="allscannedassets_capitaloutlay_max"></span></h5>
@@ -119,7 +119,7 @@ Innoventory - Inventory Mode
 			</div>
 			</div>
 		</div>
-		<div class="card" style="border : none !important; border-radius: 0px !important;" onclick="filtershow_se()">
+		<div class="card card-shadow card-filred" onclick="filtershow_se()">
 			<div class="clickablething ff_se" style="border: 2px solid transparent; border-radius: 10px;">
 				<div class="card-body">
 					<h5 class="m-0 float-right"><span id="allscannedassets_semiexpendable"></span>/<span id="allscannedassets_semiexpendable_max"></span></h5>
@@ -265,7 +265,6 @@ Innoventory - Inventory Mode
 	window.close();
 	}
 
-	
 	$("#chooseserv").hide();
 	$("#inp_qrfocus").focus();
 	var current_location_id = "";
@@ -307,7 +306,6 @@ Innoventory - Inventory Mode
 		}
 		 }
 	})
-
 
 	CheckLastSession();
 
@@ -1043,10 +1041,5 @@ $("#chooseserv").show();
 	function htmlEntities(str) {
 	return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
-
-
-
 </script>
-
-
 @endsection

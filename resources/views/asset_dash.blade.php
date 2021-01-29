@@ -60,7 +60,7 @@ Innoventory - Dashboard
 				<div id="newann" style="margin: 20px;">
 					
 				</div>
-				<a href="{{ route('manage_reminders') }}" class="btn btn-light btn-block"><i class="fas fa-hand-point-right"></i> See All Announcements</a>
+				
 			</div>
 	</div>
 
