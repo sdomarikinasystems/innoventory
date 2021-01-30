@@ -12,8 +12,6 @@ Innoventory - User Management
     <li class="breadcrumb-item active" aria-current="page">{{ session('user_changesource_station_name') }}</li>
 	</ol>
 </nav>
-
-
     <?php
     if(session("user_type") == "0" || session("user_type") == "1"){
   ?>
@@ -68,13 +66,9 @@ Innoventory - User Management
 	<div class="col-sm">
 	</div>	
 </div>
-
-
-
-
 <div class="row mt-3">
   <div class="col-sm-12">
-    <table class="mt-3 table table-bordered" id="tblu">
+    <table class="mt-3 table table-borderless table-hover" id="tblu">
   <thead>
     <tr>
       <th scope="col">Account Name</th>
@@ -158,19 +152,14 @@ Innoventory - User Management
       </div>
           </div>
 <?php 
-// This function will return a random 
-// string of specified length 
+
 function random_strings($length_of_string) 
 { 
-  // String of all alphanumeric character 
   $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; 
-  // Shufle the $str_result and returns substring 
-  // of specified length 
+
   return substr(str_shuffle($str_result), 
           0, $length_of_string); 
 } 
-// This function will generate 
-// Random string of length 10 
 $cocoa =  random_strings(10); 
 ?> 
 <script type="text/javascript">
@@ -178,7 +167,7 @@ $cocoa =  random_strings(10);
         var iKeyCode = (evt.which) ? evt.which : evt.keyCode
         if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57))
             return false;
-
+          
         return true;
     }    
 </script>
@@ -193,9 +182,7 @@ $cocoa =  random_strings(10);
     </div>
   </div>
 </div>
-
 </form>
-
 <form action="{{ route('delete_the_user') }}" method="POST">
   <div class="modal" tabindex="-1" id="m_delete" role="dialog">
     <div class="modal-dialog modal-sm" role="document">
@@ -219,7 +206,6 @@ $cocoa =  random_strings(10);
     </div>
   </div>
 </form>
-
 <form action="{{ route('edit_the_user_info') }}" method="POST">
   <div class="modal" tabindex="-1" id="m_edit" role="dialog">
     <div class="modal-dialog" role="document">
@@ -273,10 +259,7 @@ $cocoa =  random_strings(10);
    <select class="form-control"  name="x_usertype">
               <option value="4">Center Manager</option>
           </select>
-
-
 <?php
-
             }else if(session("user_type")== "0"){
             ?>
    <select class="form-control" id="edit_acctype" required=""  name="x_usertype">
@@ -301,7 +284,6 @@ $cocoa =  random_strings(10);
     </div>
   </div>
 </form>
-
 <form action="{{ route('shoot_reset_account_password') }}" method="POST">
     {{ csrf_field() }}
     <div class="modal" tabindex="-1" role="dialog" id="m_resetpass">
@@ -336,13 +318,9 @@ $cocoa =  random_strings(10);
     </div>
   </div>
 </form>
-
-
 <script type="text/javascript">
   var curr_station_id = <?php echo json_encode(session("user_changesource_station")); ?>;
   var curr_station_name = <?php echo json_encode(session("user_changesource_station_name")); ?>;
-
-
 function CopyToClipboard(id)
 {
 var r = document.createRange();
@@ -353,8 +331,6 @@ document.execCommand('copy');
 window.getSelection().removeAllRanges();
 alert("Password copied!");
 }
-
-
   function lod_resetpass(control_obj){
     $("#theempid").val($(control_obj).data("empid"));
     $("#theempnumber").val($(control_obj).data("empnumber"));
@@ -383,7 +359,6 @@ function lod_deleteacc(control_obj){
 $("#emp_id_del").val($(control_obj).data("empid"));
 
 }
-
 LoadAllAccounts()
 function LoadAllAccounts(){
    $.ajax({
@@ -397,7 +372,6 @@ function LoadAllAccounts(){
     }
   })
 }
- 
   function LoadAllSchoolsInSelection(){
       $.ajax({
     type: "POST",
@@ -410,11 +384,8 @@ function LoadAllAccounts(){
   })
   }
     function setupcreate(){
-     // $("#addtype").val("4");
      $("#all_sc_name").val("{{ session('user_school') }}");
     }
-
-
     function gotomyownassets(){
         var sourceid =  <?php echo json_encode(session("user_school")); ?>;
         var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
@@ -427,8 +398,6 @@ function LoadAllAccounts(){
         }
         })
     }
-
-
  function changesource(control_obj){
     var sourceid = $(control_obj).data("sourceid");
     var sourcename = $(control_obj).data("sourcename");
@@ -441,7 +410,6 @@ function LoadAllAccounts(){
     }
     })
     }
-
       $("#searchss").change(function(){
     var skey = $("#searchss").val();
    $.ajax({
@@ -463,5 +431,4 @@ function LoadAllAccounts(){
    })
   })
 </script>
-
 @endsection

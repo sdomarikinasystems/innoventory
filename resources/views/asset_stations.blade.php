@@ -41,7 +41,7 @@ Inno... - Stations
 
 <div class="row mt-3">
   <div class="col-md-12">
-    <table class="table table-sm " id="allstadt">
+    <table class="table " id="allstadt">
   <thead>
     <tr>
       <th>I.D</th>

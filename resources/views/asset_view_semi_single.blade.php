@@ -15,7 +15,7 @@ Innoventory (Loading....)
 <div class="row">
   <div class="col-md-3">
     <center>
-    <div class="card" role="alert">
+    <div class="card card-shadow" role="alert">
         <h1 class="mt-5 mb-5 text-muted" style="font-size: 20vh;"><i class="fas fa-image"></i></h1>
     </div>
     </center>

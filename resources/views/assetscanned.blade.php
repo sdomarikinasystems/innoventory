@@ -89,10 +89,7 @@ Innoventory - Inventory
 
 
     <?php } ?>
-
     <div class="card-deck">
-
-      
        <div class="card card-shadow">
         <div class="card-body">
            <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#m_capoutdatefilter">Change Date</button>
@@ -133,7 +130,7 @@ Innoventory - Inventory
 </div>
 <div class="row mt-3">
   <div class="col-md-12">
-    <table class="table table-hover table-bordered" id="tbl_sc">
+    <table class="table table-hover table-borderless" id="tbl_sc">
       <thead>
         <tr>
           <th scope="col" width="150">Property Number</th>
@@ -204,7 +201,7 @@ Innoventory - Inventory
 
       </div>
        <div class="col-sm-12 mt-3">
-        <table class="table table-hover table-bordered" id="tbl_scannnedsemi">
+        <table class="table table-hover table-borderless" id="tbl_scannnedsemi">
       <thead>
         <tr>
           <th scope="col" width="150">Stock Number</th>
@@ -334,295 +331,304 @@ Innoventory - Inventory
  </form>
 
 <script type="text/javascript">
-
 var is_filter_loaded = false;
 var is_filter_loaded_semi = false;
-
- var ref_station = "";
- $("#btn_semi_startinv").hide();
- $("#btn_capital_startinv").hide();
-
-
-function UniversalLoaderSourceChange(stationID){
+var ref_station = "";
+$("#btn_semi_startinv").hide();
+$("#btn_capital_startinv").hide();
+function UniversalLoaderSourceChange(stationID) {
   ref_station = stationID;
   LoadSelection_YearWithInventory(stationID);
 
-  if(is_filter_loaded == true){
+  if (is_filter_loaded == true) {
     LoadAssets(stationID);
   }
-  if(is_filter_loaded_semi == true){
+  if (is_filter_loaded_semi == true) {
     GetSemiScannedAsset(stationID);
   }
 }
-
-  $("#tbl_sc").DataTable();
-  var ss = <?php echo json_encode(session("user_changesource_station")); ?>;
-  UniversalLoaderSourceChange(ss);
-  $(".inp_filtepurpose_stationname").val(<?php echo json_encode(session("user_changesource_station_name")); ?>);
-  function gotomyownassets(){
-
-    is_filter_loaded = false;
-    is_filter_loaded_semi = false;
-    var sourceid =  <?php echo json_encode(session("user_school")); ?>;
-    var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
-
-
-     $.ajax({
-      type: "POST",
-      url: "{{ route('shoot_univ_change_source') }}",
-      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
-      success: function(){
-        location.reload();
-      }
-    })
-
-  }
-  function changesource(control_obj){
-    is_filter_loaded = false;
-    is_filter_loaded_semi = false;
-
+$("#tbl_sc").DataTable();
+var ss = <?php echo json_encode(session("user_changesource_station")); ?>;
+UniversalLoaderSourceChange(ss);
+$(".inp_filtepurpose_stationname").val(<?php echo json_encode(session("user_changesource_station_name")); ?>);
+function gotomyownassets() {
+  is_filter_loaded = false;
+  is_filter_loaded_semi = false;
+  var sourceid = <?php echo json_encode(session("user_school")); ?>;
+  var sourcename = <?php echo json_encode(session("user_schoolname")); ?>;
+  $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_univ_change_source') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      new_source_id: sourceid,
+      new_source_name: sourcename
+    },
+    success: function () {
+      location.reload();
+    }
+  })
+}
+function changesource(control_obj) {
+  is_filter_loaded = false;
+  is_filter_loaded_semi = false;
   var sourceid = $(control_obj).data("sourceid");
   var sourcename = $(control_obj).data("sourcename");
+  $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_univ_change_source') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      new_source_id: sourceid,
+      new_source_name: sourcename
+    },
+    success: function () {
+      location.reload();
+    }
+  })
+}
+var total_scanned_semiex = 0;
+function GetSemiScannedAsset(schoolid) {
+  var yy = $("#semiexpe_filter_year").val();
+  var mm = $("#semiexpe_filter_month").val();
+  $("#inp_se_selyear").val(yy);
+  $("#inp_se_selmonth").val(mm);
+  $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_show_uploaded_semi_expendable_scanneddata') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      sd_id: schoolid,
+      selyear: yy,
+      selmonth: mm
+    },
+    success: function (data) {
+      $("#tbl_scannnedsemi").DataTable().destroy();
+      $("#tbl_scanned_semiexpendableasset").html(data);
+      $("#tbl_scannnedsemi").DataTable();
+      GetSemi_TotalScanned(schoolid, yy, mm);
+    }
+  })
+}
+function GetSemi_TotalScanned(schoolid, yy, mm) {
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_getsemisum_totalscanned') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      sd_id: schoolid,
+      selyear: yy,
+      selmonth: mm
+    },
+    success: function (data) {
+      $("#semisum_totalscanned").html(data);
+      total_scanned_semiex = data;
+      GetSemi_FromTo(schoolid, yy, mm);
+    }
+  })
+}
+function GetSemi_FromTo(schoolid, yy, mm) {
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_getsemisum_fromto') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      sd_id: schoolid,
+      selyear: yy,
+      selmonth: mm
+    },
+    success: function (data) {
+      $("#semisum_fromto").html(data);
+      $("#inp_se_htmlof_fromto").val($("#semisum_fromto").html());
+      GetSemi_ItemsNotFound(schoolid, yy, mm);
+    }
+  })
+}
+function GetSemi_ItemsNotFound(schoolid, yy, mm) {
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_semi_count_by_station') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      sd_id: schoolid,
+      selyear: yy,
+      selmonth: mm
+    },
+    success: function (data) {
+      $("#semisum_itemsnotfound").html(data);
+      var scanned_semi = total_scanned_semiex;
+      var percentage_text = ((scanned_semi / data) * 100).toFixed(0);
+      $("#semiscanninf_percentage").prop("max", data);
+      $("#semiscanninf_percentage").val(total_scanned_semiex);
+      $("#semiscanninf_percentage_txt").html(percentage_text + "%");
+    }
+  })
+}
+// DATE FILTER FOR CAPITAL OUTLAY
+function LoadSelection_YearWithInventory(staID) {
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_all_years_with_inventory_capitaloutlay') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      station_id: staID
+    },
+    success: function (data) {
+      $("#capout_filter_year").html(data);
+      ref_station = staID;
+      LoadSelection_MonthWithInventory_ByYear();
+    }
+  })
+}
+function LoadSelection_MonthWithInventory_ByYear() {
+  var ref_year = $("#capout_filter_year").val();
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_inventory_month_capital_outlay') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      station_id: ref_station,
+      date_year: ref_year
+    },
+    success: function (data) {
+      $("#capout_filter_month").html(data);
 
-
+      if (is_filter_loaded == false) {
+        is_filter_loaded = true;
+        LoadAssets(ref_station);
+      }
+    }
+  })
+}
+function filter_assets_capitaloutlay() {
+  LoadAssets(ref_station);
+}
+// DATE FILTER FOR SEMI EXPENDABLE
+function LoadSelection_YearWithInventory_semi(staID) {
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_all_years_with_inventory_semiexpendable') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      station_id: staID
+    },
+    success: function (data) {
+      $("#semiexpe_filter_year").html(data);
+      ref_station = staID;
+      LoadSelection_MonthWithInventory_ByYear_semi();
+    }
+  })
+}
+function LoadSelection_MonthWithInventory_ByYear_semi() {
+  var ref_year = $("#semiexpe_filter_year").val();
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_inventory_month_semiexpendable') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      station_id: ref_station,
+      date_year: ref_year
+    },
+    success: function (data) {
+      $("#semiexpe_filter_month").html(data);
+      if (is_filter_loaded_semi == false) {
+        is_filter_loaded_semi = true;
+        GetSemiScannedAsset(ref_station);
+      }
+    }
+  })
+}
+function filter_assets_semiexpendable() {
+  GetSemiScannedAsset(ref_station);
+}
+function LoadAssets(sc_id) {
+  $("#lodass").css("display", "block");
+  $("#inp_sc_id").val(sc_id);
+  $("#inp_sc_id_inv").val(sc_id);
+  $("#inp_sc_id_inv_2").val(sc_id);
+  $("#btn_semi_startinv").show();
+  $("#btn_capital_startinv").show();
+  $("#inp_sc_id_semi").val(sc_id);
+  var choosen_year = $("#capout_filter_year").val();
+  var choosen_month = $("#capout_filter_month").val();
+  $("#inp_co_selyear").val(choosen_year);
+  $("#inp_co_selmonth").val(choosen_month);
+  GetScannedCapital();
+  function GetScannedCapital() {
     $.ajax({
       type: "POST",
-      url: "{{ route('shoot_univ_change_source') }}",
-      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
-      success: function(){
-        location.reload();
-       
-      }
-    })
-
-
-
-  }
-
-  var total_scanned_semiex = 0;
-      function GetSemiScannedAsset(schoolid){
-
-        var yy = $("#semiexpe_filter_year").val();
-        var mm = $("#semiexpe_filter_month").val();
-         $("#inp_se_selyear").val(yy);
-        $("#inp_se_selmonth").val(mm);
-        $.ajax({
-          type:"POST",
-          url: "{{ route('shoot_show_uploaded_semi_expendable_scanneddata') }}",
-          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
-          success: function(data){
-             $("#tbl_scannnedsemi").DataTable().destroy();
-            $("#tbl_scanned_semiexpendableasset").html(data);
-            
-             $("#tbl_scannnedsemi").DataTable();
-            GetSemi_TotalScanned(schoolid,yy,mm);
-          }
-        })
-      }
-
-       function GetSemi_TotalScanned(schoolid,yy,mm){
-        $.ajax({
-          type: "POST",
-          url: "{{ route('stole_getsemisum_totalscanned') }}",
-          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
-          success: function(data){
-           $("#semisum_totalscanned").html(data);
-           total_scanned_semiex = data;
-
-
-           GetSemi_FromTo(schoolid,yy,mm);
-          }
-        })
-      }
-      function GetSemi_FromTo(schoolid,yy,mm){
-        $.ajax({
-          type: "POST",
-          url: "{{ route('stole_getsemisum_fromto') }}",
-          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
-          success: function(data){
-            $("#semisum_fromto").html(data);
-            $("#inp_se_htmlof_fromto").val($("#semisum_fromto").html());
-            GetSemi_ItemsNotFound(schoolid,yy,mm);
-          }
-        })
-      }
-      function GetSemi_ItemsNotFound(schoolid,yy,mm){
-        $.ajax({
-          type: "POST",
-          url: "{{ route('stole_semi_count_by_station') }}",
-          data: {_token: "{{ csrf_token() }}",sd_id: schoolid,selyear:yy,selmonth:mm},
-          success: function(data){
-            $("#semisum_itemsnotfound").html(data);
-             var scanned_semi = total_scanned_semiex;
-           var percentage_text = ((scanned_semi / data) *  100).toFixed(0);
-
-           $("#semiscanninf_percentage").prop("max",data);
-            $("#semiscanninf_percentage").val(total_scanned_semiex);
-            $("#semiscanninf_percentage_txt").html(percentage_text + "%");  
-           
-          }
-        })
-      }
-
-
-// DATE FILTER FOR CAPITAL OUTLAY
-  function LoadSelection_YearWithInventory(staID){
-    $.ajax({
-      type:"POST",
-      url: "{{ route('stole_all_years_with_inventory_capitaloutlay') }}",
-      data: {_token: "{{ csrf_token() }}",station_id:staID},
-      success: function(data){
-        $("#capout_filter_year").html(data);
-       
-        ref_station = staID;
-        LoadSelection_MonthWithInventory_ByYear();
+      url: "{{ route('get_ass_scanned') }}",
+      data: {
+        _token: "{{ csrf_token() }}",
+        "station_number": sc_id,
+        selyear: choosen_year,
+        selmonth: choosen_month
+      },
+      success: function (data) {
+        $("#tbl_sc").DataTable().destroy();
+        $("#scannedassets").html(data);
+        $("#lodass").css("display", "none");
+        $("#tbl_sc").DataTable();
+        GetScannedCapitalTotal();
       }
     })
   }
-
-  function LoadSelection_MonthWithInventory_ByYear(){
-      var ref_year = $("#capout_filter_year").val();
+  var totalscanned_co = 0;
+  function GetScannedCapitalTotal() {
     $.ajax({
-      type:"POST",
-      url: "{{ route('stole_inventory_month_capital_outlay') }}",
-      data: {_token: "{{ csrf_token() }}",station_id:ref_station,date_year:ref_year},
-      success: function(data){
-        $("#capout_filter_month").html(data);
-     
-        if(is_filter_loaded == false){
-          is_filter_loaded = true;
-          LoadAssets(ref_station);
-        }
+      type: "POST",
+      url: "{{ route('g_sca_ttitms') }}",
+      data: {
+        _token: "{{ csrf_token() }}",
+        "station_number": sc_id,
+        selyear: choosen_year,
+        selmonth: choosen_month
+      },
+      success: function (data) {
+        $("#itms_total").html(data);
+        totalscanned_co = data;
+        GetNotScannedItems_Capital();
       }
     })
   }
-
-  function filter_assets_capitaloutlay(){
-    LoadAssets(ref_station);
-  }
-
-  // DATE FILTER FOR SEMI EXPENDABLE
-  
-    function LoadSelection_YearWithInventory_semi(staID){
+  function GetNotScannedItems_Capital() {
     $.ajax({
-      type:"POST",
-      url: "{{ route('stole_all_years_with_inventory_semiexpendable') }}",
-      data: {_token: "{{ csrf_token() }}",station_id:staID},
-      success: function(data){
-        $("#semiexpe_filter_year").html(data);
-        
-        ref_station = staID;
-        LoadSelection_MonthWithInventory_ByYear_semi();
-      }
-    })
-  }
-
-  function LoadSelection_MonthWithInventory_ByYear_semi(){
-      var ref_year = $("#semiexpe_filter_year").val();
-    $.ajax({
-      type:"POST",
-      url: "{{ route('stole_inventory_month_semiexpendable') }}",
-      data: {_token: "{{ csrf_token() }}",station_id:ref_station,date_year:ref_year},
-      success: function(data){
-        $("#semiexpe_filter_month").html(data);
-         
-        if(is_filter_loaded_semi == false){
-          is_filter_loaded_semi = true;
-          GetSemiScannedAsset(ref_station);
-        }
-      }
-    })
-  }
-  
-  function filter_assets_semiexpendable(){
-    GetSemiScannedAsset(ref_station);
-  }
-
-
-
-
-  function LoadAssets(sc_id){
-    $("#lodass").css("display","block");
-    $("#inp_sc_id").val(sc_id);
-     $("#inp_sc_id_inv").val(sc_id);
-      $("#inp_sc_id_inv_2").val(sc_id);
-      $("#btn_semi_startinv").show();
-
-    $("#btn_capital_startinv").show();
-    $("#inp_sc_id_semi").val(sc_id);
-
-    var choosen_year = $("#capout_filter_year").val();
-    var choosen_month = $("#capout_filter_month").val();
-
-     $("#inp_co_selyear").val(choosen_year);
-   $("#inp_co_selmonth").val(choosen_month);
-GetScannedCapital();
-   function GetScannedCapital(){
-     $.ajax({
-    type: "POST",
-    url: "{{ route('get_ass_scanned') }}",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
-    success: function(data){
-       $("#tbl_sc").DataTable().destroy();
-      $("#scannedassets").html(data);
-      $("#lodass").css("display","none");
-      $("#tbl_sc").DataTable();
-      GetScannedCapitalTotal();
-    }
-  })
-   }
-   var totalscanned_co = 0;
-   function GetScannedCapitalTotal(){
-     $.ajax({
-    type: "POST",
-    url: "{{ route('g_sca_ttitms') }}",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
-    success: function(data){
-      $("#itms_total").html(data);
-      totalscanned_co = data;
-
-      GetNotScannedItems_Capital();
-    }
-  })
-   }
-
-   function GetNotScannedItems_Capital(){
-    $.ajax({
-    type: "POST",
-    url: "{{ route('stole_total_assets_of_station_specific') }}",
-    data: {_token:"{{ csrf_token() }}",
-    "station_number":sc_id,
-    selyear:choosen_year,
-    selmonth:choosen_month},
-    success: function(data){
-   
+      type: "POST",
+      url: "{{ route('stole_total_assets_of_station_specific') }}",
+      data: {
+        _token: "{{ csrf_token() }}",
+        "station_number": sc_id,
+        selyear: choosen_year,
+        selmonth: choosen_month
+      },
+      success: function (data) {
         var computedmax = data;
-        var perc_total = ((totalscanned_co / computedmax) * 100).toFixed(0); 
-
+        var perc_total = ((totalscanned_co / computedmax) * 100).toFixed(0);
         $("#co_nowprecentage").html(perc_total + "%");
         $("#totalassets_co").html(computedmax);
-
-        $("#co_prog").prop("max",computedmax);
+        $("#co_prog").prop("max", computedmax);
         $("#co_prog").val(totalscanned_co);
-         // $("#view_button_cap_out_missing").css("display","block");
-      
-     GetScannedDates_Capital();
-    }
-  })
-   }
-        function GetScannedDates_Capital(){
-          $.ajax({
-    type: "POST",
-    url: "{{ route('get_sc_occudates') }}",
-    data: {_token:"{{ csrf_token() }}","station_number":sc_id,selyear:choosen_year,selmonth:choosen_month},
-    success: function(data){
-      $("#mytimeline").html(data);
-      $("#inp_co_htmlof_fromto").val($("#mytimeline").html());
-        LoadSelection_YearWithInventory_semi(sc_id);
-    }
-  })
-        }
-
+        GetScannedDates_Capital();
+      }
+    })
   }
+  function GetScannedDates_Capital() {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('get_sc_occudates') }}",
+      data: {
+        _token: "{{ csrf_token() }}",
+        "station_number": sc_id,
+        selyear: choosen_year,
+        selmonth: choosen_month
+      },
+      success: function (data) {
+        $("#mytimeline").html(data);
+        $("#inp_co_htmlof_fromto").val($("#mytimeline").html());
+        LoadSelection_YearWithInventory_semi(sc_id);
+      }
+    })
+  }
+}
 </script>
 @endsection

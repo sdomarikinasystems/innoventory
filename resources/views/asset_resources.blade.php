@@ -1,9 +1,7 @@
 @extends('master.master')
-
 @section('title')
 Innoventory - Resources
 @endsection
-
 @section('contents')
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
@@ -11,34 +9,32 @@ Innoventory - Resources
 		<li class="breadcrumb-item active" aria-current="page">Resources</li>
 	</ol>
 </nav>
-<div class="mb-3">
-	
-<?php
-			if(session("user_type") < "4" && session("user_type") != "2"){
-		?>
-		<!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-				<button class="btn btn-primary" href="#" data-toggle="modal" data-target="#modal_uploadfile"><i class="fas fa-file-import"></i> Upload Resource</button>
-			<?php } ?>
-</div>
-
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">My Resources</a>
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="fas fa-folder"></i> My Resources</a>
   </li>
   <?php
-      if(session("user_type") < "4" && session("user_type") != "2"){
+        if(session("user_type") == "0" || session("user_type") == "1"){
     ?>
   <li class="nav-item">
-    <a class="nav-link" id="profile-tab" onclick=" LoadAllReoucesByLatestUpload()" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Others</a>
+    <a class="nav-link" id="profile-tab" onclick=" LoadAllReoucesByLatestUpload()" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="fas fa-folder"></i> Others</a>
   </li>
     <?php } ?>
 </ul>
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-    
+    <div class="mt-3">
+<?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+    ?>
+    <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
+        <button class="btn btn-primary" href="#" data-toggle="modal" data-target="#modal_uploadfile"><i class="fas fa-file-import"></i> Upload Resource</button>
+      <?php } ?>
+      
+</div>
  <div class="mt-3">
 
-  <table class="table table-striped table-bordered" id="dtbl">
+  <table class="table table-hover table-borderless" id="dtbl">
     <thead>
       <tr>
         <th scope="col"></th>
@@ -56,7 +52,7 @@ Innoventory - Resources
   </div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
     <div class="mt-3">
-      <table class="table table-striped table-bordered" id="td_allres">
+      <table class="table table-hover table-borderless" id="td_allres">
         <thead>
           <tr>
             <th>Station</th>

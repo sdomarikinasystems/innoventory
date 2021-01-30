@@ -44,7 +44,34 @@ Innoventory - Disposed Assets
   }
   ?>
 
-  <h4 class="mb-3"><span id="sourcename">{{ session('user_changesource_station_name')}}</span></h4>
+  <h4 class="mb-3 mt-3"><span id="sourcename">{{ session('user_changesource_station_name')}}</span></h4>
+    <div class="card-deck mb-3">
+      <div class="card card-shadow">
+        <div class="card-body">
+          <i style="color: #c0392b;" class="fas fa-circle"></i> Condemnation / Destruction
+        </div>
+      </div>
+       <div class="card card-shadow">
+        <div class="card-body">
+          <i style="color: #27ae60;" class="fas fa-circle"></i> Transfer of Property
+        </div>
+      </div>
+       <div class="card card-shadow">
+        <div class="card-body">
+          <i style="color:  #d35400;" class="fas fa-circle"></i> Incorrect Property Number
+        </div>
+      </div>
+       <div class="card card-shadow">
+        <div class="card-body">
+          <i style="color: #2980b9;" class="fas fa-circle"></i> Donation of Property
+        </div>
+      </div>
+       <div class="card card-shadow">
+        <div class="card-body">
+          <i style="color: #8e44ad;" class="fas fa-circle"></i> Sale of Unserviceable Property
+        </div>
+      </div>
+  </div>
  <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="capout" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-box"></i> Capital Outlay</a>
@@ -56,34 +83,10 @@ Innoventory - Disposed Assets
 </ul>
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="capout">
-    
-<div class="row mt-3">
-  <div class="col-sm-7">
- <table class="table table-bordered">
-  <tr>
-    <td rowspan="3">Legends</td>
-  </tr>
-          <tr>
-            <td><i style="color: #c0392b;" class="fas fa-circle"></i></td><td>Condemnation / Destruction</td>
-            <td><i style="color: #27ae60;" class="fas fa-circle"></i></td><td>Transfer of Property</td>
-             <td><i style="color:  #d35400;" class="fas fa-circle"></i></td><td>Incorrect Property Number</td>
-          </tr>
-           <tr>
-            <td><i style="color: #2980b9;" class="fas fa-circle"></i></td><td>Donation of Property</td>
-             <td><i style="color: #8e44ad;" class="fas fa-circle"></i></td><td>Sale of Unserviceable Property</td>
-
-          </tr>
-
-
-         
-        </table>
-
-
-  </div>
-</div>
-<div>
   
- <table class="table table-hover table-bordered" id="tbl_dis">
+<div>
+
+ <table class="table table-hover table-borderless" id="tbl_dis">
   <thead>
     <tr>
       <th scope="col">Property Number</th>

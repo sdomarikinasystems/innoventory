@@ -77,8 +77,6 @@ Innoventory - Reports
 		  	    </tr>
 		  	  </thead>
 		  	  <tbody id="tbl_assetclassification">
-		  	   
-		  	
 		  	  </tbody>
 		  	</table>
 		  </div>

@@ -15,7 +15,7 @@ Innoventory (Loading....)
 <div class="row">
   <div class="col-md-3">
     <center>
-    <div class="card" role="alert">
+    <div class="card card-shadow" role="alert">
         <h1 class="mt-5 mb-5 text-muted" style="font-size: 20vh;"><i class="fas fa-image"></i></h1>
     </div>
     </center>
@@ -156,7 +156,7 @@ Innoventory (Loading....)
   
   $.ajax({
     type: "POST",
-    url: "get_asset_full",
+    url: "{{ route('my_asset_full') }}",
     data: {_token: "{{ csrf_token() }}",asset_id:<?php echo json_encode($_GET["asset_id"]); ?>},
     success: function(data){
       // alert(data);

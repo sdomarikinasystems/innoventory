@@ -1,12 +1,8 @@
 @extends('master.master')
-
 @section('title')
 Generate Appendix 73 Report
 @endsection
-
 @section('contents')
-
-
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb mb-3">
 		<li class="breadcrumb-item active" aria-current="page"><a href="{{ route('dboard') }}">Home</a></li>
@@ -14,8 +10,6 @@ Generate Appendix 73 Report
 		<li class="breadcrumb-item active" aria-current="page">Generate Appendix 73 Report</li>
 	</ol>
 </nav>
-
-
 <div class="card-deck mb-4">
   <div class="card card-shadow">
     <div class="card-body">
@@ -37,7 +31,6 @@ Generate Appendix 73 Report
     </div>
   </div>
 </div>
-
  <div class="xload" style="display: none;" id="loadgdata">
     <div class="container">
     <div style="margin:auto; width: 540px; margin-top: 35vh; ">
@@ -52,28 +45,22 @@ Generate Appendix 73 Report
     </div>
     </div>
   </div>
-
 <table class="table table-hover table-bordered">
   <thead>
     <tr>
       <th scope="col">Select</th>
       <th style="width: 20%;">Asset Item</th>
       <th style="width: 20%;">Property Number</th>
-
       <th scope="col">Unit of Mesure</th>
       <th style="width: 20%;">Date of Aquisition</th>
       <th >Cost of Acquisition</th>
-
       <th style="width: 20%;">Current Condition</th>
       <th scope="col">Count</th>
     </tr>
   </thead>
   <tbody id="myfiltered">
-    
   </tbody>
 </table>
-
-
 <form action="printdoc_a66" method="GET" target="_blank">
   {{ csrf_field() }}
   <div class="modal" tabindex="-1" role="dialog" id="modal_printdoc">
@@ -184,19 +171,14 @@ Generate Appendix 73 Report
  
 
 <script type="text/javascript">
-
   var g_invyear = <?php echo json_encode($_GET["inv_year"]); ?>;
   var g_invmonth = <?php echo json_encode($_GET["inv_month"]); ?>;
-
   $("#htinp_invyear").val(g_invyear);
   $("#htinp_invmonth").val(g_invmonth);
-
   var total_items_to_group = 0 ;
   var current_togroup = 0;
   var autoname = "";
   var room_numberreal = "";
-
-  
   GetRealRoomNumber();
   function GetRealRoomNumber(){
     $.ajax({
@@ -230,7 +212,6 @@ Generate Appendix 73 Report
       }
     })
   }
-
   function OpenUngroupItems(control_obj){
     $("#inp_groupname").val($(control_obj).data("gname"));
     $("#inp_groupnumber").val($(control_obj).data("rnum"));
@@ -240,11 +221,8 @@ Generate Appendix 73 Report
   function SignalReload(){
     LoadGroupedAssets();
   }
-
  function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
-
   function GroupAllSelectedDatum(){
-
     if($("#group_bal_per").val() > 0){
 var unik_id = IDGenerator();
   current_togroup = 0;
@@ -280,16 +258,11 @@ var unik_id = IDGenerator();
     }else{
       alert("Balance per card can't be zero (0) or less.");
     }
-    
   }
-
    function IDGenerator() {
      return '_' + Math.random().toString(36).substr(2, 9);
    }
-
-
   function FetchSelectedPropertyNumbers(){
-
     var id_of_conts_tovalidate = "";
     // CHECK IF ASSET IS VALID GROUPING TOGETHER
     var ccount =0;
@@ -301,12 +274,8 @@ var unik_id = IDGenerator();
         ccount++;
        }
     });
-
    var haserror = false;
-
-
    $('.asset_item_check[type="checkbox"]:checked').each(function() {
-      
         // ENCODE BASIS
          var myidentity = $(this).data("dateofaq") + $(this).data("itemname") + $(this).data("unitofmea") + $(this).data("aq_cost");
          if(myidentity != id_of_conts_tovalidate){
@@ -314,8 +283,6 @@ var unik_id = IDGenerator();
          }
       
     });
-
-
    // PROCEED
    if(haserror){
     alert("Items can't be grouped because specifications do not match.");
@@ -342,7 +309,6 @@ var unik_id = IDGenerator();
     }
    }
   }
-
   function LoadAssets(){
     $.ajax({
       type : "POST",
@@ -359,7 +325,6 @@ var unik_id = IDGenerator();
       }
     })
   }
-
    function LoadGroupedAssets(){
     $.ajax({
       type : "POST",

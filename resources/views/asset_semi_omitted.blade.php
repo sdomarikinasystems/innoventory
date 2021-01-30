@@ -12,12 +12,9 @@ Innoventory - Omitted Semi Expendables
 		<li class="breadcrumb-item active" aria-current="page">Asset Registry - Semi-Expendable Omitted Assets</li>
 	</ol>
 </nav>
-
 <div class="row mt-3">
 	<div class="col-md-4">
 		<div class="mb-3">
-			<!-- <button class="btn-warning btn" data-toggle='modal' data-target='#modal_ignoreall'><i class="fas fa-thumbs-down"></i> Ignore All</button> -->
-			<!-- <button class="btn btn-danger" data-toggle="modal" data-target="#repall"><i class="fas fa-flag"></i> Report All</button> -->
 		</div>
 	</div>
 	<div class="col-sm-4">
@@ -102,7 +99,6 @@ Innoventory - Omitted Semi Expendables
 	  </div>
 	</div>
 </form>
-
 <form action="{{ route('ig_sin_om') }}" method="POST">
 	<div class="modal" tabindex="-1" role="dialog" id="modal_ignoresingleton">
 	  <div class="modal-dialog" role="document">

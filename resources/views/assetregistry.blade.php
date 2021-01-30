@@ -16,8 +16,7 @@ Innoventory - Asset Registry
 <input type="hidden" value="{{ session('user_changesource_station') }}" id="myschool_realid" name="">
 
 <div class="mobiletext">
-
-<div id="lod_change_ass_source" style="display:none; top: 0; right: 0; left: 0; bottom: 0; position: fixed; background-color: rgba(0,0,0,0.9); z-index: 100; color:white;">
+<div id="lod_change_ass_source" style="display:none; top: 0; right: 0; left: 0; bottom: 0; position: fixed; background-color: rgba(0,0,0,0.5); z-index: 100;">
  <center><br><br><br><h4 class="mt-5">Changing Asset Source</h4></center>
 </div>
   <?php
@@ -65,13 +64,22 @@ Innoventory - Asset Registry
   </ul>
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show" id="suplliestbl" role="tabpanel" aria-labelledby="pills-home-tab">
-
-    <div class="row">
-      <div class="col-sm-6">
-          <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
+    <div class="row mb-4">
+      <div class="col-lg-3">
+        <div style="height: 158px;" class="card card-shadow">
+        <div class="card-body">
+           <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
+   <div class="importwarning" role="alert">
+      Change your asset source to import Supply Asset(s)
+    </div>
+        </div>
       </div>
-      <div class="col-sm-6">
-        <table class="table table-bordered">
+      </div>
+      <div class="col-lg-9">
+         <div style="height: 158px;" class="card card-shadow">
+        <div class="card-body">
+          
+<table class="table table-hover table-borderless">
       <thead>
         <tr>
           <th>Total Assets</th>
@@ -105,10 +113,13 @@ Innoventory - Asset Registry
         </tr>
       </tbody>
     </table>
+        </div>
       </div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-sm-12">
-
-          <table class="table table-hover table-bordered" id="tbl_supply">
+          <table class="table table-hover table-borderless" id="tbl_supply">
               <thead>
               <tr>
               <th scope="col" width="150">Article</th>
@@ -126,10 +137,8 @@ Innoventory - Asset Registry
                 
               </tbody>
           </table>
-
       </div>
     </div>
-
     <form action="{{ route('shoot_add_supply') }}" enctype="multipart/form-data" method="POST" >
       {{ csrf_field() }}
     <div class="modal" tabindex="-1" role="dialog" id="modal_importsupp">
@@ -142,11 +151,7 @@ Innoventory - Asset Registry
               </button>
             </div>
             <div class="modal-body">
-
-               <div id="lod_uploadsupp" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: #F8F9FA; border-radius:15px; display:none;">
-
-
-
+               <div id="lod_uploadsupp" style="display:none; top: 0; right: 0; left: 0; bottom: 0; position: fixed; background-color: rgba(0,0,0,0.5); z-index: 100;">
               <div style="margin:auto; width: 540px; margin-top: 35vh; ">
       <div class="card card-shadow" style=" border-radius: 10px !important;
     animation-name: scale-in;
@@ -161,9 +166,6 @@ Innoventory - Asset Registry
         </div>
       </div>
     </div>
-
-
-
      </div>
               <div class="row">
                  <div class="col-md-6">
@@ -192,7 +194,7 @@ Innoventory - Asset Registry
                       <div class="card-body card-limited">
                         <small class="text-muted float-right">Limited by 3 rows</small>
                         <h5>Preview <span id="issupplyvalid"></span></h5>
-                        <table class="table table-bordered table-responsive">
+                        <table class="table table-hover table-borderless table-responsive">
                         <tbody id="thetable_semiexpendible_supply">
                         <tr>
                         <td>Please upload a valid Asset Registry CSV file for the preview.</td>
@@ -240,10 +242,13 @@ Innoventory - Asset Registry
 
   </div>
    <div class="tab-pane fade show" id="semiexpendable" role="tabpanel" aria-labelledby="pills-home-tab">
-      <div class="row">
-  <div class="col-sm mb-3">
-    <a class="btn btn-success importbutton" href="#" data-toggle="modal" onclick="  LoadserviceCentersMine()" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import" ></i> Import Semi-Expendable</a>
-    <div class="alert alert-info importwarning" role="alert">
+
+    <div class="row mb-3">
+     <div class="col-lg-3">
+        <div class="card card-shadow" style="height: 158px;">
+        <div class="card-body">
+           <a class="btn btn-success importbutton" href="#" data-toggle="modal" onclick="  LoadserviceCentersMine()" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import" ></i> Import Semi-Expendable</a>
+    <div class="importwarning" role="alert">
       Change your asset source to import Semi-Expendable Asset(s)
     </div>
 
@@ -282,11 +287,9 @@ Innoventory - Asset Registry
           $("#servcentbtnchoose").css("display","none");
         }
       })
-
       $("#servcentbtnchoose").click(function(){
         $(".servicecenterselected").val($("#inp_servicecentersinput").val());
       })
-
     </script>
 
     <form action="{{ route('shoot_add_semi_expendible') }}" enctype="multipart/form-data" method="POST" >
@@ -296,7 +299,7 @@ Innoventory - Asset Registry
         <div class="modal-content">
 
 
-            <div id="lod_uploadsmi" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: #F8F9FA; border-radius:15px; display:none;">
+            <div id="lod_uploadsmi" style="display:none; top: 0; right: 0; left: 0; bottom: 0; position: fixed; background-color: rgba(0,0,0,0.5); z-index: 100;">
               <div style="margin:auto; width: 540px; margin-top: 35vh; ">
       <div class="card card-shadow" style=" border-radius: 10px !important;
     animation-name: scale-in;
@@ -347,7 +350,6 @@ Innoventory - Asset Registry
               <li>CSV has <span class="badge badge-success">9 columns</span></li>
             </ol>
               </div>
-             
               <div class="col-md-12">
                 <input type="hidden" name="service_center_id" class="servicecenterselected">
                  <div class=" mt-2">
@@ -355,7 +357,7 @@ Innoventory - Asset Registry
              <div class="card-body card-limited">
               <small class="text-muted float-right">Limited by 3 rows</small>
             <h5>Preview <span id="issemivalid"></span></h5>
-              <table class="table table-bordered table-responsive">
+              <table class="table table-hover table-borderless table-responsive">
                 <tbody id="thetable_semiexpendible">
                   <tr>
                     <td>Please upload a valid Asset Registry CSV file for the preview.</td>
@@ -377,10 +379,13 @@ Innoventory - Asset Registry
     </div>
 
     </form>
-
-  </div>
-  <div class="col-sm">
-     <table class="table table-bordered">
+        </div>
+      </div>
+     </div>
+ <div class="col-lg-9">
+        <div class="card card-shadow" style="height: 158px;">
+        <div class="card-body">
+          <table class="table table-hover table-borderless">
       <thead>
         <tr>
           <th>Total Assets</th>
@@ -412,9 +417,13 @@ Innoventory - Asset Registry
         </tr>
       </tbody>
     </table>
-  </div>
+        </div>
+      </div>
+ </div>
+    </div>
+      <div class="row">
 </div>
-    <table class="table table-hover table-bordered" id="tbl_semiexpendable">
+    <table class="table table-hover table-borderless" id="tbl_semiexpendable">
     <thead>
       <tr>
         <th scope="col" width="150">Article</th>
@@ -436,22 +445,27 @@ Innoventory - Asset Registry
    </div>
   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
       
-
-      <div class="row">
-  <div class="col-sm mb-3">
-    <?php
+<div class="row mb-3">
+  <div class="col-lg-3">
+    <div class="card card-shadow" style="height: 158px;">
+    <div class="card-body">
+        <?php
       if(session("user_type") < "4" && session("user_type") != "2"){
     ?>
     <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
     <a class="btn btn-success importbutton" href="#" data-toggle="modal" data-target="#uploadnewcsv" onclick="LoadAllSCNamesForCapOut()"><i class="fas fa-file-import"></i> Import Capital Outlay</a>
 
-     <div class="alert alert-info importwarning" role="alert">
+     <div class="importwarning" role="alert">
       Change your asset source to import Capital Outlay Asset(s)
     </div>
     <?php } ?>
+    </div>
   </div>
-  <div class="col-sm">
-    <table class="table table-bordered">
+  </div>
+  <div class="col-lg-9">
+    <div class="card card-shadow" style="height: 158px;">
+    <div class="card-body">
+       <table class="table table-hover table-borderless">
       <thead>
         <tr>
           <th>Total Assets</th>
@@ -487,11 +501,14 @@ Innoventory - Asset Registry
         </tr>
       </tbody>
     </table>
-  </div>  
+    </div>
+  </div>
+  </div>
 </div>
+      <div class="row">
 
-
-      <table class="table table-hover table-bordered" id="tbl_ass">
+</div>
+      <table class="table table-hover table-borderless" id="tbl_ass">
     <thead>
       <tr>
         <th scope="col" width="150">Property Number</th>
@@ -550,10 +567,7 @@ Innoventory - Asset Registry
   <div class="modal" tabindex="-1" id="uploadnewcsv" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
-         <div id="lod_uploadass" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: #F8F9FA; border-radius:15px; display:none;">
-
-
-
+         <div id="lod_uploadass" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: rgba(0,0,0,0.5); border-radius:15px; display:none;">
               <div style="margin:auto; width: 540px; margin-top: 35vh; ">
       <div class="card card-shadow" style=" border-radius: 10px !important;
     animation-name: scale-in;
@@ -615,7 +629,7 @@ Innoventory - Asset Registry
              <div class="card-body card-limited">
               <small class="text-muted float-right">Limited by 3 rows</small>
             <h5>Preview</h5>
-              <table class="table table-bordered table-responsive">
+              <table class="table table-hover table-borderless table-responsive">
                 <tbody id="thetable">
                   <tr>
                     <td>Please upload a valid Asset Registry CSV file for the preview.</td>
@@ -668,7 +682,7 @@ Innoventory - Asset Registry
         </button>
       </div>
      <div class="card-body">
-        <table class="table m-0 table-striped table-bordered" id="tbl_notinscap">
+        <table class="table table-hover table-borderless" id="tbl_notinscap">
           <thead>
             <tr>
               <th>Property #</th>
@@ -692,412 +706,462 @@ Innoventory - Asset Registry
 </div>
 
 <script type="text/javascript">
+var hasloadednotinserted = false;
 
-  var hasloadednotinserted = false;
-  function load_not_inserted_co(){
-
-    if(hasloadednotinserted == false){
-      var curr_sc = $("#myschool_realid").val();
+function load_not_inserted_co() {
+  if (hasloadednotinserted == false) {
+    var curr_sc = $("#myschool_realid").val();
     $.ajax({
-      type:"POST",
+      type: "POST",
       url: "{{ route('stole_not_inserted_recent_co_data') }}",
-      data: {_token: "{{ csrf_token() }}",current_station: curr_sc},
-      success: function(data){  
+      data: {
+        _token: "{{ csrf_token() }}",
+        current_station: curr_sc
+      },
+      success: function (data) {
         $("#tbl_notinscap").DataTable().destroy();
         $("#thenotinsdataofco").html(data);
         $("#tbl_notinscap").DataTable();
       }
     })
-      hasloadednotinserted = true;
-    }
+    hasloadednotinserted = true;
   }
-  $("#searchss").change(function(){
-    var skey = $("#searchss").val();
-   $.ajax({
+}
+$("#searchss").change(function () {
+  var skey = $("#searchss").val();
+  $.ajax({
     type: "POST",
     url: "{{ route('search_asstov') }}",
-    data: {_token: "{{ csrf_token() }}",searchkey:skey},
-    success: function(data){
-      if(data == ""){
-          $("#search_narrative").html("No result found.");
-          $("#school_search_cont").css("display","none");
-          $("#search_narrative").css("display","block");
-      }else{
-          $("#school_search_cont").css("display","block");
-          $("#search_narrative").css("display","none");
-          $("#school_search_cont").html(data);
+    data: {
+      _token: "{{ csrf_token() }}",
+      searchkey: skey
+    },
+    success: function (data) {
+      if (data == "") {
+        $("#search_narrative").html("No result found.");
+        $("#school_search_cont").css("display", "none");
+        $("#search_narrative").css("display", "block");
+      } else {
+        $("#school_search_cont").css("display", "block");
+        $("#search_narrative").css("display", "none");
+        $("#school_search_cont").html(data);
       }
       $("#searchss").val("");
     }
-   })
   })
-  function changesource(control_obj){
-   hasloadednotinserted = false;
-   var sourceid = $(control_obj).data("sourceid");
-   var sourcename = $(control_obj).data("sourcename");
-    $("#myschool_realid").val(sourceid);
-    $(".source_id_dynamic").val(sourceid);
-    $("#sourcename").html(sourcename);
-    $("#lod_change_ass_source").css("display","block");
+})
 
-    $.ajax({
-      type: "POST",
-      url: "{{ route('shoot_univ_change_source') }}",
-      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
-      success: function(){
-        location.reload();
-         
-      }
-    })
-   
+function changesource(control_obj) {
+  hasloadednotinserted = false;
+  var sourceid = $(control_obj).data("sourceid");
+  var sourcename = $(control_obj).data("sourcename");
+  $("#myschool_realid").val(sourceid);
+  $(".source_id_dynamic").val(sourceid);
+  $("#sourcename").html(sourcename);
+  $("#lod_change_ass_source").css("display", "block");
+
+  $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_univ_change_source') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      new_source_id: sourceid,
+      new_source_name: sourcename
+    },
+    success: function () {
+      location.reload();
+
     }
+  })
 
-    function gotomyownassets(){
-        hasloadednotinserted = false;
+}
 
-    var sourceid =  <?php echo json_encode(session("user_school")); ?>;
-   var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
-    $.ajax({
-      type: "POST",
-      url: "{{ route('shoot_univ_change_source') }}",
-      data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
-      success: function(){
-        location.reload();
-      }
-    })
+function gotomyownassets() {
+  hasloadednotinserted = false;
+
+  var sourceid = <?php echo json_encode(session("user_school")); ?>;
+  var sourcename = <?php echo json_encode(session("user_schoolname")); ?>;
+  $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_univ_change_source') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      new_source_id: sourceid,
+      new_source_name: sourcename
+    },
+    success: function () {
+      location.reload();
     }
+  })
+}
 
-  var dttoclear;
-    function ClearAssetData(control_obj){
-      dttoclear = $(control_obj).data("datatoclear");
-      $(".assdataname").html(dttoclear);
-    }
+var dttoclear;
 
-    function ProceedToAssetDeletion(){
+function ClearAssetData(control_obj) {
+  dttoclear = $(control_obj).data("datatoclear");
+  $(".assdataname").html(dttoclear);
+}
 
-    var stid = $("#myschool_realid").val();
-         // alert(stid);
-    $.ajax({
-      type:"POST",
-      url: "{{ route('shoot_delete_specific_assetdata_all') }}",
-      data: {_token: "{{ csrf_token() }}",station_id:stid,asset_type: dttoclear},
-      success: function(data){
+function ProceedToAssetDeletion() {
+
+  var stid = $("#myschool_realid").val();
+  // alert(stid);
+  $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_delete_specific_assetdata_all') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      station_id: stid,
+      asset_type: dttoclear
+    },
+    success: function (data) {
       alert(dttoclear + " asset clearing process completed!");
       LoadAssets();
-      }
-    })
-
     }
+  })
+
+}
 
 
-    $("#tbl_ass").DataTable();
-    $("#tbl_semiexpendable").DataTable();
-    $("#tbl_supply").DataTable();
-    var isokcsv = false;
-    var hasclickedsemi = false;
-    var hasclickedsupply = false;
+$("#tbl_ass").DataTable();
+$("#tbl_semiexpendable").DataTable();
+$("#tbl_supply").DataTable();
+var isokcsv = false;
+var hasclickedsemi = false;
+var hasclickedsupply = false;
 
-    $("#btn_gotosemiexpendable").click(function(){
-      if(hasclickedsemi == false){
-        hasclickedsemi = true;
-          LoadSemiExpendable();
-      }
-    })
-    $("#btn_gotosuppytable").click(function(){
-      if(hasclickedsupply == false){
-        hasclickedsupply = true;
-          getallofmysuppydata();
-      }
-    })
-    var isokcsv_semiexpendable = false
-    setInterval(function(){
-      if($("#file").val() == "" || isokcsv == false){
-        $("#sub_butt").css("display","none");
-      }else{
-        $("#sub_butt").css("display","block");
-        $("#panel_capital_previewscv").css("display","block");
-      }
-
-
-       if($("#semifile").val() == "" || isokcsv_semiexpendable == false){
-        $("#submitsemiexpendable").css("display","none");
-      }else{
-        $("#submitsemiexpendable").css("display","block");
-         $("#panel_semi_previewscv").css("display","block");
-        $("#issemivalid").html("<span class='badge badge-success'>Congrats, Uploaded file is valid!</span>");
-      }
+$("#btn_gotosemiexpendable").click(function () {
+  if (hasclickedsemi == false) {
+    hasclickedsemi = true;
+    LoadSemiExpendable();
+  }
+})
+$("#btn_gotosuppytable").click(function () {
+  if (hasclickedsupply == false) {
+    hasclickedsupply = true;
+    getallofmysuppydata();
+  }
+})
+var isokcsv_semiexpendable = false
+setInterval(function () {
+  if ($("#file").val() == "" || isokcsv == false) {
+    $("#sub_butt").css("display", "none");
+  } else {
+    $("#sub_butt").css("display", "block");
+    $("#panel_capital_previewscv").css("display", "block");
+  }
 
 
+  if ($("#semifile").val() == "" || isokcsv_semiexpendable == false) {
+    $("#submitsemiexpendable").css("display", "none");
+  } else {
+    $("#submitsemiexpendable").css("display", "block");
+    $("#panel_semi_previewscv").css("display", "block");
+    $("#issemivalid").html("<span class='badge badge-success'>Congrats, Uploaded file is valid!</span>");
+  }
 
 
-       if($("#supplyfile").val() == "" || isokcsv_semiexpendable == false){
-        $("#submitsupplycsvbtn").css("display","none");
-      }else{
-        $("#submitsupplycsvbtn").css("display","block");
-         $("#panel_semi_previewscv_supply").css("display","block");
-        $("#issupplyvalid").html("<span class='badge badge-success'>Congrats, Uploaded file is valid!</span>");
-      }
+  if ($("#supplyfile").val() == "" || isokcsv_semiexpendable == false) {
+    $("#submitsupplycsvbtn").css("display", "none");
+  } else {
+    $("#submitsupplycsvbtn").css("display", "block");
+    $("#panel_semi_previewscv_supply").css("display", "block");
+    $("#issupplyvalid").html("<span class='badge badge-success'>Congrats, Uploaded file is valid!</span>");
+  }
 
 
+  var myschool_realid = $("#myschool_realid").val();
+  var detaulscid = <?php echo json_encode(session("user_school")) ?>;
 
-      var myschool_realid = $("#myschool_realid").val();
-      var detaulscid = <?php echo json_encode(session("user_school")) ?>;
-
-      if(myschool_realid == detaulscid){
-        $(".importbutton").css("display","inline-block");
-         $(".importbutton").prop("title","Click to start importing.");
-         $(".importwarning").css("display","none");
-      }else{
-       $(".importbutton").css("display", "none");
-       $(".importbutton").prop("title","Importing is disabled because you are viewing assets in another source.");
-       $(".importwarning").css("display","inline-block");
-      }
-    },300)
-    $("#submitsemiexpendable").click(function(){
-        $("#lod_uploadsmi").css("display","block");
-    })
+  if (myschool_realid == detaulscid) {
+    $(".importbutton").css("display", "inline-block");
+    $(".importbutton").prop("title", "Click to start importing.");
+    $(".importwarning").css("display", "none");
+  } else {
+    $(".importbutton").css("display", "none");
+    $(".importbutton").prop("title", "Importing is disabled because you are viewing assets in another source.");
+    $(".importwarning").css("display", "inline-block");
+  }
+}, 300)
+$("#submitsemiexpendable").click(function () {
+  $("#lod_uploadsmi").css("display", "block");
+})
 
 
- function LoadAllSCNamesForCapOut(){
-   $.ajax({
+function LoadAllSCNamesForCapOut() {
+  $.ajax({
     type: "POST",
     url: "{{ route('load_all_school_names') }}",
-    data : {_token: "{{ csrf_token() }}"},
-    success: function(data){
+    data: {
+      _token: "{{ csrf_token() }}"
+    },
+    success: function (data) {
       $("#st_all").append(data);
       $("#st_all").val(<?php echo json_encode(session("user_school")); ?>);
     }
   })
- }
+}
 
-  function OpenAssetToDispose(control_obj){
-    $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
-  }
-    LoadAssets();
-  function LoadAssets(){
-      var school_real_id = $("#myschool_realid").val();
-      $.ajax({
-        type : "POST",
-        url : "{{ route('display_all_encoded_assets') }}",
-        data : {_token:"{{ csrf_token()}}",selected_realid: school_real_id},
-         success : function(data){
-            $("#tbl_ass").DataTable().destroy();
-            $("#allmyassests").html(data);
-            $("#tbl_ass").DataTable();
-             LoadAssetRegistrySummary(school_real_id);
-         }
-      })
-    }
-    function LoadAssetRegistrySummary(sc_id){
-       var school_real_id = $("#myschool_realid").val();
-      $.ajax({
-        type: "POST",
-        url: "{{ route('loadassetvalsum') }}",
-        data: {_token:"{{ csrf_token() }}",selected_realid:school_real_id},
-        success: function(data){
-        $("#assvalsum").html(data);
-            LoadSemiExpendable();
-        }
-      })
-    }
-    function fileValidation(){
-      var fileInput = document.getElementById('file');
-      var filePath = fileInput.value;
-      var allowedExtensions = /(\.csv)$/i;
-      var fd = new FormData();
-      var files = $('#file')[0].files[0];
-      fd.append('thecsvfile',files);
-      fd.append('_token',"{{ csrf_token() }}");
+function OpenAssetToDispose(control_obj) {
+  $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
+}
+LoadAssets();
 
-      if(!allowedExtensions.exec(filePath)){
-      alert("Only .csv file is allowed.");
-      fileInput.value = '';
-      $("#thetable").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
-      return false;
-      }else{
-      // alert(filevalue);
-      // Display CSV Preview
-      $.ajax({
-      type : "POST",
-      url : "{{ route('preview_csv') }}",
+function LoadAssets() {
+  var school_real_id = $("#myschool_realid").val();
+  $.ajax({
+    type: "POST",
+    url: "{{ route('display_all_encoded_assets') }}",
+    data: {
+      _token: "{{ csrf_token()}}",
+      selected_realid: school_real_id
+    },
+    success: function (data) {
+      $("#tbl_ass").DataTable().destroy();
+      $("#allmyassests").html(data);
+      $("#tbl_ass").DataTable();
+      LoadAssetRegistrySummary(school_real_id);
+    }
+  })
+}
+
+function LoadAssetRegistrySummary(sc_id) {
+  var school_real_id = $("#myschool_realid").val();
+  $.ajax({
+    type: "POST",
+    url: "{{ route('loadassetvalsum') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      selected_realid: school_real_id
+    },
+    success: function (data) {
+      $("#assvalsum").html(data);
+      LoadSemiExpendable();
+    }
+  })
+}
+
+function fileValidation() {
+  var fileInput = document.getElementById('file');
+  var filePath = fileInput.value;
+  var allowedExtensions = /(\.csv)$/i;
+  var fd = new FormData();
+  var files = $('#file')[0].files[0];
+  fd.append('thecsvfile', files);
+  fd.append('_token', "{{ csrf_token() }}");
+
+  if (!allowedExtensions.exec(filePath)) {
+    alert("Only .csv file is allowed.");
+    fileInput.value = '';
+    $("#thetable").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
+    return false;
+  } else {
+    // alert(filevalue);
+    // Display CSV Preview
+    $.ajax({
+      type: "POST",
+      url: "{{ route('preview_csv') }}",
       contentType: false,
       processData: false,
       enctype: 'multipart/form-data',
-      data:fd,
-      success: function(data){
-        if(data == ""){
+      data: fd,
+      success: function (data) {
+        if (data == "") {
           isokcsv = false;
-           $("#thetable").html("<tr><td><center>The CSV file does not met the specifications to be recognized as Asset Registry CSV file.</center></td></tr>");
-        }else{
+          $("#thetable").html("<tr><td><center>The CSV file does not met the specifications to be recognized as Asset Registry CSV file.</center></td></tr>");
+        } else {
           isokcsv = true;
-           $("#thetable").html(data);
+          $("#thetable").html(data);
         }
-     
-      }
-      })
-      }
-  }
 
-var hasloadedservicecenterssel = false;
-  function LoadserviceCentersMine(){
-    var stationidassigned =  $("#myschool_realid").val();
-    $.ajax({
-      type: "POST",
-      url: "{{ route('shoot_all_ofmy_service_center') }}",
-      data: {_token: "{{ csrf_token() }}",station_id: stationidassigned},
-      success: function(data){
-        $("#inp_servicecentersinput").html(data);
       }
     })
   }
-  function LoadSemiExpendable(){
-     var stationidassigned =  $("#myschool_realid").val();
-     step_1();
-     function step_1(){
-      $.ajax({
+}
+
+var hasloadedservicecenterssel = false;
+
+function LoadserviceCentersMine() {
+  var stationidassigned = $("#myschool_realid").val();
+  $.ajax({
+    type: "POST",
+    url: "{{ route('shoot_all_ofmy_service_center') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      station_id: stationidassigned
+    },
+    success: function (data) {
+      $("#inp_servicecentersinput").html(data);
+    }
+  })
+}
+
+function LoadSemiExpendable() {
+  var stationidassigned = $("#myschool_realid").val();
+  step_1();
+
+  function step_1() {
+    $.ajax({
       type: "POST",
       url: "{{ route('stole_semi_expendable_bystation') }}",
-      data: {_token: "{{ csrf_token() }}",station_id: stationidassigned},
-      success: function(data){
-         $("#tbl_semiexpendable").DataTable().destroy();
+      data: {
+        _token: "{{ csrf_token() }}",
+        station_id: stationidassigned
+      },
+      success: function (data) {
+        $("#tbl_semiexpendable").DataTable().destroy();
         $("#tbl_allsemiexpends").html(data);
         var semiasscount = (data.match(/<tr>/g) || []).length;
         $("#semi_asscount").html(semiasscount);
-         $("#tbl_semiexpendable").DataTable();
-step_2();
+        $("#tbl_semiexpendable").DataTable();
+        step_2();
       }
     })
-     }
+  }
 
-      function step_2(){
-         $.ajax({
+  function step_2() {
+    $.ajax({
       type: "POST",
       url: "{{ route('stole_my_semiexpendable_descrepancies') }}",
-      data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,layout:"count"},
-      success: function(data){
-       $("#semidesccount").html(data);
-step_3();
+      data: {
+        _token: "{{ csrf_token() }}",
+        station_id: stationidassigned,
+        layout: "count"
+      },
+      success: function (data) {
+        $("#semidesccount").html(data);
+        step_3();
       }
     })
-      }
-
-       function step_3(){
-        $.ajax({
-        type:"POST",
-        url: "{{ route('stole_semi_expendable_omitted') }}",
-        data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,layout:"count"},
-        success: function(data){
-          // alert(data);
-          $("#semi_asssataomitted").html(data);
-          step_4();
-        }
-       })
-       }
-
-       function step_4(){
-        $.ajax({
-        type:"POST",
-        url:"{{ route('stole_last_date_ofcode') }}",
-        data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,givencode: "a01.1"},
-        success: function(data){
-           $("#semi_lastuploadof").html(data);
-            getallofmysuppydata();
-        }
-       })
-       }
-    }
-      function getallofmysuppydata(){
-        var stationidassigned = $("#myschool_realid").val();
-
-        $.ajax({
-          type: "POST",
-          url: "{{ route('stole_all_of_my_supply_data') }}",
-          data: {_token: "{{ csrf_token() }}",station_id: stationidassigned},
-          success: function(data){
-              $("#tbl_supply").DataTable().destroy();
-             $("#tbl_importedsupplies").html(data);
-             $("#tbl_supply").DataTable();
-          }
-        })
-      }
-
-      function fileValidation_supplyfile(){
-         var fileInput = document.getElementById('supplyfile');
-      var filePath = fileInput.value;
-      var allowedExtensions = /(\.csv)$/i;
-      var fd = new FormData();
-      var files = $('#supplyfile')[0].files[0];
-      fd.append('thecsvfile',files);
-      fd.append('_token',"{{ csrf_token() }}");
-
-      if(!allowedExtensions.exec(filePath)){
-      alert("Only .csv file is allowed.");
-      fileInput.value = '';
-      $("#thetable_semiexpendible_supply").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
-      return false;
-      }else{
-      $.ajax({
-      type : "POST",
-      url : "{{ route('stole_preview_of_uploaded_supplyfile') }}",
-      contentType: false,
-      processData: false,
-      enctype: 'multipart/form-data',
-      data:fd,
-      success: function(data){
-        if(data.includes("Supply CSV file is not valid") == true){
-          isokcsv_semiexpendable = false;
-            $("#thetable_semiexpendible_supply").html(data);
-            $("#panel_semi_previewscv_supply").css("display","block");
-            $("#issupplyvalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
-        }else{
-            isokcsv_semiexpendable = true;
-            $("#panel_semi_previewscv_supply").css("display","block");
-            $("#thetable_semiexpendible_supply").html(data);
-        }
-      }
-      })
-      }
-      }
-
-  function fileValidation_semiexpendable(){
-      var fileInput = document.getElementById('semifile');
-      var filePath = fileInput.value;
-      var allowedExtensions = /(\.csv)$/i;
-      var fd = new FormData();
-      var files = $('#semifile')[0].files[0];
-      fd.append('thecsvfile',files);
-      fd.append('_token',"{{ csrf_token() }}");
-
-      if(!allowedExtensions.exec(filePath)){
-      alert("Only .csv file is allowed.");
-      fileInput.value = '';
-      $("#thetable_semiexpendible").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
-      return false;
-      }else{
-      // alert(filevalue);
-      // Display CSV Preview
-      $.ajax({
-      type : "POST",
-      url : "{{ route('shoot_preview_csv_semiexpendable') }}",
-      contentType: false,
-      processData: false,
-      enctype: 'multipart/form-data',
-      data:fd,
-      success: function(data){
-        if(data.includes("Semi Expendable CSV file is not valid") == true){
-            isokcsv_semiexpendable = false;
-            $("#thetable_semiexpendible").html(data);
-            $("#panel_semi_previewscv").css("display","block");
-            $("#issemivalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
-        }else{
-            isokcsv_semiexpendable = true;
-            $("#panel_semi_previewscv").css("display","block");
-            $("#thetable_semiexpendible").html(data);
-        }
-      }
-      })
-      }
   }
+
+  function step_3() {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('stole_semi_expendable_omitted') }}",
+      data: {
+        _token: "{{ csrf_token() }}",
+        station_id: stationidassigned,
+        layout: "count"
+      },
+      success: function (data) {
+        // alert(data);
+        $("#semi_asssataomitted").html(data);
+        step_4();
+      }
+    })
+  }
+
+  function step_4() {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('stole_last_date_ofcode') }}",
+      data: {
+        _token: "{{ csrf_token() }}",
+        station_id: stationidassigned,
+        givencode: "a01.1"
+      },
+      success: function (data) {
+        $("#semi_lastuploadof").html(data);
+        getallofmysuppydata();
+      }
+    })
+  }
+}
+
+function getallofmysuppydata() {
+  var stationidassigned = $("#myschool_realid").val();
+
+  $.ajax({
+    type: "POST",
+    url: "{{ route('stole_all_of_my_supply_data') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      station_id: stationidassigned
+    },
+    success: function (data) {
+      $("#tbl_supply").DataTable().destroy();
+      $("#tbl_importedsupplies").html(data);
+      $("#tbl_supply").DataTable();
+    }
+  })
+}
+
+function fileValidation_supplyfile() {
+  var fileInput = document.getElementById('supplyfile');
+  var filePath = fileInput.value;
+  var allowedExtensions = /(\.csv)$/i;
+  var fd = new FormData();
+  var files = $('#supplyfile')[0].files[0];
+  fd.append('thecsvfile', files);
+  fd.append('_token', "{{ csrf_token() }}");
+
+  if (!allowedExtensions.exec(filePath)) {
+    alert("Only .csv file is allowed.");
+    fileInput.value = '';
+    $("#thetable_semiexpendible_supply").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
+    return false;
+  } else {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('stole_preview_of_uploaded_supplyfile') }}",
+      contentType: false,
+      processData: false,
+      enctype: 'multipart/form-data',
+      data: fd,
+      success: function (data) {
+        if (data.includes("Supply CSV file is not valid") == true) {
+          isokcsv_semiexpendable = false;
+          $("#thetable_semiexpendible_supply").html(data);
+          $("#panel_semi_previewscv_supply").css("display", "block");
+          $("#issupplyvalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
+        } else {
+          isokcsv_semiexpendable = true;
+          $("#panel_semi_previewscv_supply").css("display", "block");
+          $("#thetable_semiexpendible_supply").html(data);
+        }
+      }
+    })
+  }
+}
+
+function fileValidation_semiexpendable() {
+  var fileInput = document.getElementById('semifile');
+  var filePath = fileInput.value;
+  var allowedExtensions = /(\.csv)$/i;
+  var fd = new FormData();
+  var files = $('#semifile')[0].files[0];
+  fd.append('thecsvfile', files);
+  fd.append('_token', "{{ csrf_token() }}");
+
+  if (!allowedExtensions.exec(filePath)) {
+    alert("Only .csv file is allowed.");
+    fileInput.value = '';
+    $("#thetable_semiexpendible").html("<tr><td><center>Please upload a valid Asset Registry CSV file for the preview.</center></td></tr>");
+    return false;
+  } else {
+    $.ajax({
+      type: "POST",
+      url: "{{ route('shoot_preview_csv_semiexpendable') }}",
+      contentType: false,
+      processData: false,
+      enctype: 'multipart/form-data',
+      data: fd,
+      success: function (data) {
+        if (data.includes("Semi Expendable CSV file is not valid") == true) {
+          isokcsv_semiexpendable = false;
+          $("#thetable_semiexpendible").html(data);
+          $("#panel_semi_previewscv").css("display", "block");
+          $("#issemivalid").html("<span class='badge badge-danger'>Sorry, Uploaded file is not valid!</span>");
+        } else {
+          isokcsv_semiexpendable = true;
+          $("#panel_semi_previewscv").css("display", "block");
+          $("#thetable_semiexpendible").html(data);
+        }
+      }
+    })
+  }
+}
   </script>
 
 

@@ -34,7 +34,7 @@ Innoventory - Service Centers
 </div>
 <div class="row mt-3">
 	<div class="col-md-12">
-		<table class="table table-bordered" id="tbl_allinfolocs">
+		<table class="table table-borderless table-hover" id="tbl_allinfolocs">
 		  <thead>
 			<tr>
 				<th>Service Center</th>
