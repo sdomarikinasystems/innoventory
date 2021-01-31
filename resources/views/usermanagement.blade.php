@@ -362,7 +362,7 @@ $("#emp_id_del").val($(control_obj).data("empid"));
 LoadAllAccounts()
 function LoadAllAccounts(){
    $.ajax({
-    type: "POST",
+    type: "GET",
     url: "{{ route('display_all_employees') }}",
     data : {_token: "{{ csrf_token() }}",user_school: curr_station_id},
     success: function(data){

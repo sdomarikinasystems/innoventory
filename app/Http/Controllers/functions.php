@@ -128,6 +128,9 @@ class functions extends Controller {
             return $out[0];
         }
     }
+    public function fire_dispose_semi_expendable(Request $req){
+        $this->send(["tag"=>"DISPOSE_SINGLE_SEMI_EXPENDABLE","item_id"=>$this->sdmenc($req["asset_id"])]);
+    }
     public function look_total_assets_of_station_specific(Request $req) {
         $client = new \GuzzleHttp\Client();
         $result = $client->request('POST', WEBSERVICE_URL, ['form_params' => ['tag' => $this->sdmenc('get_total_assets'), 'station_id' => $this->sdmenc($req['station_number']), ]]);
@@ -140,14 +143,9 @@ class functions extends Controller {
         return 'true';
     }
     public function fixWrongUTF8Encoding($inputString) {
-        // code source:  https://github.com/devgeniem/wp-sanitize-accented-uploads/blob/master/plugin.php#L152
-        // table source: http://www.i18nqa.com/debug/utf8-debug.html
         $fix_list = array(
-        // 3 char errors first
         'â€š' => '‚', 'â€ž' => '„', 'â€¦' => '…', 'â€¡' => '‡', 'â€°' => '‰', 'â€¹' => '‹', 'â€˜' => '‘', 'â€™' => '’', 'â€œ' => '“', 'â€¢' => '•', 'â€“' => '–', 'â€”' => '—', 'â„¢' => '™', 'â€º' => '›', 'â‚¬' => '€',
-        // 2 char errors
         'Ã‚' => 'Â', 'Æ’' => 'ƒ', 'Ãƒ' => 'Ã', 'Ã„' => 'Ä', 'Ã…' => 'Å', 'â€' => '†', 'Ã†' => 'Æ', 'Ã‡' => 'Ç', 'Ë†' => 'ˆ', 'Ãˆ' => 'È', 'Ã‰' => 'É', 'ÃŠ' => 'Ê', 'Ã‹' => 'Ë', 'Å’' => 'Œ', 'ÃŒ' => 'Ì', 'Å½' => 'Ž', 'ÃŽ' => 'Î', 'Ã‘' => 'Ñ', 'Ã’' => 'Ò', 'Ã“' => 'Ó', 'â€' => '”', 'Ã”' => 'Ô', 'Ã•' => 'Õ', 'Ã–' => 'Ö', 'Ã—' => '×', 'Ëœ' => '˜', 'Ã˜' => 'Ø', 'Ã™' => 'Ù', 'Å¡' => 'š', 'Ãš' => 'Ú', 'Ã›' => 'Û', 'Å“' => 'œ', 'Ãœ' => 'Ü', 'Å¾' => 'ž', 'Ãž' => 'Þ', 'Å¸' => 'Ÿ', 'ÃŸ' => 'ß', 'Â¡' => '¡', 'Ã¡' => 'á', 'Â¢' => '¢', 'Ã¢' => 'â', 'Â£' => '£', 'Ã£' => 'ã', 'Â¤' => '¤', 'Ã¤' => 'ä', 'Â¥' => '¥', 'Ã¥' => 'å', 'Â¦' => '¦', 'Ã¦' => 'æ', 'Â§' => '§', 'Ã§' => 'ç', 'Â¨' => '¨', 'Ã¨' => 'è', 'Â©' => '©', 'Ã©' => 'é', 'Âª' => 'ª', 'Ãª' => 'ê', 'Â«' => '«', 'Ã«' => 'ë', 'Â¬' => '¬', 'Ã¬' => 'ì', 'Â®' => '®', 'Ã®' => 'î', 'Â¯' => '¯', 'Ã¯' => 'ï', 'Â°' => '°', 'Ã°' => 'ð', 'Â±' => '±', 'Ã±' => 'ñ', 'Â²' => '²', 'Ã²' => 'ò', 'Â³' => '³', 'Ã³' => 'ó', 'Â´' => '´', 'Ã´' => 'ô', 'Âµ' => 'µ', 'Ãµ' => 'õ', 'Â¶' => '¶', 'Ã¶' => 'ö', 'Â·' => '·', 'Ã·' => '÷', 'Â¸' => '¸', 'Ã¸' => 'ø', 'Â¹' => '¹', 'Ã¹' => 'ù', 'Âº' => 'º', 'Ãº' => 'ú', 'Â»' => '»', 'Ã»' => 'û', 'Â¼' => '¼', 'Ã¼' => 'ü', 'Â½' => '½', 'Ã½' => 'ý', 'Â¾' => '¾', 'Ã¾' => 'þ', 'Â¿' => '¿', 'Ã¿' => 'ÿ', 'Ã€' => 'À',
-        // 1 char errors last
         'Ã' => 'Á', 'Å' => 'Š', 'Ã' => 'Í', 'Ã' => 'Ï', 'Ã' => 'Ð', 'Ã' => 'Ý', 'Ã' => 'à', 'Ã­' => 'í');
         $error_chars = array_keys($fix_list);
         $real_chars = array_values($fix_list);
@@ -1180,7 +1178,7 @@ class functions extends Controller {
               <button class='dropdown-item' type='submit' target='_blank'><i class='fas fa-binoculars'></i> View</button>
               </form>";
             $toecho.= '
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#semidispose"><i class="fas fa-trash"></i> Dispose</a>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-itemid="' . $semiex[$i]["item_id"] . '" onclick="preparesemidisposal(this)" data-target="#semidispose"><i class="fas fa-trash"></i> Dispose</a>
               </div>
             </div>
 

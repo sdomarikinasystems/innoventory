@@ -202,7 +202,7 @@ Innoventory - Service Centers
   }
 function LoadAssetLocations(){
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('lodasslocenc') }}",
       data: {_token:"{{ csrf_token() }}"},
       success: function(data){

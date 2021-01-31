@@ -541,7 +541,7 @@ Innoventory - Asset Registry
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Item Disposal</h5>
+          <h5 class="modal-title">Item Disposal (Capital Outlay)</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -949,7 +949,7 @@ CheckRediness();
 function LoadAssets() {
   var school_real_id = $("#myschool_realid").val();
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: "{{ route('display_all_encoded_assets') }}",
     data: {
       _token: "{{ csrf_token()}}",
@@ -1041,7 +1041,7 @@ function LoadSemiExpendable() {
 
   function step_1() {
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('stole_semi_expendable_bystation') }}",
       data: {
         _token: "{{ csrf_token() }}",
@@ -1060,7 +1060,7 @@ function LoadSemiExpendable() {
 
   function step_2() {
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('stole_my_semiexpendable_descrepancies') }}",
       data: {
         _token: "{{ csrf_token() }}",
@@ -1076,7 +1076,7 @@ function LoadSemiExpendable() {
 
   function step_3() {
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('stole_semi_expendable_omitted') }}",
       data: {
         _token: "{{ csrf_token() }}",
@@ -1093,7 +1093,7 @@ function LoadSemiExpendable() {
 
   function step_4() {
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('stole_last_date_ofcode') }}",
       data: {
         _token: "{{ csrf_token() }}",
@@ -1201,20 +1201,36 @@ function fileValidation_semiexpendable() {
     })
   }
 }
+
+function preparesemidisposal(control_obj){
+  var semi_expendable_id = $(control_obj).data("itemid");
+  $("#item_semi_todispose").val(semi_expendable_id);
+}
   </script>
 
 
-  <div class="modal" tabindex="-1" id="semidispose" role="dialog">
+<form action="{{ route('shoot_dispose_semi_expendable') }}" method="POST">
+    <div class="modal" tabindex="-1" id="semidispose" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Item Disposal</h5>
+          <h5 class="modal-title">Item Disposal (Semi-Expendable)</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <p>Are you sure that you want to dispose this Semi-Expendable asset?</p>
+            {{ csrf_field() }}
+             <input type="hidden" id="item_semi_todispose" name="asset_id">
+          <div class="form-group">
+            <label>Disposal Type</label>
+            <select class="form-control" name ="asset_archive_type">
+              <option value="1">Condemnation / Destruction</option>
+              <option value="2">Transfer of Property</option>
+              <option value="3">Donation of Property</option>
+              <option value="4">Sale of Unserviceable Property</option>
+               <option value="5">Incorrect Property Number</option>
+            </select>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger">Dispose</button>
@@ -1223,6 +1239,6 @@ function fileValidation_semiexpendable() {
       </div>
     </div>
   </div>
-
 </div>
+</form>
 @endsection

@@ -44,9 +44,9 @@ Route::post('/innoventory/manage/service_centers/add', ['uses' => 'functions@add
 Route::post('/addnewregistryreocrd', ['uses' => 'functions@addnewregistryreocrd', 'as' => 'addnewregistryreocrd']);
 Route::post('/uploadassetregistrycsv', ['uses' => 'functions@uploadassetregistrycsv', 'as' => 'uploadassetregistrycsv']);
 Route::post('/preview_csv', ['uses' => 'functions@preview_csv', 'as' => 'preview_csv']);
-Route::post('/displayencodedass', ['uses' => 'functions@display_all_encoded_assets', 'as' => 'display_all_encoded_assets']);
+Route::get('/displayencodedass', ['uses' => 'functions@display_all_encoded_assets', 'as' => 'display_all_encoded_assets']);
 Route::post('/displaydisposedassets', ['uses' => 'functions@asset_disp_disposed', 'as' => 'asset_disp_disposed']);
-Route::post('/getallemployees', ['uses' => 'functions@display_all_employees', 'as' => 'display_all_employees']);
+Route::get('/getallemployees', ['uses' => 'functions@display_all_employees', 'as' => 'display_all_employees']);
 Route::post('/getallscnames', ['uses' => 'functions@load_all_school_names', 'as' => 'load_all_school_names']);
 Route::post('/add_user', ['uses' => 'functions@add_a_new_user', 'as' => 'add_a_new_user']);
 Route::post('/del_user', ['uses' => 'functions@delete_the_user', 'as' => 'delete_the_user']);
@@ -74,7 +74,7 @@ Route::post('/geallscannedass_notincluded', ['uses' => 'functions@get_asc_not_in
 Route::get('/gotologin', ['uses' => 'functions@asklogin', 'as' => 'asklogin']);
 Route::post('/proc_signin', ['uses' => 'functions@proc_sign_protocol', 'as' => 'proc_sign_protocol']);
 Route::get('/proc_logout_now', ['uses' => 'functions@proc_logout', 'as' => 'proc_logout']);
-Route::post('/loadallassetlocationsencoded', ['uses' => 'functions@lodasslocenc', 'as' => 'lodasslocenc']);
+Route::get('/loadallassetlocationsencoded', ['uses' => 'functions@lodasslocenc', 'as' => 'lodasslocenc']);
 Route::post('/loadallstation', ['uses' => 'functions@load_stat_enc', 'as' => 'load_stat_enc']);
 Route::post('/del_a_station', ['uses' => 'functions@stat_del_now', 'as' => 'stat_del_now']);
 Route::post('/add_new_station', ['uses' => 'functions@new_station', 'as' => 'new_station']);
@@ -95,14 +95,14 @@ Route::post('/delstation', ['uses' => 'functions@delstationnow', 'as' => 'delsta
 Route::post('/edit_sc_details', ['uses' => 'functions@edit_sc_info', 'as' => 'edit_sc_info']);
 Route::get('/manage_myaccount', ['uses' => 'functions@myaccount', 'as' => 'myaccount']);
 Route::post('/cha_pass', ['uses' => 'functions@passchange', 'as' => 'passchange']);
-Route::post('/get_dash_info', ['uses' => 'functions@count_all_created_asset_loc', 'as' => 'count_all_created_asset_loc']);
+Route::get('/get_dash_info', ['uses' => 'functions@count_all_created_asset_loc', 'as' => 'count_all_created_asset_loc']);
 Route::post('/get_tobegenerated_report_count', ['uses' => 'functions@get_tobegen_repcount', 'as' => 'get_tobegen_repcount']);
 Route::post('/get_center_manager', ['uses' => 'functions@center_managers_view', 'as' => 'centermanviews']);
 Route::post('/get_center_selection', ['uses' => 'functions@centerman_selection', 'as' => 'getcentermanselection']);
 Route::post('/add_a_newremi', ['uses' => 'functions@addrem', 'as' => 'addnewreminder']);
 Route::post('/display_reminders_byorigin', ['uses' => 'functions@getremorgi', 'as' => 'getremindersbyorigin']);
 Route::post('/delete_this_rmeinder_inhouse', ['uses' => 'functions@delremthis', 'as' => 'deletethisreminder']);
-Route::post('/load_new_announcements', ['uses' => 'functions@lodnewannounce', 'as' => 'getmynewannouncements']);
+Route::get('/load_new_announcements', ['uses' => 'functions@lodnewannounce', 'as' => 'getmynewannouncements']);
 Route::post('/load_allofmy_assuploads', ['uses' => 'functions@lodresups', 'as' => 'getmyresourcesofassets']);
 Route::post('/load_all_resource_bylatest', ['uses' => 'functions@load_res_all_bylatest', 'as' => 'getallreourcesbylatest']);
 Route::post('/upload_res_now', ['uses' => 'functions@upresnow', 'as' => 'uploadresourcenow']);
@@ -121,23 +121,25 @@ Route::post('/ignore_single_omitted_asset', ['uses' => 'functions@ignore_single_
 Route::post('/check_if_inventory_ready', ['uses' => 'functions@inventory_checkif_ready', 'as' => 'checinvread']);
 Route::post('/get_service_centers_for_qr_filter', ['uses' => 'functions@get_ser_fqrs', 'as' => 'get_ser_of_sta_fo_fil']);
 Route::post('/get_qr_assets_by_service_center', ['uses' => 'functions@get_qr_as_sbyer', 'as' => 'Loadqrbyservicecen']);
-Route::post('/see_inventory_station_status', ['uses' => 'functions@get_station_in_statuses', 'as' => 'seestationsinvstatus']);
+Route::get('/see_inventory_station_status', ['uses' => 'functions@get_station_in_statuses', 'as' => 'seestationsinvstatus']);
 Route::post('/report_omitted_asset_singleton', ['uses' => 'functions@rep_om_sing', 'as' => 'report_omitted_singleton']);
 Route::post('/display_omitted_data', ['uses' => 'functions@display_omitted_of_station', 'as' => 'disp_omm_reps']);
-Route::post('/report_all_omitted_assets', ['uses' => 'functions@rep_all_om_ass', 'as' => 'reportallomassets']);
+Route::get('/report_all_omitted_assets', ['uses' => 'functions@rep_all_om_ass', 'as' => 'reportallomassets']);
 // INNOVENTORY VERSION 2
 // ASSET REGISTRY
 Route::post('/add_new_semi_expendable', ['uses' => 'functions@fire_add_semi_expendible', 'as' => 'shoot_add_semi_expendible']);
 Route::post('/validate_uploaded_cvs_file', ['uses' => 'functions@fire_preview_csv_semiexpendable', 'as' => 'shoot_preview_csv_semiexpendable']);
 Route::post('/get_all_my_service_center', ['uses' => 'functions@look_all_ofmy_service_center', 'as' => 'shoot_all_ofmy_service_center']);
-Route::post('/get_semi_expendablebystation', ['uses' => 'functions@look_semi_expendable_bystation', 'as' => 'stole_semi_expendable_bystation']);
-Route::post('/get_mysemi_discrepancies', ['uses' => 'functions@look_my_semiexpendable_descrepancies', 'as' => 'stole_my_semiexpendable_descrepancies']);
-Route::post('/get_mysemi_omitted', ['uses' => 'functions@look_semi_expendable_omitted', 'as' => 'stole_semi_expendable_omitted']);
+Route::get('/get_semi_expendablebystation', ['uses' => 'functions@look_semi_expendable_bystation', 'as' => 'stole_semi_expendable_bystation']);
+Route::get('/get_mysemi_discrepancies', ['uses' => 'functions@look_my_semiexpendable_descrepancies', 'as' => 'stole_my_semiexpendable_descrepancies']);
+Route::get('/get_mysemi_omitted', ['uses' => 'functions@look_semi_expendable_omitted', 'as' => 'stole_semi_expendable_omitted']);
 Route::post('/get_suppy_data', ['uses' => 'functions@look_all_of_my_supply_data', 'as' => 'stole_all_of_my_supply_data']);
 Route::post('/validate_uploaded_supply_file', ['uses' => 'functions@look_preview_of_uploaded_supplyfile', 'as' => 'stole_preview_of_uploaded_supplyfile']);
 Route::post('/add_new_supply', ['uses' => 'functions@fire_add_supply', 'as' => 'shoot_add_supply']);
 Route::post('/clear_specific_asset_data_by_type_station', ['uses' => 'functions@fire_delete_specific_assetdata_all', 'as' => 'shoot_delete_specific_assetdata_all']);
 Route::post('/get_not_inserted_co', ['uses' => 'functions@look_not_inserted_recent_co_data', 'as' => 'stole_not_inserted_recent_co_data']);
+Route::post('/dispose_asset_se', ['uses' => 'functions@fire_dispose_semi_expendable', 'as' => 'shoot_dispose_semi_expendable']);
+
 // ASSET INVENTORY PAGE
 Route::post('/upload_semi_expendable_inventory', ['uses' => 'functions@fire_uploadsemiexpendabledatascanned', 'as' => 'shoot_uploadsemiexpendabledata']);
 Route::post('/get_all_semi_expendable_asset_scanned', ['uses' => 'functions@look_show_uploaded_semi_expendable_scanneddata', 'as' => 'shoot_show_uploaded_semi_expendable_scanneddata']);
@@ -184,7 +186,7 @@ Route::get('/innoventory/asset_registry/supply', ['uses' => 'functions@fly_suppl
 // ISSUANCE
 Route::get('/innoventory/issuances', ['uses' => 'functions@fly_issuances', 'as' => 'goto_issuances']);
 // UNIVERSAL
-Route::post('/get_last_logdate', ['uses' => 'functions@look_last_date_ofcode', 'as' => 'stole_last_date_ofcode']);
+Route::get('/get_last_logdate', ['uses' => 'functions@look_last_date_ofcode', 'as' => 'stole_last_date_ofcode']);
 Route::post('/uni_change_source', ['uses' => 'functions@fire_univ_change_source', 'as' => 'shoot_univ_change_source']);
 Route::post('/get_asset_count_of_a_station', ['uses' => 'functions@look_total_assets_of_station_specific', 'as' => 'stole_total_assets_of_station_specific']);
 Route::post('/get_asset_semi_count_bystation', ['uses' => 'functions@look_semi_count_by_station', 'as' => 'stole_semi_count_by_station']);

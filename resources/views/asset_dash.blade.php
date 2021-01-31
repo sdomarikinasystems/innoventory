@@ -92,6 +92,65 @@ Innoventory - Dashboard
 	</div>	
 </div>
 <script type="text/javascript">
-var isallload_station=!1;function DisplayAllStationsInventoryStatus(){0==isallload_station&&$.ajax({type:"POST",url:"{{ route('seestationsinvstatus') }}",data:{_token:"{{ csrf_token() }}"},success:function(t){$("#allstaconts").html(t),$("#tbl_datastation").DataTable(),isallload_station=!0}})}function CheckIfReadyForInventory(){$.ajax({type:"POST",url:"{{ route('checinvread') }}",data:{_token:"{{ csrf_token() }}"},success:function(t){$("#inv_status").html(t),LoadNewAnnouncements()}})}function LoadNewAnnouncements(){$.ajax({type:"POST",url:"{{ route('getmynewannouncements') }}",data:{_token:"{{ csrf_token() }}",typeofget:"0"},success:function(t){$("#newann").html(t),LoadDashboardInfo()}})}function LoadDashboardInfo(){$.ajax({type:"POST",url:"{{ route('count_all_created_asset_loc') }}",data:{_token:"{{ csrf_token() }}"},success:function(t){$("#lod_bar").css("display","none"),$("#statbar").css("display","flex");var s=t.split(","),a=s[1].split(":"),n=s[2].split(":"),o=s[3].split(":");$("#count_assloc_created").html(s[0]),$("#count_ass_reg").html(a[0]+" - "+a[1]),$("#count_sc_assets").html(n[0]+" - "+n[1]),$("#count_ass_disposed").html(o[0]+" - "+o[1]),$("#count_ass_servicecenters").html(s[4]),$("#count_accounts").html(s[5])}})}CheckIfReadyForInventory(),$("#statbar").css("display","none"),$("#lod_bar").css("display","block");
+var isallload_station = !1;
+
+function DisplayAllStationsInventoryStatus() {
+    0 == isallload_station && $.ajax({
+        type: "GET",
+        url: "{{ route('seestationsinvstatus') }}",
+        data: {
+            _token: "{{ csrf_token() }}"
+        },
+        success: function(t) {
+            $("#allstaconts").html(t), $("#tbl_datastation").DataTable(), isallload_station = !0
+        }
+    })
+}
+
+function CheckIfReadyForInventory() {
+    $.ajax({
+        type: "POST",
+        url: "{{ route('checinvread') }}",
+        data: {
+            _token: "{{ csrf_token() }}"
+        },
+        success: function(t) {
+            $("#inv_status").html(t), LoadNewAnnouncements()
+        }
+    })
+}
+
+function LoadNewAnnouncements() {
+    $.ajax({
+        type: "GET",
+        url: "{{ route('getmynewannouncements') }}",
+        data: {
+            _token: "{{ csrf_token() }}",
+            typeofget: "0"
+        },
+        success: function(t) {
+            $("#newann").html(t), LoadDashboardInfo()
+        }
+    })
+}
+
+function LoadDashboardInfo() {
+    $.ajax({
+        type: "GET",
+        url: "{{ route('count_all_created_asset_loc') }}",
+        data: {
+            _token: "{{ csrf_token() }}"
+        },
+        success: function(t) {
+            $("#lod_bar").css("display", "none"), $("#statbar").css("display", "flex");
+            var s = t.split(","),
+                a = s[1].split(":"),
+                n = s[2].split(":"),
+                o = s[3].split(":");
+            $("#count_assloc_created").html(s[0]), $("#count_ass_reg").html(a[0] + " - " + a[1]), $("#count_sc_assets").html(n[0] + " - " + n[1]), $("#count_ass_disposed").html(o[0] + " - " + o[1]), $("#count_ass_servicecenters").html(s[4]), $("#count_accounts").html(s[5])
+        }
+    })
+}
+CheckIfReadyForInventory(), $("#statbar").css("display", "none"), $("#lod_bar").css("display", "block");
 </script>
 @endsection
