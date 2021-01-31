@@ -67,10 +67,14 @@ Innoventory - Asset Registry
     <div class="row mb-4">
       <div class="col-lg-3">
         <div style="height: 158px;" class="card card-shadow">
-        <div class="card-body">
-           <a class="btn btn-success importbutton" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
+        <div class="card-body d-flex flex-column">
+          <div>
+            <p class="m-0">Supply</p>
+            <small class="m-0 text-muted">Supply feature is not ready for use but you're fress to test it.</small>
+          </div>
+           <a class="btn btn-success importbutton btn-sm mt-auto" href="#" data-toggle="modal" id="imp_sem" data-target="#modal_importsupp"><i class="fas fa-file-import"></i> Import Supply</a>
    <div class="importwarning" role="alert">
-      Change your asset source to import Supply Asset(s)
+
     </div>
         </div>
       </div>
@@ -246,10 +250,11 @@ Innoventory - Asset Registry
     <div class="row mb-3">
      <div class="col-lg-3">
         <div class="card card-shadow" style="height: 158px;">
-        <div class="card-body">
-           <a class="btn btn-success importbutton" href="#" data-toggle="modal" onclick="  LoadserviceCentersMine()" id="imp_sem" data-target="#chooseserv"><i class="fas fa-file-import" ></i> Import Semi-Expendable</a>
+        <div class="card-body d-flex flex-column">
+            <div id="readystatus_se"></div>
+           <a class="btn btn-success mt-auto btn-sm importbutton" href="#" data-toggle="modal" onclick="  LoadserviceCentersMine()" id="imp_sem" title="Import Semi-Expendable" data-target="#chooseserv"><i class="fas fa-file-import" ></i> Import</a>
     <div class="importwarning" role="alert">
-      Change your asset source to import Semi-Expendable Asset(s)
+     
     </div>
 
     <div class="modal" tabindex="-1" role="dialog" id="chooseserv">
@@ -333,7 +338,7 @@ Innoventory - Asset Registry
 
             <div class="row">
               <div class="col-md-6">
-                <div class="card">
+                <div class="card card-shadow">
                   <div class="card-body">
                     <div class="form-group">
                       <label>Upload Semi-Expendable CSV File</label>
@@ -448,15 +453,16 @@ Innoventory - Asset Registry
 <div class="row mb-3">
   <div class="col-lg-3">
     <div class="card card-shadow" style="height: 158px;">
-    <div class="card-body">
+    <div class="card-body d-flex flex-column">
         <?php
       if(session("user_type") < "4" && session("user_type") != "2"){
     ?>
     <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-    <a class="btn btn-success importbutton" href="#" data-toggle="modal" data-target="#uploadnewcsv" onclick="LoadAllSCNamesForCapOut()"><i class="fas fa-file-import"></i> Import Capital Outlay</a>
+    <div id="readystatus_co"></div>
+    <a class="btn btn-success importbutton m-0 btn-sm mt-auto" href="#" title="Import Capital Outlay" data-toggle="modal" data-target="#uploadcapitaloutlaymodal" onclick="LoadAllSCNamesForCapOut()"><i class="fas fa-file-import"></i> Import</a>
 
      <div class="importwarning" role="alert">
-      Change your asset source to import Capital Outlay Asset(s)
+     
     </div>
     <?php } ?>
     </div>
@@ -564,7 +570,7 @@ Innoventory - Asset Registry
 
 <form action="{{ route('uploadassetregistrycsv') }}" method="POST"  enctype="multipart/form-data">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
-  <div class="modal" tabindex="-1" id="uploadnewcsv" role="dialog">
+  <div class="modal" tabindex="-1" id="uploadcapitaloutlaymodal" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
          <div id="lod_uploadass" style=" position: fixed; display: block; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; height: 100%; width:  100%; background-color: rgba(0,0,0,0.5); border-radius:15px; display:none;">
@@ -596,7 +602,7 @@ Innoventory - Asset Registry
         <div class="modal-body">
          <div class="row">
            <div class="col-md-6">
-          <div class="card" style="min-height: 145px;">
+          <div class="card card-shadow" style="min-height: 145px;">
             <div class="card-body" >
                <div class="form-group" style="display: none;">
             <label>Station</label><br>
@@ -816,7 +822,7 @@ function ProceedToAssetDeletion() {
     },
     success: function (data) {
       alert(dttoclear + " asset clearing process completed!");
-      LoadAssets();
+      CheckRediness();
     }
   })
 
@@ -905,7 +911,40 @@ function LoadAllSCNamesForCapOut() {
 function OpenAssetToDispose(control_obj) {
   $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
 }
-LoadAssets();
+
+var currentlyready = "";
+CheckRediness();
+  async function CheckRediness(){
+      var myschool_realid = $("#myschool_realid").val();
+  $.ajax({
+      type: "POST",
+      url: "{{ route('stole_checkready_specific') }}",
+      data: {_token: "{{ csrf_token() }}",user_school: myschool_realid},
+      success:async function(data){
+        currentlyready = data;
+
+        if(currentlyready.includes("co")){
+          $("#readystatus_co").html("<p class='mb-0 text-success'><i class='fas fa-check'></i> Ready</p><small class='text-muted m-0'>" +
+            "Congratulations!, Capital Outlay has zero discrepancies."
+           +"</small>");
+        }else{
+          $("#readystatus_co").html("<p class='mb-0 text-danger'><i class='fas fa-times'></i> Not Ready</p><small class='text-muted m-0'>" +
+            "Your Capital Outlay has discrepancies left."
+           +"</small>");
+        }
+        if(currentlyready.includes("se")){
+          $("#readystatus_se").html("<p class='mb-0 text-success'><i class='fas fa-check'></i> Ready</p><small class='text-muted m-0'>" +
+            "Congratulations!, Semi-Expendable has zero discrepancies."
+           +"</small>");
+        }else{
+           $("#readystatus_se").html("<p class='mb-0 text-danger'><i class='fas fa-times'></i> Not Ready</p><small class='text-muted m-0'>" +
+            "Your Semi-Expendable has discrepancies left."
+            +"</small>");
+        }
+        LoadAssets();
+      }
+    })
+}
 
 function LoadAssets() {
   var school_real_id = $("#myschool_realid").val();

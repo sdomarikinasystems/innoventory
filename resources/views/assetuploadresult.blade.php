@@ -156,16 +156,21 @@ Inno... - Capital Outlay Upload Result
   
   CheckForNewServiceCenters();
   function CheckForNewServiceCenters(){
+  	p1();
   	// GET COUNT
-  	$.ajax({
+  	function p1(){
+  		$.ajax({
   		type: "POST",
   		url: "{{ route('findnewservicecentercount') }}",
   		data: {_token:"{{ csrf_token() }}"},
   		success:function(data){
   			$("#idnewfoundservicecentercount").html(data);
+  			p2();
   		}
   	})
-  	// GET SERVICE CENTERS
+  	}
+  	function p2(){
+  		// GET SERVICE CENTERS
   	$.ajax({
   		type: "POST",
   		url: "{{ route('findnewsercen') }}",
@@ -178,9 +183,25 @@ Inno... - Capital Outlay Upload Result
   			$("#tbl_neesercen").html(data);
   			$("#todtnow").DataTable();
   			}
-  			
+  			Finalize();
   		}
   	})
+
+  	}
+  	 function Finalize() {
+  var school_real_id = <?php echo json_encode(session("user_school")); ?>;
+  $.ajax({
+    type: "POST",
+    url: "{{ route('loadassetvalsum') }}",
+    data: {
+      _token: "{{ csrf_token() }}",
+      selected_realid: school_real_id
+    },
+    success: function (data) {
+      // alert(data);
+    }
+  })
   }
+}
 </script>
 @endsection

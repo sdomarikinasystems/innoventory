@@ -122,7 +122,11 @@ class functions extends Controller {
     // FUNCTIONS
     public function look_semi_count_by_station(Request $req) {
         $out = $this->send(['tag' => 'GET_SEMI_COUNT_REGISTRY_BY_STATION', 'stationid' => $this->sdmenc($req['sd_id']) ]);
-        return $out[0];
+        if ($out[0] == "" || $out[0] == null) {
+            return "0";
+        } else {
+            return $out[0];
+        }
     }
     public function look_total_assets_of_station_specific(Request $req) {
         $client = new \GuzzleHttp\Client();
@@ -496,7 +500,11 @@ class functions extends Controller {
     }
     public function look_getsemisum_totalscanned(Request $req) {
         $output = $this->send(['tag' => "GET_TOTAL_SCANNED_SEMIEXPENDABLE", "station_id" => $this->sdmenc($req["sd_id"]), "yy" => $this->sdmenc($req["selyear"]), "mm" => $this->sdmenc($req["selmonth"]) ]);
-        return $output[0];
+        if ($output[0] == "" || $output[0] == null) {
+            return "0";
+        } else {
+            return $output[0];
+        }
     }
     public function look_getsemisum_fromto(Request $req) {
         $output = $this->send(['tag' => "GET_SEMI_FROM_TO_DATES", "station_id" => $this->sdmenc($req["sd_id"]), "yy" => $this->sdmenc($req["selyear"]), "mm" => $this->sdmenc($req["selmonth"]) ]);
@@ -1511,7 +1519,7 @@ class functions extends Controller {
         $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "reason" => $reason, "propertynumber" => $propertynumber, "remarks" => $remarks, "user_eid" => $user_eid, "station_id" => $station_id, ]]);
         $output = $this->sdmdec($xresult->getBody()->getContents());
         Alert::success("All Asset Reported!");
-        return redirect()->route("gotoomitted");
+        return redirect()->back();
     }
     public function display_omitted_of_station(Request $req) {
         $tag = $this->sdmenc("disp_om_ass_rebysta");
@@ -1577,7 +1585,7 @@ class functions extends Controller {
         $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "idofassetinregistry" => $idofassetinregistry, "reason" => $reason, "propertynumber" => $propertynumber, "remarks" => $remarks, "user_eid" => $user_eid, "station_id" => $station_id, ]]);
         $output = $this->sdmdec($xresult->getBody()->getContents());
         Alert::success("Asset Reported!");
-        return redirect()->route("gotoomitted");
+        return redirect()->back();
     }
     public function get_station_in_statuses() {
         $tag = $this->sdmenc("getstastatus");
@@ -3513,7 +3521,6 @@ class functions extends Controller {
     }
     public function uploadassetregistrycsv(Request $req) {
         $output = "";
-        $tag = $this->sdmenc("get_all_assets_pr");
         $sc_id = $this->sdmenc($req["sc_id"]);
         $photo = $req->file('thecsvfile');
         $file = fopen($photo, "r");

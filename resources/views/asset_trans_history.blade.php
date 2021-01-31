@@ -13,11 +13,11 @@ Inno... - Transaction History
 </nav>
 
 <div class="row mt-3">
-	<div class="col-sm-9">
-		<table class="table" id="tbl_tra">
+	<div class="col-sm-7">
+		<table class="table table-borderless table-hover" id="tbl_tra">
 			<thead>
 				<tr>
-					<th>Account</th>
+					<th>Date/Time</th>
 					<th>Action Taken</th>
 					<th>User</th>
 				</tr>
@@ -27,14 +27,13 @@ Inno... - Transaction History
 			</tbody>
 		</table>
 	</div>
-  <div class="col-sm-3">
-    <div class="card">
+  <div class="col-sm-5">
+    <div class="card card-shadow">
       <div class="card-body">
-         <h5 class="mb-3"><i class="fas fa-tags"></i> Action Tags</h5>
-        <table class="table">
+        <table class="table table-borderless table-hover">
          <thead>
            <tr>
-             <th>Code</th>
+             <th><i class="fas fa-tags"></i> Action Tags</th>
              <th>Action</th>
            </tr>
          </thead>

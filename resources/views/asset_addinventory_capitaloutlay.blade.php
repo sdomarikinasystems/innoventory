@@ -827,7 +827,7 @@ $("#chooseserv").show();
 					if(parseInt(result) >= 0){
 						goodtogo = true;
 					}else{
-						AddToErrorLogs("Given quantity to Semi-Expendable (" + htmlEntities(newdata) + ") can't be less than 1.");
+						AddToErrorLogs("Given quantity to Semi-Expendable (" + htmlEntities(newdata) + ") is not quantifiable.");
 					}
 				}else if(asset_type == "se" && (isNumeric(result) == false || result == "")){
 					// bad semi-expendable data

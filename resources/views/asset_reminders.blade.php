@@ -23,7 +23,7 @@ Innoventory - Reminders
 
 <div class="row">
 	<div class="col-sm">
-		<table class="table table-bordered" id="tblmytbl">
+		<table class="table table-borderless table-hover" id="tblmytbl">
 		  <thead>
 			<tr>
 			  <th scope="col" width="200">Title</th>

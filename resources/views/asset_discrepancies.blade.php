@@ -34,11 +34,15 @@ if($_GET["isown"]){
 	?>
 </div>
 <div class="row">
-	<div class="col-md-12">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title mb-3">Assets with Discrepancy</h5>
-				<table class="mt-3 table table-sm" id="tbl_disc">
+  <div class="col-md-6">
+    <div class="card card-shadow">
+      <div class="card-body">
+        Fix your asset registry to be marked as <strong>Ready</strong> for inventory.
+      </div>
+    </div>
+  </div>
+	<div class="col-md-12 mt-3">
+				<table class=" table table-borderless table-hover" id="tbl_disc">
 					<thead>
 						<tr>
 							<th scope="col">Property Number</th>
@@ -53,8 +57,6 @@ if($_GET["isown"]){
 				<tbody id="allassdisctbl">
 				</tbody>
 				</table>
-			</div>
-		</div>
 	</div>
 </div>
 
@@ -152,9 +154,12 @@ function p2(){
        $("#tbl_disc").DataTable().destroy();
       $("#allassdisctbl").html(data);
        $("#tbl_disc").DataTable();
+
     }
   })
   }
+
+
 </script>
 
 @endsection

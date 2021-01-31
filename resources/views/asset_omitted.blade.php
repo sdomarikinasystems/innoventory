@@ -15,21 +15,20 @@ Inno... - Capital Outlay Omitted
 </nav>
 
 <div class="row mt-3">
-	<div class="col-md-4">
-		<div class="mb-3">
 			<!-- <button class="btn-warning btn" data-toggle='modal' data-target='#modal_ignoreall'><i class="fas fa-thumbs-down"></i> Ignore All</button> -->
 			<!-- <button class="btn btn-danger" data-toggle="modal" data-target="#repall"><i class="fas fa-flag"></i> Report All</button> -->
-		</div>
-	</div>
-	<div class="col-sm-4">
-	</div>
-	<div class="col-sm-4">
-		<div class="alert alert-info mb-3" role="alert">
-			  Omitted asset(s) can still be scanned from the mobile app unless you <strong><i class="fas fa-flag"></i> Report</strong> them for deletion.
+	<div class="col-sm-6">
+		<div class="card card-shadow mb-3" role="alert">
+			 <div class="card-body">
+			 	 Omitted asset(s) are still counted on your <strong>Asset Registry</strong> and can still be included in <strong>Inventory</strong> unless you <strong><i class="fas fa-flag"></i> Report</strong> them for deletion.
+			 </div>
 			</div>
 	</div>
+	<div class="col-sm-4">
+		
+	</div>
 	<div class="col-md-12 table-responsive table-striped"> 
-		<table class="table table-hover table-bordered" id="tbl_omass">
+		<table class="table table-hover table-borderless" id="tbl_omass">
 			<thead>
 				<tr>
 					<th scope="col">Property Number</th>

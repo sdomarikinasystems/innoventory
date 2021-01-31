@@ -17,34 +17,31 @@ Inno... - Semi-Expendable Missing
 <div class="row mt-3">
   <div class="col-md-12">
     <div class="card-deck">
-      <div class="card">
+      <div class="card card-shadow">
         <div class="card-body">
-          <h5 id="stationname"></h5>
+          <p class="m-0 text-primary"><small>Station</small></p>
+          <h5 class="m-0" id="stationname"></h5>
         </div>
-        <div class="card-footer">
-          Station
-        </div>
+        
       </div>
-      <div class="card">
+      <div class="card card-shadow">
         <div class="card-body">
-          <h5 id="allassetcount"></h5>
+          <p class="m-0 text-primary"><small>Total Missing Asset(s)</small></p>
+          <h5 class="m-0" id="allassetcount"></h5>
         </div>
-        <div class="card-footer">
-          Total Missing Asset(s)
-        </div>
+        
       </div>
-      <div class="card">
+      <div class="card card-shadow">
         <div class="card-body">
-          <span id="fromtodates"></span>
+          <p class="m-0 text-primary"><small>From - To</small></p>
+          <span class="m-0" id="fromtodates"></span>
         </div>
-        <div class="card-footer">
-          From - To
-        </div>
+        
       </div>
     </div>
   </div>
-  <div class="col-md-12 mt-3 table-responsive table-striped"> 
-    <table class="table table-hover table-bordered" id="td_scanned_nf">
+  <div class="col-md-12 mt-3 table-responsive"> 
+    <table class="table table-hover table-borderless" id="td_scanned_nf">
       <thead>
         <tr>
          <th scope="col" width="150">Stock Number</th>

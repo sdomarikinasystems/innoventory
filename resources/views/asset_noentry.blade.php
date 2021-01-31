@@ -16,28 +16,22 @@ Inno... - Capital Outlay Missing
 <div class="row mt-3">
 	<div class="col-md-12">
 		<div class="card-deck">
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
-					<h5 id="stationname"></h5>
-				</div>
-				<div class="card-footer">
-					Station
+					  <p class="m-0 text-primary"><small>Station</small></p>
+					<h5 class="m-0" id="stationname"></h5>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
-					<h5 id="allassetcount"></h5>
-				</div>
-				<div class="card-footer">
-					Total Missing Asset(s)
+					<p class="m-0 text-primary"><small>Total Missing Asset(s)</small></p>
+					<h5 class="m-0" id="allassetcount"></h5>
 				</div>
 			</div>
-			<div class="card">
+			<div class="card card-shadow">
 				<div class="card-body">
-					<span id="fromtodates"></span>
-				</div>
-				<div class="card-footer">
-					From - To
+					 <p class="m-0 text-primary"><small>From - To</small></p>
+					<span class="m-0" id="fromtodates"></span>
 				</div>
 			</div>
 		</div>
