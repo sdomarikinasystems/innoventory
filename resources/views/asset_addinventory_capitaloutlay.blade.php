@@ -69,7 +69,7 @@ Innoventory - Inventory Mode
 		</div>
 		
 	
-		  <div class="card mb-3">
+		  <div class="card card-shadow mb-3">
 		  	<div class="card-header">
 		  		<button class="btn btn-sm btn-danger float-right" data-toggle="modal" data-target="#modal_changeassetlocationsource" id="chooseserv" onclick="OnSelect_ServiceCenterQuickInfo()"><i class="fas fa-sync"></i> Service Center</button>
 				<h5 class="mt-0 "><strong class="text-dark curr_roomname"></strong></h5>
@@ -130,29 +130,18 @@ Innoventory - Inventory Mode
 			</div>
 		</div>
 		</div>
-		<div class="card  mt-3">
-			<div class="card-header" style="display: none">
-				<div class="card-deck">
-			<div class="card" style="display: none;">
-				<div class="card-body">
+		<div style="display: none;">
 					<span class="text-muted">Overall</span>
 					<h4 class="mb-0" id="item_count_scanned">0</h4>
 				</div>
-			</div>
-		</div>
-			</div>
-			<div class="card-body announcement_card_body" style="padding:0; background-color: #E9ECEF !important;" >	
-				<div id="asset_data_reflection" style="background-color: #E9ECEF !important; margin: 20px;">
 
+		<div id="asset_data_reflection" class="card-shadow" style="background-color: #E9ECEF !important; padding: 20px; border-radius: 15px; margin-top: 20px;">
 					<div class="mt-5 mb-5">
 						<center>
 							<h4 class="text-muted">Scanned asset will appear here.</h4>
 						</center>
 					</div>
-
 				</div>
-			</div>
-		</div>
 	</div>
 </div>
 </div>
@@ -312,7 +301,7 @@ Innoventory - Inventory Mode
 	function CheckLastSession(){
 		$("#step_0").show();
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('stole_last_session') }}",
 			data: {_token: "{{ csrf_token() }}"},
 			success : function(data){
@@ -355,7 +344,7 @@ Innoventory - Inventory Mode
 
 	function RemoveLastSessionInStation(){
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			url: "{{ route('shoot_remove_last_session') }}",
 			data: {_token: "{{ csrf_token() }}"},
 			success: function(data){
@@ -366,7 +355,7 @@ Innoventory - Inventory Mode
 
 	async function CheckRediness(){
 	$.ajax({
-  		type: "POST",
+  		type: "GET",
   		url: "{{ route('stole_checkready_specific') }}",
   		data: {_token: "{{ csrf_token() }}",user_school: current_station_id},
   		success:async function(data){
@@ -459,7 +448,6 @@ var single_data = data_fragment[i].split(col_XX);
 	}
 	function AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype){
 
-
 		if(currentlyready.includes(ss_assettype)){
 			$.ajax({
 			type:"POST",
@@ -510,7 +498,7 @@ var single_data = data_fragment[i].split(col_XX);
 			if(iscomplete == false){
 				await x_timer(355);
 				$.ajax({
-					type: "POST",
+					type: "GET",
 					url: "{{ route('shoot_clear_recovery_data') }}",
 					data: {_token: "{{ csrf_token() }}"},
 					success: function(data){
@@ -531,7 +519,7 @@ var single_data = data_fragment[i].split(col_XX);
 		$("#chlocbtn").hide();
 		var idof_servicecenter = $("#toloadservicecenters").val();
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('stole_single_service_center_data_byid') }}",
 			data: {_token: "{{ csrf_token() }}",service_center_id: idof_servicecenter},
 			success: function(data){
@@ -583,7 +571,7 @@ var single_data = data_fragment[i].split(col_XX);
 	async function RunPreviewOfMaxValIn_servicecenters(prev_service_center_id){
 		await x_timer(351);
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('stole_get_max_values_of_CoSe') }}",
 			data: {_token: "{{ csrf_token() }}",sta_id: current_station_id,service_centerid: prev_service_center_id},
 			success: function(data){
@@ -668,7 +656,7 @@ var single_data = data_fragment[i].split(col_XX);
 		$("#step_1").hide();
 
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('stole_getallservicecenters') }}",
 			data: {_token: "{{ csrf_token() }}",station_id: current_station_id},
 			success: function(data){
@@ -679,6 +667,31 @@ var single_data = data_fragment[i].split(col_XX);
 				
 			}
 		})
+	}
+	function GetAllScannedDataOnThisInventoryPeriod(){
+		
+		function GetCapitalScanned(){
+			$.ajax({
+				type: "POST",
+				url: "{{ route('stole_scanned_co') }}",
+				data: {_token: "{{ csrf_token() }}"},
+				success: function(data){
+					alert("co: " + data);
+					GetSemiScanned();
+				}
+			})
+		}
+
+		function GetSemiScanned(){
+			$.ajax({
+				type: "POST",
+				url: "{{ route('stole_scanned_se') }}",
+				data: {_token: "{{ csrf_token() }}"},
+				success: function(data){
+					alert("co: " + data);
+				}
+			})
+		}
 	}
 
 	function AbsoluteServiceCenterSelect(){
@@ -694,7 +707,7 @@ var single_data = data_fragment[i].split(col_XX);
 
 		current_location_id = $("#toloadservicecenters").val();
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('stole_single_service_center_data_byid') }}",
 			data: {_token: "{{ csrf_token() }}",service_center_id: current_location_id},
 			success:async function(data){
@@ -719,7 +732,7 @@ var single_data = data_fragment[i].split(col_XX);
 
 	function GetMaxValues(){
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('stole_get_max_values_of_CoSe') }}",
 			data: {_token: "{{ csrf_token() }}",sta_id: current_station_id,service_centerid: current_location_id},
 			success: function(data){
@@ -795,7 +808,7 @@ $("#chooseserv").show();
 		var current_moreinfo = "";
 		await x_timer(351);
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('stole_scanned_item_details') }}",
 			data: {_token: "{{ csrf_token() }}",
 				sta_id: current_station_id,
@@ -873,7 +886,7 @@ $("#chooseserv").show();
 		await x_timer(351);
 		var current_raw = $("#rawdatatext").val();
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('shoot_save_last_session') }}",
 			data: {_token: "{{ csrf_token() }}",
 					stationid: current_station_id,

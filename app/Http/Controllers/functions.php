@@ -123,6 +123,12 @@ class functions extends Controller {
         return view('asset_utilities');
     }
     // FUNCTIONS
+    public function look_scanned_co(){
+        $out = $this->send_get(["tag"=>"GET_SC_CO_CURR","station_id"=>$this->sdmenc(session("user_school"))]);
+    }
+    public function look_scanned_se(){
+        $out = $this->send_get(["tag"=>"GET_SC_SE_CURR","station_id"=>$this->sdmenc(session("user_school"))]);
+    }
     public function look_items_for_scanning(Request $req) {
         $output = $this->send_get(['tag' =>'GET_ASSETS_FOR_QR_GENERATION',
             'property_no' => $this->sdmenc($req["p_number"]),
@@ -413,19 +419,19 @@ class functions extends Controller {
         return json_encode($out);
     }
     public function look_get_max_values_of_CoSe(Request $req) {
-        $out = $this->send(['tag' => "GET_MAX_VALUES_OF_CAPITAL_X_SEMI", "station_id" => $this->sdmenc($req["sta_id"]), "center_id" => $this->sdmenc($req["service_centerid"]) ]);
+        $out = $this->send_get(['tag' => "GET_MAX_VALUES_OF_CAPITAL_X_SEMI", "station_id" => $this->sdmenc($req["sta_id"]), "center_id" => $this->sdmenc($req["service_centerid"]) ]);
         return $out[0];
     }
     public function look_scanned_item_details(Request $req) {
-        $out = $this->send(['tag' => "GET_SINGLE_SCANNED_ASSET_DETAILS", "station_id" => $this->sdmenc($req["sta_id"]), "code" => $this->sdmenc($req["scanned_cod"]), "loc_id" => $this->sdmenc($req["location_id"]) ]);
+        $out = $this->send_get(['tag' => "GET_SINGLE_SCANNED_ASSET_DETAILS", "station_id" => $this->sdmenc($req["sta_id"]), "code" => $this->sdmenc($req["scanned_cod"]), "loc_id" => $this->sdmenc($req["location_id"]) ]);
         return json_encode($out);
     }
     public function look_single_service_center_data_byid(Request $req) {
-        $out = $this->send(['tag' => "GET_SERVICE_CENTER_INFO_BYID", "loc_id" => $this->sdmenc($req["service_center_id"]) ]);
+        $out = $this->send_get(['tag' => "GET_SERVICE_CENTER_INFO_BYID", "loc_id" => $this->sdmenc($req["service_center_id"]) ]);
         return json_encode($out);
     }
     public function look_getallservicecenters(Request $req) {
-        $out = $this->send(['tag' => "GET_ALL_SERVICE_CENTERS_MYSTATION", "station_id" => $this->sdmenc($req["station_id"]) ]);
+        $out = $this->send_get(['tag' => "GET_ALL_SERVICE_CENTERS_MYSTATION", "station_id" => $this->sdmenc($req["station_id"]) ]);
         $toecho = "";
         for ($i = 0;$i < count($out);$i++) {
             $toecho.= "

@@ -157,16 +157,18 @@ Route::get('/innoventory/semi_expendable/item_view', ['uses' => 'functions@fly_s
 Route::get('/get_full_info_of_single_semi_expendable', ['uses' => 'functions@look_single_semi_expenable', 'as' => 'stole_single_semi_expenable']);
 // INVENTORY GET DATA PAGE
 Route::get('/innoventory/inventory/capital_outlay_inventory', ['uses' => 'functions@fly_inventory_co', 'as' => 'goto_inventory_co']);
-Route::post('/get_all_service_centers', ['uses' => 'functions@look_getallservicecenters', 'as' => 'stole_getallservicecenters']);
-Route::post('/get_service_center_allinfo_byid', ['uses' => 'functions@look_single_service_center_data_byid', 'as' => 'stole_single_service_center_data_byid']);
-Route::post('/get_single_scanned_data_by_code', ['uses' => 'functions@look_scanned_item_details', 'as' => 'stole_scanned_item_details']);
-Route::post('/get_maxval_of_capitalo_and_semie', ['uses' => 'functions@look_get_max_values_of_CoSe', 'as' => 'stole_get_max_values_of_CoSe']);
+Route::get('/get_all_service_centers', ['uses' => 'functions@look_getallservicecenters', 'as' => 'stole_getallservicecenters']);
+Route::get('/get_service_center_allinfo_byid', ['uses' => 'functions@look_single_service_center_data_byid', 'as' => 'stole_single_service_center_data_byid']);
+Route::get('/get_single_scanned_data_by_code', ['uses' => 'functions@look_scanned_item_details', 'as' => 'stole_scanned_item_details']);
+Route::get('/get_maxval_of_capitalo_and_semie', ['uses' => 'functions@look_get_max_values_of_CoSe', 'as' => 'stole_get_max_values_of_CoSe']);
 Route::post('/submit_scanned_asset_datum', ['uses' => 'functions@fire_submit_scanned_data', 'as' => 'shoot_submit_scanned_data']);
 Route::get('/check_rediness_specific', ['uses' => 'functions@look_checkready_specific', 'as' => 'stole_checkready_specific']);
-Route::post('/check_if_last_session', ['uses' => 'functions@look_last_session', 'as' => 'stole_last_session']);
-Route::post('/remove_last_session', ['uses' => 'functions@fire_remove_last_session', 'as' => 'shoot_remove_last_session']);
-Route::post('/save_session_today', ['uses' => 'functions@fire_save_last_session', 'as' => 'shoot_save_last_session']);
-Route::post('/clear_cache_data_rec', ['uses' => 'functions@fire_clear_recovery_data', 'as' => 'shoot_clear_recovery_data']);
+Route::get('/check_if_last_session', ['uses' => 'functions@look_last_session', 'as' => 'stole_last_session']);
+Route::get('/remove_last_session', ['uses' => 'functions@fire_remove_last_session', 'as' => 'shoot_remove_last_session']);
+Route::get('/save_session_today', ['uses' => 'functions@fire_save_last_session', 'as' => 'shoot_save_last_session']);
+Route::get('/clear_cache_data_rec', ['uses' => 'functions@fire_clear_recovery_data', 'as' => 'shoot_clear_recovery_data']);
+Route::get('/inventorypage_getscannedco', ['uses' => 'functions@look_scanned_co', 'as' => 'stole_scanned_co']);
+Route::get('/inventorypage_getscannedsemi', ['uses' => 'functions@look_scanned_se', 'as' => 'stole_scanned_se']);
 // ASSET SEMI EXPENDABLE DISCREPANCIES
 Route::get('/innoventory/asset_registry/semi_expendable/discrepancies', ['uses' => 'functions@fly_semiexpendable_discrepancies', 'as' => 'goto_semiexpendable_discrepancies']);
 // ASSET SEMI EXPENDIBLE OMITTED PADE
