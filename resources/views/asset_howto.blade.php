@@ -18,7 +18,7 @@ Innoventory - How To?
 	    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Step by Step Tutorial</a>
 	  </li>
 	  <li class="nav-item">
-	    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Slides Tutorial</a>
+	    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">More</a>
 	  </li>
 	</ul>
 
@@ -96,7 +96,16 @@ Innoventory - How To?
 
 	  </div>
 	  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTRNVdhYm2QG6ncYqPDL0a9NrApyPIwZuiiaG6-WmiIEtoDCJuKUcIX57QvcE3wHHrOvRnFNUIPiQrJ/embed?start=false&loop=true&delayms=3000" frameborder="0" width="1440" height="839" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+			<div class="container">
+				<div class="mb-5">
+	  			<h1>Achives</h1>
+	  			<p>Innoventory old files from previous versions</p>
+	  		</div>
+	  		<h5 class="text-muted">Files</h5>
+				<ul>
+					<li>Innoventory 2019 Tutorial Persentation - <a href="https://docs.google.com/presentation/d/e/2PACX-1vTRNVdhYm2QG6ncYqPDL0a9NrApyPIwZuiiaG6-WmiIEtoDCJuKUcIX57QvcE3wHHrOvRnFNUIPiQrJ/embed?start=false&loop=true&delayms=3000" target="_blank">View Here</a></li>
+				</ul>
+			</div>
 	  </div>
 	  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
 	</div>

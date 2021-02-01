@@ -92,7 +92,7 @@ Innoventory - Dashboard
 	</div>	
 </div>
 <script type="text/javascript">
-var isallload_station = !1;
+var isallload_station =! 1;
 
 function DisplayAllStationsInventoryStatus() {
     0 == isallload_station && $.ajax({
@@ -109,7 +109,7 @@ function DisplayAllStationsInventoryStatus() {
 
 function CheckIfReadyForInventory() {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "{{ route('checinvread') }}",
         data: {
             _token: "{{ csrf_token() }}"

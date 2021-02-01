@@ -917,7 +917,7 @@ CheckRediness();
   async function CheckRediness(){
       var myschool_realid = $("#myschool_realid").val();
   $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('stole_checkready_specific') }}",
       data: {_token: "{{ csrf_token() }}",user_school: myschool_realid},
       success:async function(data){

@@ -16,7 +16,7 @@
                <!-- LOGIN -->
                <h5 class='mb-4 mt-0'>
                Sign-in</h3>
-               <form action='{{ route("proc_sign_protocol") }}' method='POST' autocomplete='off'>
+               <form action='{{ route("proc_signin_protocol") }}' method='POST' autocomplete='off'>
                   {{ csrf_field() }}
                   <div class='row'>
                      <div class='col-lg-12'>

@@ -147,7 +147,7 @@ function p2(){
 
   function loadsum2(){
       $.ajax({
-    type: "POST",
+    type: "GET",
     url: "{{ route('lod_dis_indetail') }}",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
     success: function(data){

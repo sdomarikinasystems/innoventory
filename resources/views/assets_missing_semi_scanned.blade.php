@@ -70,7 +70,7 @@ fetch_data();
     $("#stationname").html(station_name);
     $("#fromtodates").html(htmldata_fromto);
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('stole_get_semi_expendable_not_scanned') }}",
       data: {_token:"{{ csrf_token() }}",station_info:asset_station,selyear:filtered_year,selmonth:filtered_month},
       success: function(data){

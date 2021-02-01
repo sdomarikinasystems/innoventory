@@ -123,14 +123,12 @@ Innoventory - Reminders
 	LoadRemindersPage();
  	function LoadRemindersPage(){
  		$.ajax({
- 			type: "POST",
+ 			type: "GET",
  			url: "{{ route('getremindersbyorigin') }}",
  			data: {_token: "{{ csrf_token() }}"},
  			success : function(data){
- 				// alert(data);
  				$("#reminderstbl").html(data);
  				$("#tblmytbl").DataTable();
-
  			}
  		})
  	}

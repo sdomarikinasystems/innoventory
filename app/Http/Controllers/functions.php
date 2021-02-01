@@ -119,9 +119,25 @@ class functions extends Controller {
     public function fly_generate_appendix66() {
         return view('doc_appendix66');
     }
+    public function fly_print_assets_qr(){
+        return view('asset_utilities');
+    }
     // FUNCTIONS
+    public function look_items_for_scanning(Request $req) {
+        $output = $this->send_get(['tag' =>'GET_ASSETS_FOR_QR_GENERATION',
+            'property_no' => $this->sdmenc($req["p_number"]),
+            'ass_type' => $this->sdmenc($req["ass_type"]),
+            'room_name' => $this->sdmenc($req["room_name"]),
+            'room_number' => $this->sdmenc($req["room_number"]),
+            'station' => $this->sdmenc(session('user_school'))]);
+        return  json_encode($output);
+    }
+    public function fly_printassetpage() {
+        $sch_id = session('user_schoolname');
+        return view('asset_printpage', ['sch_id' => $sch_id]);
+    }
     public function look_semi_count_by_station(Request $req) {
-        $out = $this->send(['tag' => 'GET_SEMI_COUNT_REGISTRY_BY_STATION', 'stationid' => $this->sdmenc($req['sd_id']) ]);
+        $out = $this->send_get(['tag' => 'GET_SEMI_COUNT_REGISTRY_BY_STATION', 'stationid' => $this->sdmenc($req['sd_id']) ]);
         if ($out[0] == "" || $out[0] == null) {
             return "0";
         } else {
@@ -369,11 +385,7 @@ class functions extends Controller {
     }
     public function look_checkready_specific(Request $req) {
         //CHECK CAPITAL OUTLAY REDINESS
-        $tag = $this->sdmenc("inventory_checkif_ready");
-        $station_id = $this->sdmenc($req["user_school"]);
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "station_id" => $station_id, ]]);
-        $output = json_decode($this->sdmdec($result->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"inventory_checkif_ready","station_id" => $this->sdmenc($req["user_school"])]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             // CHECK TYPE OF ASSET
@@ -467,14 +479,22 @@ class functions extends Controller {
         return $toecho;
     }
     public function look_single_semi_expenable(Request $req) {
-        $out = $this->send(['tag' => "GET_SINGLE_SEMI_EXPENDABLE", "data_id" => $this->sdmenc($req["d_id"]) ]);
+        $out = $this->send_get(['tag' => "GET_SINGLE_SEMI_EXPENDABLE", "data_id" => $this->sdmenc($req["d_id"]) ]);
         if (count($out) != 0) {
-            $out[0]["unit_value"] = number_format($out[0]["unit_value"], 2);
+            $out[0]["unit_value"] = str_replace(" ", "",  strtolower($out[0]["unit_value"]));
+            if($out[0]["unit_value"] != "" && $out[0]["unit_value"] != null && !strpos("n/a", $out[0]["unit_value"])){
+
+                $out[0]["unit_value"] = str_replace(",", "",   $out[0]["unit_value"]);
+                $out[0]["unit_value"] = number_format((int)$out[0]["unit_value"], 2);
+                if($out[0]["unit_value"] == "0.00"){
+                    $out[0]["unit_value"] = "Unidentified";
+                }
+            }
         }
         return json_encode($out);
     }
     public function look_get_semi_expendable_not_scanned(Request $req) {
-        $output = $this->send(['tag' => "GET_MISSING_SCANNED_SEMI_DATA", "station_id" => $this->sdmenc($req["station_info"]), "cho_year" => $this->sdmenc($req["selyear"]), "cho_month" => $this->sdmenc($req["selmonth"]) ]);
+        $output = $this->send_get(['tag' => "GET_MISSING_SCANNED_SEMI_DATA", "station_id" => $this->sdmenc($req["station_info"]), "cho_year" => $this->sdmenc($req["selyear"]), "cho_month" => $this->sdmenc($req["selmonth"]) ]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             if ($output[$i]["stock_number"] != "none" && $output[$i]["stock_number"] != "") {
@@ -938,7 +958,7 @@ class functions extends Controller {
         return $toecho;
     }
     public function look_last_date_ofcode(Request $req) {
-        $out = $this->send(['tag' => "GET_LAST_DATE_CODEOF", "station_id" => $this->sdmenc($req["station_id"]), "logcode" => $this->sdmenc($req["givencode"]) ]);
+        $out = $this->send_get(['tag' => "GET_LAST_DATE_CODEOF", "station_id" => $this->sdmenc($req["station_id"]), "logcode" => $this->sdmenc($req["givencode"]) ]);
         if (count($out) != 0) {
             // HAS DATE
             return date("M d, Y g:i a", strtotime($out[0]["timestamp"])) . "<small class='text-muted float-right'>" . $this->DateExplainder($out[0]["timestamp"]) . "</small>";
@@ -952,7 +972,7 @@ class functions extends Controller {
         return $this->quick_result($reset_account_password, "usermanagement");
     }
     public function look_semi_expendable_omitted(Request $req) {
-        $omitt = $this->send(['tag' => "GET_OMITTED_ASSET_IN_SCHOOL", "station_id" => $this->sdmenc($req["station_id"]), true]);
+        $omitt = $this->send_get(['tag' => "GET_OMITTED_ASSET_IN_SCHOOL", "station_id" => $this->sdmenc($req["station_id"]), true]);
         $toecho = "";
         switch ($req["layout"]) {
             case 'count':
@@ -996,7 +1016,7 @@ class functions extends Controller {
         return $toecho;
     }
     public function look_my_semiexpendable_descrepancies(Request $req) {
-        $semiex = $this->send(['tag' => "GET_ALL_SEMI_EXPENDIBLE_BY_STATION", "station_id" => $this->sdmenc($req["station_id"]), "location_id" => $this->sdmenc("all") ]);
+        $semiex = $this->send_get(['tag' => "GET_ALL_SEMI_EXPENDIBLE_BY_STATION", "station_id" => $this->sdmenc($req["station_id"]), "location_id" => $this->sdmenc("all") ]);
         $toecho = "";
         $desccount = 0;
         switch ($req["layout"]) {
@@ -1148,7 +1168,7 @@ class functions extends Controller {
         return $toecho;
     }
     public function look_semi_expendable_bystation(Request $req) {
-        $semiex = $this->send(['tag' => "GET_ALL_SEMI_EXPENDIBLE_BY_STATION", "station_id" => $this->sdmenc($req["station_id"]), "location_id" => $this->sdmenc("all") ]);
+        $semiex = $this->send_get(['tag' => "GET_ALL_SEMI_EXPENDIBLE_BY_STATION", "station_id" => $this->sdmenc($req["station_id"]), "location_id" => $this->sdmenc("all") ]);
         $toecho = "";
         for ($i = 0;$i < count($semiex);$i++) {
             $toecho.= "
@@ -1203,7 +1223,7 @@ class functions extends Controller {
         $file = fopen($upload_CSVFILE, "r");
         $toecho = "";
         // SELECT ALL EXISTING SEMI EXPENDABLE
-        $AllSemiExpendable = $this->send(['tag' => "GET_ALL_SEMI_EXPENDIBLE_BY_STATION", "station_id" => $this->sdmenc(session("user_school")), "location_id" => $this->sdmenc($req["service_center_id"]) ]);
+        $AllSemiExpendable = $this->send_get(['tag' => "GET_ALL_SEMI_EXPENDIBLE_BY_STATION", "station_id" => $this->sdmenc(session("user_school")), "location_id" => $this->sdmenc($req["service_center_id"]) ]);
         $tbl_discrepancies = "";
         $tbl_assetnofound = "";
         $miss_col = 0;
@@ -1586,10 +1606,8 @@ class functions extends Controller {
         return redirect()->back();
     }
     public function get_station_in_statuses() {
-        $tag = $this->sdmenc("getstastatus");
-        $client = new \GuzzleHttp\Client();
-        $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, ]]);
-        $output = json_decode($this->sdmdec($xresult->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"GET_STATION_STATUSES"]);
+        // return $output;
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             $isready_capital = $output[$i]["pref_value"];
@@ -1614,10 +1632,8 @@ class functions extends Controller {
         return $toecho;
     }
     public function get_ser_fqrs(Request $req) {
-        $tag = $this->sdmenc("get_ser_fqrs");
-        $client = new \GuzzleHttp\Client();
-        $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "station_id" => $this->sdmenc(session("user_school")), ]]);
-        $output = json_decode($this->sdmdec($xresult->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"get_ser_fqrs","station_id"=>$this->sdmenc(session("user_school"))]);
+
         $toecho = "<option selected value='" . $this->sdmenc("all") . "~all'>Show All</option>";
         for ($i = 0;$i < count($output);$i++) {
             $toecho.= "<option value='" . $this->sdmenc($output[$i]["office"]) . "~" . $output[$i]["room_number"] . "'>" . $output[$i]["office"] . " (" . $output[$i]["room_number"] . ")" . "</option>";
@@ -1625,13 +1641,8 @@ class functions extends Controller {
         return $toecho;
     }
     public function get_qr_as_sbyer(Request $req) {
-        $tag = $this->sdmenc("getassqrbyroomfilter");
-        $service_center = $this->sdmenc($this->sdmdec($req["service_center"]));
-        $room_number = $this->sdmenc($req["room_number"]);
-        $client = new \GuzzleHttp\Client();
-        $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "station_id" => $this->sdmenc(session("user_school")), "service_center" => $service_center, "room_number" => $room_number, "assettype" => $this->sdmenc($req["asset_type"]), ]]);
-        $out_res = $this->sdmdec($xresult->getBody()->getContents());
-        $output = json_decode($out_res, true);
+        $output = $this->send_get(["tag"=>"getassqrbyroomfilter","station_id" => $this->sdmenc(session("user_school")), "service_center" => $this->sdmenc($this->sdmdec($req["service_center"])), "room_number" =>$this->sdmenc($req["room_number"]), "assettype" => $this->sdmenc($req["asset_type"])]);
+
         $toecho = "";
         if ($req["asset_type"] == "co") {
             for ($i = 0;$i < count($output);$i++) {
@@ -1847,10 +1858,7 @@ class functions extends Controller {
         }
     }
     public function count_all_created_asset_loc() {
-        $tag = $this->sdmenc("count_allcreated_assloc");
-        $client = new \GuzzleHttp\Client();
-        $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "school_id" => $this->sdmenc(session("user_school")), ]]);
-        $output = $this->sdmdec($xresult->getBody()->getContents());
+        $output = $this->send_get(["tag"=>"count_allcreated_assloc","school_id" => $this->sdmenc(session("user_school"))],true);
         return $output;
     }
     public function edit_sc_info(Request $req) {
@@ -1931,12 +1939,7 @@ class functions extends Controller {
         return $toecho;
     }
     public function get_trhisto() {
-        $tag = $this->sdmenc("gettrahistory");
-        $station_id = $this->sdmenc(session("user_school"));
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "station_id" => $station_id, "employee_id" => $this->sdmenc(session("user_eid")), ]]);
-        $output = $this->sdmdec($result->getBody()->getContents());
-        $output = json_decode($output, true);
+        $output = $this->send_get(["tag"=>"gettrahistory","station_id" => $this->sdmenc(session("user_school")), "employee_id" => $this->sdmenc(session("user_eid"))]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             $toecho.= "<tr>
@@ -1949,20 +1952,12 @@ class functions extends Controller {
         return $toecho;
     }
     public function lod_dis_indetail(Request $req) {
-        $tag = $this->sdmenc("get_discrepancies_indetail");
-        $station_id = $this->sdmenc($req["stationid"]);
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "station_id" => $station_id, ]]);
-        $toecho = $this->sdmdec($result->getBody()->getContents());
-        return $toecho;
+        $output = $this->send_get(["tag"=>"get_discrepancies_indetail","station_id"=>$this->sdmenc($req["stationid"])],true);
+        return $output;
     }
     public function inventory_checkif_ready() {
         //CHECK CAPITAL OUTLAY REDINESS
-        $tag = $this->sdmenc("inventory_checkif_ready");
-        $station_id = $this->sdmenc(session("user_school"));
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "station_id" => $station_id, ]]);
-        $output = json_decode($this->sdmdec($result->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"inventory_checkif_ready","station_id" => $this->sdmenc(session("user_school"))]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             // CHECK TYPE OF ASSET
@@ -2022,7 +2017,7 @@ class functions extends Controller {
         $discrepancies = $this->sdmdec($result->getBody()->getContents());
         // GET LAST LOGIN TO THE SYSTEM
         if ($re["selected_realid"] == session("user_school")) {
-            $out = $this->send(['tag' => "GET_LAST_DATE_CODEOF", "station_id" => $this->sdmenc(session("user_school")), "logcode" => $this->sdmenc("a01") ]);
+            $out = $this->send_get(['tag' => "GET_LAST_DATE_CODEOF", "station_id" => $this->sdmenc(session("user_school")), "logcode" => $this->sdmenc("a01") ]);
             if (count($out) != 0) {
                 $last_login = date("M d, Y g:i a", strtotime($out[0]["timestamp"])) . "<small class='text-muted float-right'>" . $this->DateExplainder($out[0]["timestamp"]) . "</small>";
             } else {
@@ -2246,11 +2241,7 @@ class functions extends Controller {
         return redirect()->route("manstat");
     }
     public function load_stat_enc() {
-        $tag = $this->sdmenc("lod_all_enc_station");
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, ]]);
-        $output = $this->sdmdec($result->getBody()->getContents());
-        $output = json_decode($output, true);
+        $output = $this->send_get(["tag"=>"lod_all_enc_station"]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             $toecho.= "<tr>
@@ -2355,11 +2346,7 @@ class functions extends Controller {
         }
     }
     public function getremorgi() {
-        $tag = $this->sdmenc("getallreminderbyoriginnoe");
-        $reminderorigineid = $this->sdmenc(session("user_eid"));
-        $client = new \GuzzleHttp\Client();
-        $res_2 = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "reminderorigineid" => $reminderorigineid, ]]);
-        $output = json_decode($this->sdmdec($res_2->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"getallreminderbyoriginnoe","reminderorigineid"=>$this->sdmenc(session("user_eid"))]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             $toecho.= "
@@ -2415,13 +2402,7 @@ class functions extends Controller {
         return $output;
     }
     public function lodnewannounce(Request $req) {
-        $tag = $this->sdmenc("getrecentreminders");
-        $reminderorigineid = $this->sdmenc(session("user_type"));
-        $typeofget = $this->sdmenc($req["typeofget"]);
-        $client = new \GuzzleHttp\Client();
-        $res_2 = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "reminderorigineid" => $reminderorigineid, "typeofget" => $typeofget, "userid" => $this->sdmenc(session("user_eid")) ]]);
-        $orig = $this->sdmdec($res_2->getBody()->getContents());
-        $output = json_decode($orig, true);
+        $output = $this->send_get(["tag"=>"getrecentreminders", "reminderorigineid" => $this->sdmenc(session("user_type")), "userid" => $this->sdmenc(session("user_eid"))]);
         $toecho = "";
         $system_suggestion = array("
               <div class='alert alert-secondary pt-5 pb-5 announcement_card mb-4 card-shadow'>
@@ -3155,12 +3136,7 @@ class functions extends Controller {
         }
     }
     public function get_acc_info_edit(request $req) {
-        $tag = $this->sdmenc("get_emp_info_for_edit");
-        $emp_id = $this->sdmenc($req["emp_id"]);
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "emp_id" => $emp_id, ]]);
-        $output = $this->sdmdec($result->getBody()->getContents());
-        return $output;
+        return json_encode($this->send_get(["tag"=>"get_emp_info_for_edit","emp_id"=> $this->sdmenc($req["emp_id"])]));
     }
     public function edit_the_user_info(Request $req) {
         $depedemail = strtolower($req["x_depedemail"]);
@@ -3203,10 +3179,7 @@ class functions extends Controller {
         return redirect()->route("usermanagement");
     }
     public function load_all_school_names() {
-        $tag = $this->sdmenc("load_all_sc_names");
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, ]]);
-        $output = json_decode($this->sdmdec($result->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"load_all_sc_names"]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             if (session("user_type") == "0" || session("user_type") == "1") {
@@ -3299,11 +3272,7 @@ class functions extends Controller {
         return $toecho;
     }
     public function asset_disp_disposed(Request $req) {
-        $tag = $this->sdmenc("display_disposed_assets_reg");
-        $id_of_something = $this->sdmenc($req["id_of_something"]);
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "id_of_something" => $id_of_something, ]]);
-        $output = json_decode($this->sdmdec($result->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"display_disposed_assets_reg","id_of_something"=>$this->sdmenc($req["id_of_something"])]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             $toecho.= "
@@ -3533,7 +3502,7 @@ class functions extends Controller {
         $asset_signature = array();
         $asset_signature_existing = array();
         $asset_signature_existing_id = array();
-        $this->send(['tag' => "RESET_MY_NOT_INSERTED_DEFINITION_IN_CO", "stationid" => $this->sdmenc(session("user_school")) ]);
+        $this->send_get(['tag' => "RESET_MY_NOT_INSERTED_DEFINITION_IN_CO", "stationid" => $this->sdmenc(session("user_school")) ]);
         $tag = $this->sdmenc("get_all_pn_in_ir");
         // GET EXISITING ASSETS
         $client = new \GuzzleHttp\Client();
@@ -3730,10 +3699,7 @@ class functions extends Controller {
         return redirect()->route("assetuploadresult", ["i_newly" => $inserted_new, "i_existing" => $inserted_alreadyexisting, "i_not" => $inserted_not, "i_logs" => $mylogs, "i_incomplete" => $blankcols, "total_assets" => $tots, "nothere" => $nothere, "omcount" => $omitted_count, "om_logs" => $omitted_tbl]);
     }
     public function load_res_all_bylatest() {
-        $tag = $this->sdmenc("get_uploaded_assets_allstation_bylatest");
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, ]]);
-        $output = json_decode($this->sdmdec($result->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"get_uploaded_assets_allstation_bylatest"]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             $toecho.= "<tr>
@@ -3776,10 +3742,7 @@ class functions extends Controller {
         return $toecho;
     }
     public function lodresups() {
-        $tag = $this->sdmenc("get_uploaded_assets");
-        $client = new \GuzzleHttp\Client();
-        $result = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "st_id" => $this->sdmenc(session("user_school")), ]]);
-        $output = json_decode($this->sdmdec($result->getBody()->getContents()), true);
+        $output = $this->send_get(["tag"=>"get_uploaded_assets", "st_id" => $this->sdmenc(session("user_school"))]);
         $toecho = "";
         for ($i = 0;$i < count($output);$i++) {
             $toecho.= "<tr>
@@ -3988,6 +3951,17 @@ class functions extends Controller {
             return json_decode($this->sdmdec($res->getBody()->getContents()), true);
         } else {
             return $this->sdmdec($res->getBody()->getContents());
+        }
+    }
+     public function send_get($contents, $free_result = false) {
+        $contents['tag'] = $this->sdmenc($contents['tag']);
+        $client = new \GuzzleHttp\Client();
+        $res = $client->request("GET", WEBSERVICE_URL, ["query" => $contents]);
+        $output = $res->getBody()->getContents();
+        if ($free_result == false) {
+            return json_decode($this->sdmdec($output),true);
+        } else {
+            return $this->sdmdec($output);
         }
     }
     public function tblform_dropdown($name, $contents) {

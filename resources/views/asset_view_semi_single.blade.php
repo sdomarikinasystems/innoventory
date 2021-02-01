@@ -121,7 +121,7 @@ Innoventory (Loading....)
     var data_identification = <?php echo json_encode($_GET["asset_id"]); ?>;
     // alert(data_identification);
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "{{ route('stole_single_semi_expenable') }}",
       data: {_token: "{{ csrf_token() }}",d_id: data_identification},
       success: function(data){

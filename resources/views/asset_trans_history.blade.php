@@ -87,7 +87,7 @@ Inno... - Transaction History
 </div>
 <script type="text/javascript">
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: "{{ route('get_trhisto') }}",
     data: {_token:"{{ csrf_token() }}"},
     success: function(data){

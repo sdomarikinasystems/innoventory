@@ -118,7 +118,16 @@ Inno... - Capital Outlay Upload Result
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	       <table class="table table-striped" id="todtnow">
+	      	<div class="row mb-3">
+	      		<div class="col-md-9">
+	      			<div class="card card-shadow">
+	      				<div class="card-body">
+	      					This might duplicate your service center entry. Please double check your spelling before continuing.
+	      				</div>
+	      			</div>
+	      		</div>
+	      	</div>
+	       <table class="table table-borderless table-hover" id="todtnow">
 	       	<thead>
 	       		<tr>
 	       			<th>Service Centers</th>

@@ -167,7 +167,7 @@ Innoventory - Disposed Assets
   LoadAssets("{{ session('user_changesource_station') }}");
   function LoadAssets(station_id){
     $.ajax({
-      type : "POST",
+      type : "GET",
       url : "{{ route('asset_disp_disposed') }}",
       data : {_token:"{{ csrf_token()}}",id_of_something:station_id},
        success : function(data){
@@ -202,15 +202,14 @@ Innoventory - Disposed Assets
 
      function changesource(control_obj){
 
-         var sourceid = $(control_obj).data("sourceid");
-   var sourcename = $(control_obj).data("sourcename");
+      var sourceid = $(control_obj).data("sourceid");
+      var sourcename = $(control_obj).data("sourcename");
          $.ajax({
       type: "POST",
       url: "{{ route('shoot_univ_change_source') }}",
       data: {_token : "{{ csrf_token() }}", new_source_id: sourceid, new_source_name: sourcename },
       success: function(){
         location.reload();
-
       }
     })
    

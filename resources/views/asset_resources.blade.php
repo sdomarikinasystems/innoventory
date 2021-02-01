@@ -60,7 +60,6 @@ Innoventory - Resources
              <th>File Name</th>
               <th>Uploaded By</th>
               <th>Date Uploaded</th>
-          
           </tr>
         </thead>
         <tbody id="allresourcesbystation">
@@ -130,7 +129,7 @@ var hasloaded =false;
  function LoadAllReoucesByLatestUpload(){
 
    $.ajax({
-      type:"POST",
+      type:"GET",
       url: "{{ route('getallreourcesbylatest') }}",
       data: {_token: "{{ csrf_token() }}"},
       success: function(data){
@@ -151,7 +150,7 @@ function opendeleteresource(control_obj){
 }
   function LoadResources(){
   	$.ajax({
-  		type:"POST",
+  		type:"GET",
   		url: "{{ route('getmyresourcesofassets') }}",
   		data: {_token: "{{ csrf_token() }}"},
   		success: function(data){

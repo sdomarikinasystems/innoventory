@@ -114,8 +114,8 @@ Inno... - Manage Stations
   }
 function LoadAssetLocations(){
     $.ajax({
-      type: "POST",
-      url: "loadallstation",
+      type: "GET",
+      url: "{{ route('load_stat_enc') }}",
       data: {_token:"{{ csrf_token() }}"},
       success: function(data){
         // console.log(data);

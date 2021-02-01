@@ -153,13 +153,13 @@ $("#startinginfo").show();
 		$("#asset_type").prop("disabled",true);
 		if(hasfilterlocaded == false){
 			$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('get_ser_of_sta_fo_fil') }}",
 			data: {_token:"{{ csrf_token() }}"},
 			success: function(data){
+
 				$("#id_qrfilter").html(data);
 				CheckRediness();
-
 			}
 		})
 		}else{
@@ -172,7 +172,7 @@ $("#startinginfo").show();
 		
 
 	$.ajax({
-		type: "POST",
+		type: "GET",
 		url: "{{ route('stole_checkready_specific') }}",
 		data: {_token: "{{ csrf_token() }}",user_school: <?php echo json_encode(session("user_school")); ?>},
 		success:function(data){
@@ -213,17 +213,16 @@ $("#startinginfo").show();
 			$("#tblhead_roomnum").html("Room");
 		}
 		$.ajax({
-			type:"POST",
+			type:"GET",
 			url: "{{ route('Loadqrbyservicecen') }}",
 			data: {_token:"{{ csrf_token() }}",
 			service_center:myval[0],
 			room_number:myval[1],
 			asset_type: ass_type},
 			success: function(data){
-				// alert(data);
+
 				  $("#tbl_ass").DataTable().destroy();
 				$("#tbl_qrcontents").html(data);
-				// $("#tbl_ass").DataTable();
 				$('#tbl_ass').DataTable({  "bPaginate": false,"ordering":false});
 				$("#id_qrfilter").prop("disabled",false);
 				$("#asset_type").prop("disabled",false);
@@ -272,7 +271,7 @@ setTimeout(function(){
 			alert("Please select and asset first before you print QR Stickers!");
 		} else {
 			localStorage.setItem('pnumber_arr', JSON.stringify(arr1));
-			window.open('{{ route("pr_asset") }}?ass_type=' + $("#asset_type").val() + '&locationinfo=' + $("#id_qrfilter").val(), '_blank'); // <- This is what makes it open in a new window.
+			window.open('{{ route("goto_printassetpage") }}?ass_type=' + $("#asset_type").val() + '&locationinfo=' + $("#id_qrfilter").val(), '_blank'); // <- This is what makes it open in a new window.
 		}
 	})
 </script>

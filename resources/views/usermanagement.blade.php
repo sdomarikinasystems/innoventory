@@ -342,8 +342,8 @@ function lod_editacc(control_obj){
 $("#emp_id_edit").val(theid_myval);
 //load account all information
 $.ajax({
-  type: "POST",
-  url: "../../get_inf_user",
+  type: "GET",
+  url: "{{ route('get_acc_info_edit') }}",
   data : {_token: "{{ csrf_token() }}",emp_id: theid_myval},
   success : function(data){
     data = JSON.parse(data);
@@ -374,7 +374,7 @@ function LoadAllAccounts(){
 }
   function LoadAllSchoolsInSelection(){
       $.ajax({
-    type: "POST",
+    type: "GET",
     url: "{{ route('load_all_school_names') }}",
     data : {_token: "{{ csrf_token() }}"},
     success: function(data){

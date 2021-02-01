@@ -62,19 +62,17 @@
 	var rname ="";
 	var rnum ="";
 	function dec_data(){
-		// alert();
 		lcx = loca_id[0].replace(" ", "+")
 		$.ajax({
-			type:"POST",
-			url: "{{ route('shoot_trans_sdm') }}",
-			data: {_token: "{{ csrf_token() }}",todec: lcx},
-			success: function(data){
-				// alert(data);
-				loca_id[0] = data;
-				rname = loca_id[0];
-				rnum =loca_id[1];
-				coco();
-			}
+		type:"GET",
+		url: "{{ route('shoot_trans_sdm') }}",
+		data: {_token: "{{ csrf_token() }}",todec: lcx},
+		success: function(data){
+		loca_id[0] = data;
+		rname = loca_id[0];
+		rnum =loca_id[1];
+		coco();
+		}
 		})
 	}
 	var alreadydone = "";
@@ -83,48 +81,39 @@
 	totallod = json_data.length;
 
 	$("#xproggen").prop("max",totallod);
-		
 
-		
-    	async function coco(){
-    			for (var i = 0; i < json_data.length;i++) {
-		var pnumberarr=json_data[i];	
-	
-		if(loaded_data_pausetime < 85){
+		async function coco(){
+			for (var i = 0; i < json_data.length;i++) {
+			var pnumberarr=json_data[i];	
+
+			if(loaded_data_pausetime < 85){
 			await timer(256);
 			GenSelect(pnumberarr);
 			loaded_data_pausetime++;
 			gentime -= 234;
-		}else{
+			}else{
 			await timer(4000);
 			// alert("pausetime");
 			GenSelect(pnumberarr);
 			loaded_data_pausetime = 0;
+			}
+			}
 		}
-	}
-    	}
     	
-function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
-
-var inserted = false;
-async function GenSelect(pnumberarr){
-	
-		// setTimeout(function(){
-			// alert(pnumberarr + "---(" + rname + ")----" + rnum + "----" + asset_type + "----");
+		function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
+		var inserted = false;
+		async function GenSelect(pnumberarr){
 			$.ajax({
-				url: "{{ route('g_items') }}",
-				type: "POST",
+				type: "GET",
+				url: "{{ route('stole_items_for_scanning') }}",
 				data: {
 					_token: "{{ csrf_token() }}",
-					tag: "selectmp_bypr",
 					p_number: pnumberarr,
 					room_name: rname,
 					room_number: rnum,
 					ass_type: asset_type
 				},
 				success: function(response){
-
-					// alert(response);
 					if(asset_type == "co"){
 					// CAPITAL OUTLAY
 					
@@ -146,14 +135,12 @@ async function GenSelect(pnumberarr){
 						}else{
 							propername = asset_item;
 						}
-current += 1;
-
-$("#xproggen").val(current);
-var percentage_value_trans = ((current / totallod) * 100).toFixed(0) + "%";
-document.title = "Inno... - (" + percentage_value_trans +  ") QR Code Generation";
-$("#percentagecounter").html(percentage_value_trans);
+						current += 1;
+						$("#xproggen").val(current);
+						var percentage_value_trans = ((current / totallod) * 100).toFixed(0) + "%";
+						document.title = "Inno... - (" + percentage_value_trans +  ") QR Code Generation";
+						$("#percentagecounter").html(percentage_value_trans);
 						$('#wrapper').append('<div class="printbox"><div id="qrcode_' + current + '" data-pno="' +pnumber_x + '"><div class="qrtext">' + sch_name + "<br>" + pnumber_x + '<br>' + " " +  propername + '<br>' + " " +service_center+ ' (' + room_number + ')</div></div></div>');
-
 						var qrcode = new QRCode(document.getElementById("qrcode_" + current),{
 							text: pnumber_x,
 							width: 80,
@@ -162,32 +149,20 @@ $("#percentagecounter").html(percentage_value_trans);
 							colorLight : "#ffffff",
 							correctLevel : QRCode.CorrectLevel.H
 						});
-
-					   
-
-
 						$("#txt_okstat").show();
-$("#warmuptxt").hide();
-						   $("#currs").html(current);
-					    $("#totss").html(totallod);
-					    if(current == totallod){
-					    	 $("#currs").html(totallod);
-					    $("#totss").html(totallod);
-					    	$(".loadingui").css("display","none");
-					    	$("body").css("overflow","auto");
+						$("#warmuptxt").hide();
+						$("#currs").html(current);
+						$("#totss").html(totallod);
+						if(current == totallod){
+						$("#currs").html(totallod);
+						$("#totss").html(totallod);
+						$(".loadingui").css("display","none");
+						$("body").css("overflow","auto");
 					    }
 					}
 					}else{
 						//SEMI EXPENDABLE
-
-					
-
 					var data = JSON.parse(response);
-					// console.log(JSON.parse(response).length);
-					// console.log(data);
-					// if(data.length ==0){
-					// 	alert("huli ka balbon!");
-					// }
 					for (var key in data) {
 
 						var did = data[key].dataid;
@@ -202,23 +177,18 @@ $("#warmuptxt").hide();
 						if(!alreadydone.includes("(" + did + ")")){
 						inserted = true;
 						alreadydone += "(" + did + ")";
-
 						var propername = "";
-
 						if(asset_item.length > 50){
 							propername = asset_item.substr(1, 50) + "...";
 						}else{
 							propername = asset_item;
 						}
-current += 1;
-
-$("#xproggen").val(current);
-var percentage_value_trans = ((current / totallod) * 100).toFixed(0) + "%";
-document.title = "Inno... - (" + percentage_value_trans +  ") QR Code Generation";
-$("#percentagecounter").html(percentage_value_trans);
+						current += 1;
+						$("#xproggen").val(current);
+						var percentage_value_trans = ((current / totallod) * 100).toFixed(0) + "%";
+						document.title = "Inno... - (" + percentage_value_trans +  ") QR Code Generation";
+						$("#percentagecounter").html(percentage_value_trans);
 						$('#wrapper').append('<div class="printbox"><div id="qrcode_' + current + '" data-pno="' +pnumber_x + '"><div class="qrtext">' + sch_name + "<br>" +pnumber_x+ '<br>' + " " + propername + " X" + balance_per_card + '<br>' + " " +service_center+ ' (' + room_number + ')</div></div></div>');
-
-						
 						var qrcode = new QRCode(document.getElementById("qrcode_" + current),{
 							text: pnumber_x,
 							width: 80,
@@ -227,33 +197,21 @@ $("#percentagecounter").html(percentage_value_trans);
 							colorLight : "#ffffff",
 							correctLevel : QRCode.CorrectLevel.H
 						});
-
-
-										$("#txt_okstat").show();
-$("#warmuptxt").hide();
-						   $("#currs").html(current);
-					    $("#totss").html(totallod);
-					    if(current == totallod){
-					    	 $("#currs").html(totallod);
-					    $("#totss").html(totallod);
-					    	$(".loadingui").css("display","none");
-					    	$("body").css("overflow","auto");
+						$("#txt_okstat").show();
+						$("#warmuptxt").hide();
+						$("#currs").html(current);
+						$("#totss").html(totallod);
+						if(current == totallod){
+						$("#currs").html(totallod);
+						$("#totss").html(totallod);
+						$(".loadingui").css("display","none");
+						$("body").css("overflow","auto");
 					    }
 					}
-	
-
 						}
-
-						
 					}
 				}	
 			})
-
-		// },gentime)
-
-		
 		}
-
-
-    self.window.name = "qr_gen_print";
+		    self.window.name = "qr_gen_print";
 </script>

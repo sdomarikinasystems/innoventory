@@ -36,8 +36,8 @@ Inno... - Capital Outlay Missing
 			</div>
 		</div>
 	</div>
-	<div class="col-md-12 mt-3 table-responsive table-striped"> 
-		<table class="table table-hover table-bordered" id="td_scanned_nf">
+	<div class="col-md-12 mt-3 table-responsive"> 
+		<table class="table table-hover table-borderless" id="td_scanned_nf">
 			<thead>
 				<tr>
 					<th scope="col">Property Number</th>
