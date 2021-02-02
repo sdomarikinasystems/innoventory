@@ -82,7 +82,7 @@ Route::get('/get_discrep_indetail', ['uses' => 'functions@lod_dis_indetail', 'as
 Route::get('/get_all_transhistory', ['uses' => 'functions@get_trhisto', 'as' => 'get_trhisto']);
 Route::post('/get_export_his', ['uses' => 'functions@get_export_history', 'as' => 'get_export_history']);
 Route::post('/search_station_toview', ['uses' => 'functions@search_asstov', 'as' => 'search_asstov']);
-Route::post('/get_sc_fn', ['uses' => 'functions@get_school_fullname', 'as' => 'get_school_fullname']);
+Route::get('/get_sc_fn', ['uses' => 'functions@get_school_fullname', 'as' => 'get_school_fullname']);
 Route::get('/stations_man', ['uses' => 'functions@sta_amanagement', 'as' => 'sta_amanagement']);
 Route::post('/addstation_new', ['uses' => 'functions@addnewsta_xnow', 'as' => 'addnewsta_xnow']);
 Route::post('/view_all_ass', ['uses' => 'functions@view_all_st_names', 'as' => 'view_all_st_names']);
@@ -124,7 +124,7 @@ Route::get('/report_all_omitted_assets', ['uses' => 'functions@rep_all_om_ass', 
 // ASSET REGISTRY
 Route::post('/add_new_semi_expendable', ['uses' => 'functions@fire_add_semi_expendible', 'as' => 'shoot_add_semi_expendible']);
 Route::post('/validate_uploaded_cvs_file', ['uses' => 'functions@fire_preview_csv_semiexpendable', 'as' => 'shoot_preview_csv_semiexpendable']);
-Route::post('/get_all_my_service_center', ['uses' => 'functions@look_all_ofmy_service_center', 'as' => 'shoot_all_ofmy_service_center']);
+Route::get('/get_all_my_service_center', ['uses' => 'functions@look_all_ofmy_service_center', 'as' => 'shoot_all_ofmy_service_center']);
 Route::get('/get_semi_expendablebystation', ['uses' => 'functions@look_semi_expendable_bystation', 'as' => 'stole_semi_expendable_bystation']);
 Route::get('/get_mysemi_discrepancies', ['uses' => 'functions@look_my_semiexpendable_descrepancies', 'as' => 'stole_my_semiexpendable_descrepancies']);
 Route::get('/get_mysemi_omitted', ['uses' => 'functions@look_semi_expendable_omitted', 'as' => 'stole_semi_expendable_omitted']);
@@ -192,3 +192,5 @@ Route::get('/translate_sdm_securitywise', ['uses' => 'functions@fire_trans_sdm',
 Route::get('/innoventory/asset/qr', ['uses' => 'functions@fly_print_assets_qr', 'as' => 'goto_print_asset_qr']);
 Route::get('/innoventory/qr_printing', ['uses' => 'functions@fly_printassetpage', 'as' => 'goto_printassetpage']);
 Route::get('/get_qr_priting_assets', ['uses' => 'functions@look_items_for_scanning', 'as' => 'stole_items_for_scanning']);
+// ASSET DISPOSED
+Route::get('/get_disposed_semi', ['uses' => 'functions@look_get_disposed_semiexpendable', 'as' => 'stole_get_disposed_semiexpendable']);

@@ -13,19 +13,15 @@ Innoventory - Omitted Semi Expendables
 	</ol>
 </nav>
 <div class="row mt-3">
-	<div class="col-md-4">
-		<div class="mb-3">
-		</div>
-	</div>
-	<div class="col-sm-4">
-	</div>
-	<div class="col-sm-4">
-		<div class="alert alert-info mb-3" role="alert">
-			  Omitted asset(s) can still be scanned from the mobile app unless you <strong><i class="fas fa-flag"></i> Report</strong> them for deletion.
+		<div class="col-sm-6">
+		<div class="card card-shadow mb-3" role="alert">
+			 <div class="card-body">
+			 	 Omitted asset(s) are still counted on your <strong>Asset Registry</strong> and can still be included in <strong>Inventory</strong> unless you <strong><i class="fas fa-flag"></i> Report</strong> them for deletion.
+			 </div>
 			</div>
 	</div>
 	<div class="col-md-12 table-responsive table-striped"> 
-		<table class="table table-hover table-bordered" id="tbl_omass">
+		<table class="table table-hover table-borderless" id="tbl_omass">
 			<thead>
 				<tr>
 					 <th>No #</th>
@@ -185,12 +181,13 @@ var stationidassigned = <?php echo json_encode($_GET["stationid"]); ?>;
 LoadOmittedData();
 function LoadOmittedData(){
 	$.ajax({
-		type:"POST",
+		type:"GET",
 		url: "{{ route('stole_semi_expendable_omitted') }}",
 		data: {_token: "{{ csrf_token() }}",station_id: stationidassigned,layout:"table"},
         success: function(data){
           // alert(data);
           $("#tbl_semi_omitted").html(data);
+          $("#tbl_omass").DataTable();
         }
        })
 }

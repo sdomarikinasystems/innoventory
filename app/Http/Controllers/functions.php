@@ -123,11 +123,62 @@ class functions extends Controller {
         return view('asset_utilities');
     }
     // FUNCTIONS
+    public function look_get_disposed_semiexpendable(Request $req){
+        $out = $this->send_get(["tag"=>"GET_SEMI_EXPENDABLE_DISPOSED","station_id"=>$this->sdmenc($req["sta_id"])]);
+
+        $toecho = "";
+        for ($i = 0;$i < count($out);$i++) {
+            $toecho.= "
+        <tr>
+        <td>" . $out[$i]["article"] . "</td>
+        <td>" . $out[$i]["description"] . "</td>
+        <td>" . $out[$i]["stock_number"] . "</td>
+        <td>" . $out[$i]["unit_of_mesure"] . "</td>
+        <td>" . $out[$i]["unit_value"] . "</td>
+        <td>" . $out[$i]["balance_per_card"] . "</td>
+        <td>" . $out[$i]["on_hand_per_count"] . "</td>
+         <td>" . $out[$i]["office"] . "</td>
+          <td>" . $out[$i]["room_number"] . "</td>
+          <td>
+
+ <div class='dropdown'>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
+  
+    <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
+      <a class='dropdown-item' href='#'><i class='fas fa-trash-restore'></i> Restore</a>
+    </div>
+  </div>
+          </td>
+        </tr>
+        ";
+        }
+
+        return $toecho;
+    }
     public function look_scanned_co(){
         $out = $this->send_get(["tag"=>"GET_SC_CO_CURR","station_id"=>$this->sdmenc(session("user_school"))]);
+        for ($i=0; $i < count($out); $i++) { 
+            if(date("Y-m-d",strtotime($out[$i]["scanned_date"])) == date("Y-m-d")){
+                $out[$i]["scanned_date"] = date("g:i a",strtotime($out[$i]["scanned_date"]));
+            }else{
+            $out[$i]["scanned_date"] = date("F d, Y g:i a",strtotime($out[$i]["scanned_date"]));
+        }
+    }
+        return json_encode($out);
     }
     public function look_scanned_se(){
         $out = $this->send_get(["tag"=>"GET_SC_SE_CURR","station_id"=>$this->sdmenc(session("user_school"))]);
+        for ($i=0; $i < count($out); $i++) { 
+            if(date("Y-m-d",strtotime($out[$i]["scanned_date"])) == date("Y-m-d")){
+                $out[$i]["scanned_date"] = date("g:i a",strtotime($out[$i]["scanned_date"]));
+            }else{
+            $out[$i]["scanned_date"] = date("F d, Y g:i a",strtotime($out[$i]["scanned_date"]));
+        }
+    }
+        return json_encode($out);
     }
     public function look_items_for_scanning(Request $req) {
         $output = $this->send_get(['tag' =>'GET_ASSETS_FOR_QR_GENERATION',
@@ -136,7 +187,7 @@ class functions extends Controller {
             'room_name' => $this->sdmenc($req["room_name"]),
             'room_number' => $this->sdmenc($req["room_number"]),
             'station' => $this->sdmenc(session('user_school'))]);
-        return  json_encode($output);
+        return json_encode($output);
     }
     public function fly_printassetpage() {
         $sch_id = session('user_schoolname');
@@ -151,7 +202,11 @@ class functions extends Controller {
         }
     }
     public function fire_dispose_semi_expendable(Request $req){
-        $this->send(["tag"=>"DISPOSE_SINGLE_SEMI_EXPENDABLE","item_id"=>$this->sdmenc($req["asset_id"])]);
+        $out = $this->send(["tag"=>"DISPOSE_SINGLE_SEMI_EXPENDABLE",
+                            "status"=>$this->sdmenc($req["asset_archive_type"]),
+                            "data_id"=>$this->sdmenc($req["asset_id"])]);
+        Alert::success("Item Disposed!");
+       return redirect()->back();
     }
     public function look_total_assets_of_station_specific(Request $req) {
         $client = new \GuzzleHttp\Client();
@@ -946,10 +1001,11 @@ class functions extends Controller {
         <td>" . $semiex[$i]["on_hand_per_count"] . "</td>
         <td>" . $semiex[$i]["remarks"] . "</td>
         <td>" . '
-                    <div class="dropdown ">
-              <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               Action
-              </a>
+                     <div class="dropdown">
+    <a class="btn btn-link" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-ellipsis-v"></i>
+    </a>
+  
             
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#supplydispose"><i class="fas fa-trash"></i> Dispose</a>
@@ -1190,10 +1246,11 @@ class functions extends Controller {
 
         <td>" . $semiex[$i]["remarks"] . "</td>
         <td>" . '
-                    <div class="dropdown ">
-              <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               Action
-              </a>
+                   <div class="dropdown">
+    <a class="btn btn-link" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-ellipsis-v"></i>
+    </a>
+  
             
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
 
@@ -1215,11 +1272,20 @@ class functions extends Controller {
         return $toecho;
     }
     public function look_all_ofmy_service_center(Request $req) {
-        $out = $this->send(['tag' => "GET_ALL_SERVICE_CENTERS_MYSTATION", "station_id" => $this->sdmenc($req["station_id"]) ]);
+        $out = $this->send_get(['tag' => "GET_ALL_SERVICE_CENTERS_MYSTATION", "station_id" => $this->sdmenc($req["station_id"]) ]);
         $toecho = "";
         $toecho.= "<option value='' disabled selected>Choose here...</option>";
         for ($i = 0;$i < count($out);$i++) {
-            $toecho.= "<option value='" . $out[$i]["id"] . "'>" . $out[$i]["office"] . "-" . $out[$i]["room_number"] . "</option>";
+            $extra_info = "";
+            $name = "";
+            if($out[$i]["items_count"] != "0"){
+                 $extra_info = " → " . number_format($out[$i]["items_count"]) . " stored";
+                $name = "(" . $out[$i]["office"] . " - " . $out[$i]["room_number"] .")";
+            }else{
+                $name = $out[$i]["office"] . " - " . $out[$i]["room_number"];
+            }
+
+            $toecho.= "<option value='" . $out[$i]["id"] . "'>" . $name .  $extra_info . "</option>";
         }
         return $toecho;
     }
@@ -1760,9 +1826,10 @@ class functions extends Controller {
             if ($isown) {
                 $toecho.= "
         <div class='dropdown'>
-        <a class='btn btn-primary btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        Action
-        </a>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
 
         <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
 
@@ -1784,10 +1851,10 @@ class functions extends Controller {
             } else {
                 $toecho.= "
         <div class='dropdown'>
-        <a class='btn btn-light btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        Action
-        </a>
-
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
         <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
 
 
@@ -1908,12 +1975,8 @@ class functions extends Controller {
         return redirect()->route("sta_amanagement");
     }
     public function get_school_fullname(Request $req) {
-        $sc_id = $this->sdmenc($req["stationid"]);
-        $tag = $this->sdmenc("get_sc_name");
-        $client = new \GuzzleHttp\Client();
-        $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "sc_id" => $sc_id, ]]);
-        $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
-        return $mynameschool;
+        $output = $this->send_get(["tag"=>"get_sc_name","sc_id"=>$this->sdmenc($req["stationid"])],true);
+        return $output;
     }
     public function search_asstov(Request $req) {
         $tag = $this->sdmenc("search_histo");
@@ -2103,10 +2166,11 @@ class functions extends Controller {
                 <td>" . $output[$i]["room_number"] . "</td>
               ";
             $toecho.= "
-        <td><div class='dropdown'>
-        <a class='btn btn-link btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        Action
-        </a>
+        <td> <div class='dropdown'>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
 
         <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
 
@@ -2291,11 +2355,11 @@ class functions extends Controller {
             $toecho.= "</td>
                 <td>
 
-                <div class='dropdown'>
-                  <a class='btn btn-primary btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                    action
-                  </a>
-                
+                 <div class='dropdown'>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
                   <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
 
                     <a class='dropdown-item' data-toggle='modal' data-target='#editservicecentermodal' href='#' onclick='showupdateincharge(this)' data-cont_id='" . $output[$i]["locid"] . "'
@@ -2603,10 +2667,11 @@ class functions extends Controller {
         <td>
         ";
                 $toecho.= "
-        <div class='dropdown'>
-        <a class='btn btn-link btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        Action
-        </a>
+         <div class='dropdown'>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
 
         <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
 
@@ -3313,10 +3378,11 @@ class functions extends Controller {
                     <td>" . $output[$i]["room_number"] . "</td>
                 <td>
 
-                <div class='dropdown'>
-                <a class='btn btn-primary btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                Action
-                </a>
+               <div class='dropdown'>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
 
                 <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
 
@@ -3425,11 +3491,11 @@ class functions extends Controller {
         ";
             if ($isown) {
                 $toecho.= "
-        <div class='dropdown'>
-        <a class='btn btn-primary btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        Action
-        </a>
-
+       <div class='dropdown'>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
         <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
 
 
@@ -3449,11 +3515,11 @@ class functions extends Controller {
                 }
             } else {
                 $toecho.= "
-        <div class='dropdown'>
-        <a class='btn btn-light btn-sm dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        Action
-        </a>
-
+         <div class='dropdown'>
+    <a class='btn btn-link' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+      <i class='fas fa-ellipsis-v'></i>
+    </a>
+  
         <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
 
 

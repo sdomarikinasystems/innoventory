@@ -7,8 +7,14 @@ Innoventory - Inventory Mode
 @section('contents')
 <div id="step_0" style="display: block;">
 	<div class="container">
-		<div class="mt-5">
-			<h5>Recovering last session...</h5>
+		<div style="margin-top: 30vh;">
+			<center>
+				<div class="card card-shadow" style="width: 530px;">
+					<div class="card-body p-5">
+						<h5 class="m-0">Innoventory is recovering your last session...</h5>
+					</div>
+				</div>
+			</center>
 		</div>
 	</div>
 </div>
@@ -51,13 +57,26 @@ Innoventory - Inventory Mode
 		</div>
 	</div>
 </div>
-<div id="step_1" style="display: none;">
-<div class="row mb-2">
+<div id="step_1" class="container" style="display: none;">
+<div class="card card-shadow mb-3">
+	<div class="card-body">
+		<div class="row">
 	<div class="col-sm-8">
-		<h5><?php echo $_GET["station_full_name"]; ?> <small class="text-muted">Inventory Mode</small></h5>
+		<h5 class="m-0"><?php echo $_GET["station_full_name"]; ?></h5>
 	</div>
 	<div class="col-sm-4">
-		<button class="btn-success btn-sm m-0 btn float-right" data-toggle="modal" data-target="#modal_inventorysubmitssion"><i class="fas fa-check-circle"></i> Submit Inventory</button>
+
+		<div class="dropdown float-right m-0">
+		  <a class="btn btn-link btn-sm btn-text" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		    <i class="fas fa-ellipsis-v"></i>
+		  </a>
+		
+		  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+		    <a class="dropdown-item" data-toggle="modal" data-target="#modal_inventorysubmitssion" href="#"><i class="fas fa-arrow-circle-right"></i> Submit Inventory</a>
+		  </div>
+		</div>
+	</div>
+</div>
 	</div>
 </div>
 <div class="row">
@@ -67,25 +86,19 @@ Innoventory - Inventory Mode
 		  <h3 class="mt-3 mb-0" id="disp_time">9:46 am</h3>
 		<h5 class="mb-3 mt-0" id="disp_date">Sunday March 12, 2020</h5>
 		</div>
-		
-	
 		  <div class="card card-shadow mb-3">
 		  	<div class="card-header">
-		  		<button class="btn btn-sm btn-danger float-right" data-toggle="modal" data-target="#modal_changeassetlocationsource" id="chooseserv" onclick="OnSelect_ServiceCenterQuickInfo()"><i class="fas fa-sync"></i> Service Center</button>
-				<h5 class="mt-0 "><strong class="text-dark curr_roomname"></strong></h5>
-				<p class="mb-0"><span class="mb-0" id="curr_roomnumber">Room: <strong>...</strong></span> / <span class="mb-0">In-charge: <strong id="curr_roomincharge">...</strong></span></p>
+		  		<button class="btn btn-sm btn-link btn-text m-0 float-right" title="Change service center for asset scanning." data-toggle="modal" data-target="#modal_changeassetlocationsource" id="chooseserv" onclick="OnSelect_ServiceCenterQuickInfo()"><i class="fas fa-sync"></i></button>
+				<p class="m-0"><strong class="text-dark curr_roomname"></strong> <small class="text-muted">(<span id="curr_roomnumber"></span>)</small></p>
+				<p class="mb-0" style="display: none;"><span class="mb-0" >Room: <strong>...</strong></span> / <span class="mb-0">In-charge: <strong id="curr_roomincharge">...</strong></span></p>
 		  	</div>
 		  	<div class="card-body">
-				<h5 class="mt-0">Property / Stock Number</h5>
-				<div class="form-group" style="height: 50px; display: block; width: 100%;">
-					 <span class="deleteicon">
-				<input type="text" autocomplete="off" class="form-control form-control-lg" id="inp_qrfocus" placeholder="Scan Result" name="">
+				<div class="form-group">
+				<input type="text" autocomplete="off" onfocus="this.value=''" class="form-control form-control-lg" id="inp_qrfocus" placeholder="Property / Stock Number" name="">
 				 <span onclick="$('#inp_qrfocus').val(''); $('#inp_qrfocus').focus();"></span>
-				 </span>
-
 				</div>
 		<label class="float-left mt-2"><input type="checkbox" id="inp_autorecieve" name=""> Auto-Recieve</label>
-		<button class="btn btn-primary float-right" id="btn_addtoinventory"><i class="fas fa-plus-circle"></i> Add to <span class="curr_roomname"></span></button>
+		<button class="btn btn-primary float-right" id="btn_addtoinventory"><i class="fas fa-plus-circle"></i> Add</button>
 		  	</div>
 		  </div>
 
@@ -95,7 +108,7 @@ Innoventory - Inventory Mode
 		
 		<div class="form-group mt-3" style="display: none;">
 			<label>Raw Data Preview</label>
-			<textarea id="rawdatatext" rows="15" style="widows: 100%;" class="form-control" disabled=""></textarea>
+			<textarea id="rawdatatext" onclick="ReflectDataToHTML()" rows="15" style="widows: 100%;" class="form-control" ></textarea>
 		</div>
 	</div>
 	<div class="col-sm-6">
@@ -135,7 +148,7 @@ Innoventory - Inventory Mode
 					<h4 class="mb-0" id="item_count_scanned">0</h4>
 				</div>
 
-		<div id="asset_data_reflection" class="card-shadow" style="background-color: #E9ECEF !important; padding: 20px; border-radius: 15px; margin-top: 20px;">
+		<div id="asset_data_reflection" class="card-shadow" style="background-color: #E9ECEF !important; padding: 20px; border-radius: 15px; margin-top: 20px; border-top: 2px solid rgba(255,255,255,0.8); overflow: auto; height: 60vh;">
 					<div class="mt-5 mb-5">
 						<center>
 							<h4 class="text-muted">Scanned asset will appear here.</h4>
@@ -281,6 +294,7 @@ Innoventory - Inventory Mode
 	var currentlyready = "";
 	var col_s_COUNT = "<|count|>";
 	var sessioned_data = "";
+	var hasloadedfromsession = false;
 
 	var timer = 0;
 	$("#inp_qrfocus").keyup(async function(){
@@ -328,15 +342,18 @@ Innoventory - Inventory Mode
 	function SessionAbsoluteRestore(){
 		$("#session_restore").hide();
 		// RESTORE SESSION
+		hasloadedfromsession = true;
 		current_station_id = sessioned_data[0];
-		$("#rawdatatext").html(sessioned_data[1]);
+		$("#rawdatatext").val(sessioned_data[1]);
 		current_station_fullname = sessioned_data[2];
 		CheckRediness();
+		$("#inp_qrfocus").focus();
 	}
 	function SessionAbsoluteCancel(){
 		$("#session_restore").hide();
 		//NORMAL
 		RemoveLastSessionInStation();
+			$("#inp_qrfocus").focus();
 	}
 
 
@@ -432,24 +449,26 @@ var single_data = data_fragment[i].split(col_XX);
 				var ss_timestamp = single_data[2];
 				var ss_asset_name = single_data[3];
 				var ss_assettype = single_data[4];
+				var ss_alreadysent = single_data[6];
 		if(loaded_data_pausetime < 35){
 			await x_timer(315);
-			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
+			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype,ss_alreadysent);
 			loaded_data_pausetime++;
 		}else{
 			await x_timer(3000);
 			// alert("pausetime");
-			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype);
+			AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype,ss_alreadysent);
 			loaded_data_pausetime = 0;
 		}
 
 			}
 		}
 	}
-	function AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype){
+	function AddDataOnline(ss_locationid,ss_assetcode,ss_timestamp,ss_asset_name,ss_assettype,ss_alreadysent){
 
 		if(currentlyready.includes(ss_assettype)){
-			$.ajax({
+			if(ss_alreadysent == "false"){
+	$.ajax({
 			type:"POST",
 			url:"{{ route('shoot_submit_scanned_data') }}",
 			data: {
@@ -467,6 +486,12 @@ var single_data = data_fragment[i].split(col_XX);
 				savetime -= 333;
 			}
 			})	
+			}else{
+				transfercount++;
+				Revisualize_percentage_transferUI();
+				
+			}
+		
 		}else{
 				transfercount++;
 				Revisualize_percentage_transferUI();
@@ -664,19 +689,25 @@ var single_data = data_fragment[i].split(col_XX);
 				$("#toloadservicecenters").html(data);
 				$("#custom_service_center_ofstation").html(data);
 				// Store current service center ID in variable
-				
+			
+
 			}
 		})
 	}
 	function GetAllScannedDataOnThisInventoryPeriod(){
-		
+		if(hasloadedfromsession == false){
+			GetCapitalScanned();
 		function GetCapitalScanned(){
 			$.ajax({
-				type: "POST",
+				type: "GET",
 				url: "{{ route('stole_scanned_co') }}",
 				data: {_token: "{{ csrf_token() }}"},
-				success: function(data){
-					alert("co: " + data);
+				success: async function(data){
+					// alert(data);
+					data = JSON.parse(data);
+					for(var i = 0 ; i < data.length; i ++){
+						AddCodeToRawData(data[i], true);
+					}
 					GetSemiScanned();
 				}
 			})
@@ -684,13 +715,23 @@ var single_data = data_fragment[i].split(col_XX);
 
 		function GetSemiScanned(){
 			$.ajax({
-				type: "POST",
+				type: "GET",
 				url: "{{ route('stole_scanned_se') }}",
 				data: {_token: "{{ csrf_token() }}"},
-				success: function(data){
-					alert("co: " + data);
+				success: async function(data){
+					// alert(data);
+					data = JSON.parse(data);
+					for(var i = 0 ; i < data.length; i ++){
+						AddCodeToRawData(data[i], true);
+					}
+
+					GetRoomInformationByID();
 				}
 			})
+		}
+		}else{
+			GetRoomInformationByID();
+			ReflectDataToHTML();
 		}
 	}
 
@@ -698,8 +739,18 @@ var single_data = data_fragment[i].split(col_XX);
 		$("#select_service_center_page").hide();
 		current_location_id = $("#custom_service_center_ofstation").val();
 		$("#toloadservicecenters").val(current_location_id);
-		GetRoomInformationByID();
+
+
+		if(has_getted_data == false){
+			GetAllScannedDataOnThisInventoryPeriod();
+			has_getted_data = true;
+		}else{
+			GetRoomInformationByID();
+		}
+
+		
 		$("#step_1").show();
+			$("#inp_qrfocus").focus();
 	}
 
 	var selected_location_info = "";
@@ -796,7 +847,7 @@ $("#chooseserv").show();
 		$("#inp_qrfocus").val("");
 
 	}
-	 async function AddCodeToRawData(newdata){
+	 async function AddCodeToRawData(newdata,already_sent = false){
 		 $("#inp_qrfocus").prop("placeholder","Proccessing....");
 		var currentdata = $("#rawdatatext").val();
 		if(currentdata != "" && currentdata != null){
@@ -806,8 +857,10 @@ $("#chooseserv").show();
 		
 		// GET SCANNED CODE INRMATION IF HAS EXISTING REFERENCE IN REGISTRY
 		var current_moreinfo = "";
-		await x_timer(351);
-		$.ajax({
+		
+		if(already_sent == false){
+			await x_timer(351);
+					$.ajax({
 			type:"GET",
 			url: "{{ route('stole_scanned_item_details') }}",
 			data: {_token: "{{ csrf_token() }}",
@@ -818,7 +871,7 @@ $("#chooseserv").show();
 				current_moreinfo = JSON.parse(data);
 				if(current_moreinfo.length !=0){
 				// BUILD DATA IF REFERENCE IS EXISTING-----
-				// location id,code,timestamp,item name, asset type, gorg_timestamp
+				// location id,code,timestamp,item name, asset type, gorg_timestamp, alreadysent
 
 				var asset_type = "";
 				var asset_name = "";
@@ -826,8 +879,11 @@ $("#chooseserv").show();
 				if(current_moreinfo[0]["property_number"]){
 					asset_type = "co";
 					asset_name = current_moreinfo[0]["asset_item"];
-				}else{
-					result = prompt("Enter Semi-Expendable Item Quantity");
+				}else {
+					if (already_sent == false) {
+						result = prompt("Enter Semi-Expendable Item Quantity");
+					}
+					
 					asset_type = "se";
 					asset_name = current_moreinfo[0]["description"];
 				}
@@ -835,21 +891,29 @@ $("#chooseserv").show();
 				var semi_count_sep = col_s_COUNT;
 				// Pass data
 				var goodtogo = false;
-				if(asset_type == "se" && isNumeric(result) && result != ""){
+				if(asset_type == "se" && isNumeric(result) && result != "" && already_sent == false){
 					// good semi-expendable data
 					if(parseInt(result) >= 0){
 						goodtogo = true;
 					}else{
 						AddToErrorLogs("Given quantity to Semi-Expendable (" + htmlEntities(newdata) + ") is not quantifiable.");
 					}
-				}else if(asset_type == "se" && (isNumeric(result) == false || result == "")){
+				}else if(asset_type == "se" && (isNumeric(result) == false || result == "" && already_sent== false)){
 					// bad semi-expendable data
 					AddToErrorLogs("Semi-Expendable (" + htmlEntities(newdata) + ") given quantity is invalid.");
-				}else if(asset_type == "co"){
+				}else if(asset_type == "co" && already_sent== false){
 					//good capital outlay data
 					result = "";
 					goodtogo = true;
 					semi_count_sep = "";
+				}else if(already_sent = true){
+					if(asset_type == "co" ){
+						result = "";
+						semi_count_sep = "";
+					}else{
+						result = "0";
+					}
+					goodtogo = true;
 				}
 
 				currentdata += current_location_id + col_XX +
@@ -857,7 +921,8 @@ $("#chooseserv").show();
 				current_timestamp + col_XX +
 				asset_name + semi_count_sep + result + col_XX +
 				asset_type + col_XX +
-				current_time_good;
+				current_time_good + col_XX +
+				already_sent;
 
 				if(goodtogo){
 					$("#rawdatatext").val(currentdata);
@@ -872,7 +937,7 @@ $("#chooseserv").show();
 				$("#inp_qrfocus").val("");
 				setTimeout(function(){
 				$("#inp_qrfocus").prop("disabled",false);
-				$("#inp_qrfocus").prop("placeholder","Scan Result");
+				$("#inp_qrfocus").prop("placeholder","Property / Stock Number");
 				ReflectDataToHTML();
 				$("#inp_qrfocus").focus();
 				SaveSession();
@@ -880,6 +945,38 @@ $("#chooseserv").show();
 
 			}
 		})
+				}else{
+					// newdata = JSON.parse(newdata);
+					// IF ALREADY SENT
+					var semi_count_sep = col_s_COUNT;
+					var sc_code = "";
+					var itm_type = "";
+					var asset_item = "";
+					if(!newdata["stock_number"]){
+						sc_code = newdata["property_number"];
+						itm_type = "co";
+						semi_count_sep = "";
+						result = "";
+						asset_item = newdata["asset_item"];
+					}else{
+						sc_code = newdata["stock_number"];
+						itm_type = "se";
+						result = newdata["quantity"];
+						asset_item = newdata["description"];
+					}
+					currentdata += newdata["loc_id"] + col_XX +
+					sc_code + col_XX +
+					newdata["stock_number"] + col_XX +
+					asset_item + semi_count_sep + result + col_XX +
+					itm_type + col_XX +
+					newdata["scanned_date"] + col_XX +
+					already_sent;
+					$("#rawdatatext").val(currentdata);
+					filtershow_all();
+					ReflectDataToHTML();
+					// SaveSession();
+				}
+
 		
 	}
 	async function SaveSession(){
@@ -929,8 +1026,9 @@ $("#chooseserv").show();
 		}
 		return existing;
 	}
-
+	var has_getted_data = false;
 	function ReflectDataToHTML(){
+
 		$("#asset_data_reflection").html("");
 		var currentdata = $("#rawdatatext").val();
 		var data_fragment = currentdata.split(separator_word);
@@ -946,10 +1044,9 @@ $("#chooseserv").show();
 		var co_count =0;
 		var se_count=0;
 		for(var i = 0; i < totalscannedasset;i++){
-			// location id,code,timestamp, item name, asset type, gorg_timestamp
+			// location id,code,timestamp, item name, asset type, gorg_timestamp, alreadysent
 			if(data_fragment[i] != ""){
 			var single_data = data_fragment[i].split(col_XX);
-
 			if(single_data[0] == current_location_id){
 				allscanned++;
 				var newdt = "";
@@ -957,39 +1054,56 @@ $("#chooseserv").show();
 				var classname = "";
 				if(single_data[4] == "co"){
 					co_count ++;
-					colour_head = "#4EDD57";
+					colour_head = "#4FDF4F";
 					classname = "cl_co";
 				}else{
 					se_count ++;
 					colour_head = "#FF3530";
 					classname = "cl_se";
 				}
+				var isnotready = false;
+				var notreadyname = "";
+				if(!currentlyready.includes(single_data[4])){
+					if(single_data[4] == "co"){
+						isnotready = true;
+						notreadyname = "Capital Outlay";
+					}else{
+						isnotready = true;
+						notreadyname = "Semi-Expendable";
+					}
+				}
 
-				newdt = "<div class='card announcement_card card-shadow mb-3 " + classname + "' style='border-top: 2px solid "+ colour_head + " !important;'>" + 
+
+				var extradata = "";
+				if(isnotready == false){
+					if(single_data[6] == "true"){
+					extradata = '<i class="fas fa-check" style="color: rgba(0,0,0,0.5);" title="This data is already scanned and sent to your inventory."></i> ';
+					}
+				}
+
+				newdt = "<div class='card announcement_card card-shadow mb-3 " + classname + "'>" + 
 				"<div class='card-body'>"+ 
-				"<span class='float-right text-muted' style='text-align: right;'>" + single_data[5] + "</span>" + 
-				"<strong>" + single_data[1] + "</strong>" + 
+				"<small class='float-right text-muted' style='text-align: right;'>" + single_data[5] + "</small>" + 
+				"<span>"+ extradata + " " + single_data[1] + "</span> " +
 				"<h6 class='mt-0 mb-0'>";
 
 
 				if(single_data[4] == "se"){
 					var se_name_fragments = single_data[3].split(col_s_COUNT);
-					newdt +=  se_name_fragments[0] + " <span class='text-primary'>Quantity: " + se_name_fragments[1] + "</span>";
+					newdt +=  "<span><small><i style='color: " + colour_head + "; font-size: 10px;' class='fas fa-circle'></i></small> " + se_name_fragments[0] + "</span>" + " <span class='text-muted'> x" + se_name_fragments[1] + "</span>";
 				}else{
-					newdt +=  single_data[3];
+					newdt +=  "<span><small><i style='color: " + colour_head + "; font-size: 10px;' class='fas fa-circle'></i></small> " + single_data[3] + "</span>";
 				}
 				newdt += "</h6>";
 
 
 
-
-				if(!currentlyready.includes(single_data[4])){
-					if(single_data[4] == "co"){
-						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> Capital Outlay is not ready for inventory so this will be ignored.</p>";
-					}else{
-						newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> Semi-Expendable is not ready for inventory so this will be ignored.</p>";
-					}
+// style='color: " + colour_head + ";
+			
+				if(isnotready){
+					newdt += "<p class='text-muted mt-4 mb-0'><i class='fas fa-exclamation-circle'></i> " + notreadyname + " is not ready for inventory so this will be ignored.</p>";
 				}
+			
 				newdt += "</div>" + 
 				"</div>";
 				// compiled_toadd = newdt + compiled_toadd;

@@ -152,7 +152,24 @@ Innoventory - Disposed Assets
 
   </div>
   <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-    UNDER DEVELOPMENT
+   <table class="table table-hover table-borderless" id="tbl_semiexpendable">
+      <thead>
+        <tr>
+          <th scope="col" width="150">Article</th>
+          <th scope="col">Description</th>
+          <th scope="col">Stock Number</th>
+          <th scope="col">Unit of Measure</th>
+          <th scope="col">Unit Value</th>
+          <th scope="col">Balance Per Card</th>
+          <th scope="col">On Hand Per Count</th>
+           <th scope="col">Service Center</th>
+          <th scope="col">Remarks</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody id="tbl_allsemiexpends">
+      </tbody>
+    </table>
   </div>
 
 </div>
@@ -173,9 +190,22 @@ Innoventory - Disposed Assets
        success : function(data){
           $("#allmyassests").html(data);
           $("#tbl_dis").DataTable();
+          LoadAssets_Semi(station_id);
        }
     })
   }
+  function LoadAssets_Semi(station_id){
+     $.ajax({
+      type : "GET",
+      url : "{{ route('stole_get_disposed_semiexpendable') }}",
+      data : {_token:"{{ csrf_token()}}",sta_id:station_id},
+       success : function(data){
+          $("#tbl_allsemiexpends").html(data);
+          $("#tbl_semiexpendable").DataTable();
+       }
+    })
+  }
+
    $("#searchss").change(function(){
     var skey = $("#searchss").val();
    $.ajax({

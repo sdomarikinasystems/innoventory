@@ -9,30 +9,11 @@ Inno... - Capital Outlay Discrepancies
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/asset/registry">Asset Registry</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Asset Registry - Capital Outlay Discrepancies</li>
+		<li class="breadcrumb-item active" aria-current="page"><strong><span id="disc_sc_name">(Please wait)</span></strong> Asset Registry - Capital Outlay Discrepancies</li>
 	</ol>
 </nav>
 
 <input type="hidden" value="{{ session('user_school') }}" id="myschool_realid" name="">
-
-
-<div class="row">
- 
-<?php
-
-if($_GET["isown"]){
-?>
-
-<?php
-}else{
-?>
-	<div class="col-md-12">
-		<h5>Asset Discrepancies of <span id="disc_sc_name">(Please wait)</span></h5>
-	</div>
-	<?php
-	}
-	?>
-</div>
 <div class="row">
   <div class="col-md-6">
     <div class="card card-shadow">
@@ -113,37 +94,16 @@ if($_GET["isown"]){
 
 function p2(){
   $.ajax({
-    type: "POST",
-    url: "get_sc_fn",
+    type: "GET",
+    url: "{{ route('get_school_fullname') }}",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
     success: function(data){
        $("#disc_sc_name").html(data);
-       Load_Discrepancy_Sum();
+       loadsum2();
     }
   })
 }
-  
 
-
-  
-  function Load_Discrepancy_Sum(){
-     $.ajax({
-    type: "POST",
-    url: "get_reg_last_sum",
-    data: {_token:"{{ csrf_token() }}"},
-    success: function(data){
-      data = JSON.parse(data);
-      $("#tca").html(data[0]["total_csv"]);
-      $("#ins").html(data[0]["inserted"]);
-      $("#upd").html(data[0]["updated"]);
-      $("#inc").html(data[0]["incomplete"]);
-      $("#notins").html(data[0]["notinserted"]);
-      $("#dtup").html(data[0]["timestamp"]);
-      loadsum2();
-    }
-  })
-   
-  }
 
   function loadsum2(){
       $.ajax({

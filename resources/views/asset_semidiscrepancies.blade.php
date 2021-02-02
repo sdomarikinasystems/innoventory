@@ -9,32 +9,20 @@ Innoventory - Semi Expendables Discrepancies
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/asset/registry">Asset Registry</a></li>
-		<li class="breadcrumb-item active" aria-current="page">Asset Registry - Discrepancies</li>
+		<li class="breadcrumb-item active" aria-current="page"><strong><span id="disc_sc_name">(Please wait)</span></strong> Asset Registry - Discrepancies</li>
 	</ol>
 </nav>
 <input type="hidden" value="{{ session('user_school') }}" id="myschool_realid" name="">
 <div class="row">
-	<?php
-
-if(session("stationid") != $_GET["stationid"]){
-?>
-
-<?php
-}else{
-?>
-  <div class="col-md-12">
-    <h5>Asset Discrepancies of <span id="disc_sc_name">(Please wait)</span></h5>
+   <div class="col-md-6">
+    <div class="card card-shadow">
+      <div class="card-body">
+        Fix your asset registry to be marked as <strong>Ready</strong> for inventory.
+      </div>
+    </div>
   </div>
-  <?php
-  }
-  ?>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title mb-3">Assets with Discrepancy</h5>
-				<table class="mt-3 table table-sm" id="tbl_semiexdis">
+	<div class="col-md-12 mt-3">
+				<table class="mt-3 table table-borderless table-hover" id="tbl_semiexdis">
 					<thead>
 						<tr>
               <th>Article</th>
@@ -50,8 +38,6 @@ if(session("stationid") != $_GET["stationid"]){
           
 				</tbody>
 				</table>
-			</div>
-		</div>
 	</div>
 </div>
 
@@ -60,7 +46,7 @@ if(session("stationid") != $_GET["stationid"]){
   function LoadSemiDiscrepancies(){
     var thestationid = <?php echo json_encode($_GET["stationid"]); ?>;
     $.ajax({
-      type:"POST",
+      type:"GET",
       url: "{{ route('stole_my_semiexpendable_descrepancies') }}",
       data: {_token:"{{ csrf_token() }}",layout:"table",station_id: thestationid},
       success: function(data){
@@ -75,8 +61,8 @@ if(session("stationid") != $_GET["stationid"]){
   
   function getscname(){
       $.ajax({
-    type: "POST",
-    url: "get_sc_fn",
+    type: "GET",
+    url: "{{ route('get_school_fullname') }}",
     data: {_token:"{{ csrf_token() }}",stationid:<?php echo json_encode($_GET["stationid"]); ?>},
     success: function(data){
        $("#disc_sc_name").html(data);

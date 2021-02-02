@@ -89,9 +89,7 @@ Innoventory - Asset Registry
           <th>Total Assets</th>
           <th>Discrepancies</th>
           <th>Omitted</th>
-          <th> 
-
-          <?php
+          <th><?php
           if(session("user_type") == "0" || session("user_type") == "1"){
           ?>
             <div class="dropdown">
@@ -104,8 +102,7 @@ Innoventory - Asset Registry
             </div>
           <?php
           }
-          ?>
-          As of</th>
+          ?>As of</th>
         </tr>
       </thead>
       <tbody>
@@ -1021,9 +1018,11 @@ function fileValidation() {
 var hasloadedservicecenterssel = false;
 
 function LoadserviceCentersMine() {
-  var stationidassigned = $("#myschool_realid").val();
+  if(hasloadedservicecenterssel == false){
+    hasloadedservicecenterssel = true;
+    var stationidassigned = $("#myschool_realid").val();
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: "{{ route('shoot_all_ofmy_service_center') }}",
     data: {
       _token: "{{ csrf_token() }}",
@@ -1033,6 +1032,8 @@ function LoadserviceCentersMine() {
       $("#inp_servicecentersinput").html(data);
     }
   })
+  }
+  
 }
 
 function LoadSemiExpendable() {
@@ -1220,20 +1221,20 @@ function preparesemidisposal(control_obj){
           </button>
         </div>
         <div class="modal-body">
-            {{ csrf_field() }}
-             <input type="hidden" id="item_semi_todispose" name="asset_id">
+          {{ csrf_field() }}
+          <input type="hidden" id="item_semi_todispose" name="asset_id">
           <div class="form-group">
             <label>Disposal Type</label>
-            <select class="form-control" name ="asset_archive_type">
+              <select class="form-control" name ="asset_archive_type">
               <option value="1">Condemnation / Destruction</option>
               <option value="2">Transfer of Property</option>
               <option value="3">Donation of Property</option>
               <option value="4">Sale of Unserviceable Property</option>
-               <option value="5">Incorrect Property Number</option>
+              <option value="5">Incorrect Property Number</option>
             </select>
-        </div>
+          </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger">Dispose</button>
+          <button type="submit" class="btn btn-danger">Dispose</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
         </div>
       </div>
