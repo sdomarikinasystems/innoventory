@@ -2624,10 +2624,8 @@ class functions extends Controller {
                 $output = json_decode($output, true);
                 // return   $output;
                 // GET MY SCHOOL NAME FULL
-                $tag = $this->sdmenc("get_sc_name");
-                $client = new \GuzzleHttp\Client();
-                $xresult = $client->request("POST", WEBSERVICE_URL, ["form_params" => ['tag' => $tag, "sc_id" => $this->sdmenc($output[0]["station_id"]) ]]);
-                $mynameschool = $this->sdmdec($xresult->getBody()->getContents());
+                $mynameschool = $this->send_get(["tag"=>"get_sc_name","sc_id" => $this->sdmenc($output[0]["station_id"])],true);
+
                 session(['user_uname' => $output[0]["username"]]);
                 session(['user_eid' => $output[0]["employee_id"]]);
                 session(['user_type' => $output[0]["acc_type"]]);

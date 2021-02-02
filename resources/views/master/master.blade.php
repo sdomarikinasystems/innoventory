@@ -237,7 +237,7 @@
          
          	var inp_sc_id = <?php  echo json_encode(session('user_school')); ?>;
          	$.ajax({
-         		type : 'POST',
+         		type : 'GET',
          		url: '{{ route("stole_getallservicecenters") }}',
          		data: {_token:'{{ csrf_token() }}',station_id: inp_sc_id},
          		success : function(data){
