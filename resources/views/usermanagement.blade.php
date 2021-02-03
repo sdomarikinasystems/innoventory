@@ -361,12 +361,17 @@ $("#emp_id_del").val($(control_obj).data("empid"));
 }
 LoadAllAccounts()
 function LoadAllAccounts(){
+   $("#tblu").DataTable().destroy();
+   $("#tallemp").html(localStorage.getItem("usr_preloadeddata"));
+    $("#tblu").DataTable();
    $.ajax({
     type: "GET",
     url: "{{ route('display_all_employees') }}",
     data : {_token: "{{ csrf_token() }}",user_school: curr_station_id},
     success: function(data){
-      $("#tallemp").html(data);
+       localStorage.setItem("usr_preloadeddata",data);
+       $("#tblu").DataTable().destroy();
+        $("#tallemp").html(data);
        $("#tblu").DataTable();
        LoadAllSchoolsInSelection();
     }
@@ -387,6 +392,7 @@ function LoadAllAccounts(){
      $("#all_sc_name").val("{{ session('user_school') }}");
     }
     function gotomyownassets(){
+      localStorage.setItem("usr_preloadeddata","");
         var sourceid =  <?php echo json_encode(session("user_school")); ?>;
         var sourcename =  <?php echo json_encode(session("user_schoolname")); ?>;
         $.ajax({
@@ -399,6 +405,7 @@ function LoadAllAccounts(){
         })
     }
  function changesource(control_obj){
+  localStorage.setItem("usr_preloadeddata","");
     var sourceid = $(control_obj).data("sourceid");
     var sourcename = $(control_obj).data("sourcename");
     $.ajax({

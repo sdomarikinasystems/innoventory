@@ -71,7 +71,7 @@ var tru_roomname= "";
 GetRoomInfo();
 function GetRoomInfo(){
 	$.ajax({
-		type:"POST",
+		type:"GET",
 		url: "{{ route('stole_single_service_center_data_byid') }}",
 		data: {_token: "{{ csrf_token() }}",
 		service_center_id: original_ID_room},

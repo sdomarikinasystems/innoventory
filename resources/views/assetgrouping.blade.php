@@ -182,7 +182,7 @@ Generate Appendix 73 Report
   GetRealRoomNumber();
   function GetRealRoomNumber(){
     $.ajax({
-      type:"POST",
+      type:"GET",
       url: "{{ route('stole_single_service_center_data_byid') }}",
       data: {_token: "{{ csrf_token() }}",service_center_id: <?php echo json_encode($_GET["my_room"]) ?>},
       success: function(data){

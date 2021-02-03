@@ -113,12 +113,13 @@ Inno... - Manage Stations
     $("#inp_sc_id").val($(control_obj).data("sc_id"));
   }
 function LoadAssetLocations(){
+   
     $.ajax({
       type: "GET",
       url: "{{ route('load_stat_enc') }}",
       data: {_token:"{{ csrf_token() }}"},
       success: function(data){
-        // console.log(data);
+       
         $("#tbl_assloc").html(data);
       }
     })

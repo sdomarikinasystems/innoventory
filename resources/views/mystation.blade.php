@@ -67,9 +67,6 @@ Innoventory - Service Centers
             <div class="col-sm-12" style="display: none;">
              <div class="form-group" >
                 <label>Select Station</label>
-            <!--   <select name="xstation" id="station_school" class="form-control">
-                <option>All</option>
-              </select>--> 
               <input type="text" value="{{ session('user_school') }}" name="xstation">
              </div>
             </div>
@@ -201,11 +198,16 @@ Innoventory - Service Centers
     $("#toremoveid").val($(control_obj).data("cont_id"));
   }
 function LoadAssetLocations(){
+    $("#tbl_allinfolocs").DataTable().destroy();
+     $("#tbl_assloc").html(localStorage.getItem("usr_servicecenters"));
+  $("#tbl_allinfolocs").DataTable();
     $.ajax({
       type: "GET",
       url: "{{ route('lodasslocenc') }}",
       data: {_token:"{{ csrf_token() }}"},
       success: function(data){
+        localStorage.setItem("usr_servicecenters",data);
+        $("#tbl_allinfolocs").DataTable().destroy();
         $("#tbl_assloc").html(data);
         $("#tbl_allinfolocs").DataTable();
       }
@@ -224,7 +226,7 @@ $.ajax({
 }
  var utype = <?php echo json_encode(session("user_type")); ?>;
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: "{{ route('load_all_school_names') }}",
     data : {_token: "{{ csrf_token() }}"},
     success: function(data){

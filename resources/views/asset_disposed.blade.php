@@ -48,36 +48,36 @@ Innoventory - Disposed Assets
     <div class="card-deck mb-3">
       <div class="card card-shadow">
         <div class="card-body">
-          <i style="color: #c0392b;" class="fas fa-circle"></i> Condemnation / Destruction
+          <i class="fas fa-circle text-danger"></i> Condemnation / Destruction
         </div>
       </div>
        <div class="card card-shadow">
         <div class="card-body">
-          <i style="color: #27ae60;" class="fas fa-circle"></i> Transfer of Property
+          <i class="fas fa-circle text-info"></i> Transfer of Property
         </div>
       </div>
        <div class="card card-shadow">
         <div class="card-body">
-          <i style="color:  #d35400;" class="fas fa-circle"></i> Incorrect Property Number
+          <i class="fas fa-circle text-warning"></i> Donation of Property
         </div>
       </div>
        <div class="card card-shadow">
         <div class="card-body">
-          <i style="color: #2980b9;" class="fas fa-circle"></i> Donation of Property
+          <i class="fas fa-circle text-primary"></i> Sale of Unserviceable Property
         </div>
       </div>
-       <div class="card card-shadow">
+      <div class="card card-shadow">
         <div class="card-body">
-          <i style="color: #8e44ad;" class="fas fa-circle"></i> Sale of Unserviceable Property
+          <i class="fas fa-circle text-secondary"></i> Incorrect Property Number
         </div>
       </div>
   </div>
  <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="capout" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-box"></i> Capital Outlay</a>
+    <a class="nav-link active" id="disp_tab_cap" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true" onclick="SaveTabSelection('1')"><i class="fas fa-box"></i> Capital Outlay</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-boxes"></i> <span >Semi-Expendable</span></a>
+    <a class="nav-link" id="disp_tab_sem" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false" onclick="SaveTabSelection('2')"><i class="fas fa-boxes"></i> <span >Semi-Expendable</span></a>
   </li>
 
 </ul>
@@ -126,29 +126,6 @@ Innoventory - Disposed Assets
   </div>
 </form>
 
-<form action="../../restore_asset" method="POST">
-  {{ csrf_field() }}
-  <div class="modal" tabindex="-1" id="m_remove" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Item Restoration</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="the_asset_to_dispose_id" name="asset_id">
-          <p>Restore this item from the Assets Registry?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Restore</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
 
   </div>
   <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
@@ -175,10 +152,80 @@ Innoventory - Disposed Assets
 </div>
 
 
+<form action="{{ route('restore_an_asset') }}" method="POST">
+  {{ csrf_field() }}
+  <div class="modal" tabindex="-1" id="m_remove" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Restore Capital Outlay</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="the_asset_to_dispose_id" name="asset_id">
+          <p class="mt-3 mb-3">Restore this Capital Outlay back to the Asset Registry?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Restore</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<form action="{{ route('shoot_restore_disposed_semi') }}" method="POST">
+  {{ csrf_field() }}
+  <div class="modal" tabindex="-1" id="restore_semi_item" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Restore Semi-Expendable</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="the_asset_to_dispose_id_semi" name="item_id">
+          <p class="mt-3 mb-3">Restore this Semi-Expendable back to the Asset Registry?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Restore</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+
   <script type="text/javascript">
+
+    function SaveTabSelection(tabname){
+      localStorage.setItem("disposedtabs",tabname);
+    }
+    LoadTabSelected();
+    function LoadTabSelected(){
+      if(localStorage.getItem("disposedtabs") != null){
+        switch(localStorage.getItem("disposedtabs")){
+          case "1":
+              $('#disp_tab_cap').tab('show');
+          break;
+          case "2":
+              $('#disp_tab_sem').tab('show');
+          break;
+        }
+      }
+    }
+
  $("#sourcename").html("{{ session('user_changesource_station_name') }}");
   function OpenAssetToDispose(control_obj){
     $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
+  }
+  function OpenAssetToDispose_Semi( control_obj){
+    $("#the_asset_to_dispose_id_semi").val($(control_obj).data("asset_id"));
   }
 
   LoadAssets("{{ session('user_changesource_station') }}");
@@ -205,7 +252,6 @@ Innoventory - Disposed Assets
        }
     })
   }
-
    $("#searchss").change(function(){
     var skey = $("#searchss").val();
    $.ajax({
@@ -216,14 +262,11 @@ Innoventory - Disposed Assets
       if(data == ""){
         $("#search_narrative").html("No result found.");
         $("#school_search_cont").css("display","none");
-          $("#search_narrative").css("display","block");
+        $("#search_narrative").css("display","block");
       }else{
-         $("#school_search_cont").css("display","block");
-          $("#search_narrative").css("display","none");
-
-             $("#school_search_cont").html(data);
-      
-         
+        $("#school_search_cont").css("display","block");
+        $("#search_narrative").css("display","none");
+        $("#school_search_cont").html(data);
       }
       $("#searchss").val("");
     }

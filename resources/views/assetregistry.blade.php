@@ -10,11 +10,8 @@ Innoventory - Asset Registry
 		<li class="breadcrumb-item active" aria-current="page"><a href="/innoventory/dashboard">Home</a></li>
 		<li class="breadcrumb-item active" aria-current="page">Asset Registry</li>
 	</ol>
-     
 </nav>
-
 <input type="hidden" value="{{ session('user_changesource_station') }}" id="myschool_realid" name="">
-
 <div class="mobiletext">
 <div id="lod_change_ass_source" style="display:none; top: 0; right: 0; left: 0; bottom: 0; position: fixed; background-color: rgba(0,0,0,0.5); z-index: 100;">
  <center><br><br><br><h4 class="mt-5">Changing Asset Source</h4></center>
@@ -710,10 +707,12 @@ Innoventory - Asset Registry
 
 <script type="text/javascript">
 var hasloadednotinserted = false;
-
 function load_not_inserted_co() {
   if (hasloadednotinserted == false) {
     var curr_sc = $("#myschool_realid").val();
+      $("#tbl_notinscap").DataTable().destroy();
+      $("#thenotinsdataofco").html(localStorage.getItem("lonoinsco"));
+   $("#tbl_notinscap").DataTable();
     $.ajax({
       type: "POST",
       url: "{{ route('stole_not_inserted_recent_co_data') }}",
@@ -722,6 +721,7 @@ function load_not_inserted_co() {
         current_station: curr_sc
       },
       success: function (data) {
+        localStorage.setItem("lonoinsco",data);
         $("#tbl_notinscap").DataTable().destroy();
         $("#thenotinsdataofco").html(data);
         $("#tbl_notinscap").DataTable();
@@ -904,23 +904,34 @@ function LoadAllSCNamesForCapOut() {
     }
   })
 }
-
 function OpenAssetToDispose(control_obj) {
   $("#the_asset_to_dispose_id").val($(control_obj).data("asset_id"));
 }
-
 var currentlyready = "";
 CheckRediness();
   async function CheckRediness(){
       var myschool_realid = $("#myschool_realid").val();
+      currentlyready = localStorage.getItem("currentlyready_ar");
+RenderReady();
+$("#tbl_ass").DataTable().destroy();
+$("#allmyassests").html(localStorage.getItem("dt_cap_out_preload"));
+$("#assvalsum").html(localStorage.getItem("assval_co_summary"));
+$("#tbl_ass").DataTable();
   $.ajax({
       type: "GET",
       url: "{{ route('stole_checkready_specific') }}",
       data: {_token: "{{ csrf_token() }}",user_school: myschool_realid},
       success:async function(data){
+         localStorage.setItem("currentlyready_ar",data);
         currentlyready = data;
-
-        if(currentlyready.includes("co")){
+        RenderReady();
+        LoadAssets();
+      }
+    })
+}
+function RenderReady(){
+  if(currentlyready != null){
+    if(currentlyready.includes("co")){
           $("#readystatus_co").html("<p class='mb-0 text-success'><i class='fas fa-check'></i> Ready</p><small class='text-muted m-0'>" +
             "Congratulations!, Capital Outlay has zero discrepancies."
            +"</small>");
@@ -938,13 +949,12 @@ CheckRediness();
             "Your Semi-Expendable has discrepancies left."
             +"</small>");
         }
-        LoadAssets();
-      }
-    })
+  }
+  
 }
-
 function LoadAssets() {
   var school_real_id = $("#myschool_realid").val();
+    
   $.ajax({
     type: "GET",
     url: "{{ route('display_all_encoded_assets') }}",
@@ -953,6 +963,7 @@ function LoadAssets() {
       selected_realid: school_real_id
     },
     success: function (data) {
+      localStorage.setItem("dt_cap_out_preload",data);
       $("#tbl_ass").DataTable().destroy();
       $("#allmyassests").html(data);
       $("#tbl_ass").DataTable();
@@ -963,6 +974,7 @@ function LoadAssets() {
 
 function LoadAssetRegistrySummary(sc_id) {
   var school_real_id = $("#myschool_realid").val();
+   
   $.ajax({
     type: "POST",
     url: "{{ route('loadassetvalsum') }}",
@@ -971,6 +983,7 @@ function LoadAssetRegistrySummary(sc_id) {
       selected_realid: school_real_id
     },
     success: function (data) {
+      localStorage.setItem("assval_co_summary",data);
       $("#assvalsum").html(data);
       LoadSemiExpendable();
     }

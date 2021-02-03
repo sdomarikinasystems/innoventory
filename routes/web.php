@@ -194,3 +194,4 @@ Route::get('/innoventory/qr_printing', ['uses' => 'functions@fly_printassetpage'
 Route::get('/get_qr_priting_assets', ['uses' => 'functions@look_items_for_scanning', 'as' => 'stole_items_for_scanning']);
 // ASSET DISPOSED
 Route::get('/get_disposed_semi', ['uses' => 'functions@look_get_disposed_semiexpendable', 'as' => 'stole_get_disposed_semiexpendable']);
+Route::post('/restore_disposed_se', ['uses' => 'functions@fire_restore_disposed_semi', 'as' => 'shoot_restore_disposed_semi']);

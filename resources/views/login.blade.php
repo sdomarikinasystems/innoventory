@@ -33,7 +33,7 @@
                         </div>
                      </div>
                      <div class='col-lg-12'>
-                        <button style='margin-top: 5px;' name='btn_login' id='btnsub' class='btn btn-primary float-right' type='submit'>Sign in <i class='fas fa-arrow-right'></i></button>
+                        <button style='margin-top: 5px;' onclick="localStorage.clear()" name='btn_login' id='btnsub' class='btn btn-primary float-right' type='submit'>Sign in <i class='fas fa-arrow-right'></i></button>
                      </div>
                </form>
                <?php 

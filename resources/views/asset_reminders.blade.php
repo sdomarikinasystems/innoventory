@@ -122,11 +122,16 @@ Innoventory - Reminders
 <script type="text/javascript">
 	LoadRemindersPage();
  	function LoadRemindersPage(){
+ 		$("#tblmytbl").DataTable().destroy();
+ 		$("#reminderstbl").html(localStorage.getItem("remtable_usr_c"));
+		 $("#tblmytbl").DataTable();
  		$.ajax({
  			type: "GET",
  			url: "{{ route('getremindersbyorigin') }}",
  			data: {_token: "{{ csrf_token() }}"},
  			success : function(data){
+ 				localStorage.setItem("remtable_usr_c",data);
+				$("#tblmytbl").DataTable().destroy();
  				$("#reminderstbl").html(data);
  				$("#tblmytbl").DataTable();
  			}

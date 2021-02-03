@@ -42,6 +42,7 @@
       <meta charset="UTF-8"> <meta name="description" content="ProcMS Inventory by SDO-Marikina City"> <meta name="keywords" content="Inventory System, DepEd Marikina, SDO Marikina, Procurement Management System, Innoventory"> <meta name="author" content="Virmil Talattad"> <link rel='icon' href='{{asset("images/sdo.ico")}}' type='image/x-icon'/ > <meta charset='utf-8'> <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'> <link rel='stylesheet' href='https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/css/bootstrap.min.css'> <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script> <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'></script> <script src='https://ajax.aspnetcdn.com/ajax/bootstrap/4.3.1/bootstrap.min.js'></script> <script src='https://kit.fontawesome.com/396c986df7.js' crossorigin='anonymous'></script> <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css'> <script src='https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js'></script> <script type='text/javascript' src='https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js'></script> <script type='text/javascript' src='https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js'></script> <link rel='stylesheet' type='text/css' href='https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css'> <link href="https://fonts.cdnfonts.com/css/helvetica-neue-9?styles=49038" rel="stylesheet">
       <style>
        body{font-family:'Helvetica 35 Thin',sans-serif}.list-group{border:0 none}.list-group li{border:0 none}.list-group i{width:30px}.list-group-item{background-color:transparent;border-radius:40px!important;text-decoration:none!important;border:1px solid transparent!important}.list-group-item a{text-decoration:none!important}.list-group-item:hover{box-shadow:0 2px 3px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08);border-color:#eeeef2!important}.btn-text{padding:0!important;margin:0!important;min-width:0!important;display:inline!important}.xload{background:rgba(220,221,225,.7);left:0;right:0;top:0;bottom:0;z-index:100;width:100%;height:100%;position:fixed}.card-body-sm{padding:10px}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#fff;border:1px solid #ededed}::-webkit-scrollbar-thumb{background:#e6e6e6}::-webkit-scrollbar-thumb:hover{background:#555}.basic_link{text-decoration:none}span.deleteicon{position:absolute;width:94%}span.deleteicon span{position:absolute;display:block;top:11px;right:10px;width:25px;height:25px;opacity:.5;background:url(https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png) 0 -6px;background-size:contain;background-position:center;background-repeat:no-repeat;cursor:pointer}.modal-header{text-align:center}.modal-header .modal-title{margin:0 auto!important}.addtext_anim{animation-name:drop_slide!important;animation-duration:.3s!important;display:block!important}@keyframes drop_slide{0%{opacity:0;margin-top:-10px}}.addcard_anim{animation-name:drop_slide_shadow!important;animation-duration:1s!important;display:block!important}@keyframes drop_slide_shadow{0%{opacity:0;margin-top:-30px}50%{box-shadow:0 10px 30px rgba(0,0,0,.4)}}.close{position:absolute;right:1rem}.announcement_card_body{overflow-x:hidden;overflow-y:auto;max-height:80vh}.announcement_card{width:456px;margin:auto}.card-shadow{box-shadow:0 2px 3px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08)}@media only screen and (max-width:1366px){.announcement_card{width:100%;margin:auto}.hideinmobile{display:none}}pre{font:16px 'Helvetica 35 Thin',sans-serif;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word}.btn{border-radius:50px;border:none;min-width:60px;padding-left:20px;padding-right:20px}.alert{border-radius:10px}.clickablething:hover{cursor:pointer;border-color:#007dff!important}.card{border-radius:10px!important;animation-name:scale-in;animation-duration:.3s;border-color:#eeeef2!important}.card-header{background: transparent!important;border-color:#eeeef2!important}.card-footer{background:transparent!important;border-color:#eeeef2!important}.breadcrumb{background:0 0;border-radius:20px!important;padding-left:0}.modal-content{border-radius:10px!important;border:none;animation-name:scale-in;animation-duration:.3s;box-shadow:0 2px 3px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08)}.btn:hover{box-shadow:0 2px 3px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08)}.dropdown-menu{border-radius:10px!important;box-shadow:0 2px 3px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08);border-color:#eeeef2!important}.nav-tabs .nav-item .nav-link{border-radius:10px 10px 0 0;padding:10px;padding-left:20px;padding-right:20px}.form-control{background:#f8f9fa;border-radius:30px!important;border:none;box-shadow:inset 0 1px 3px rgba(0,0,0,.2)}.sub-list-group{list-style:none;margin-top:10px}.sub-list-group>.sub-list{padding:8px 0}.importwarning{display:none}.invalidcolor{color:#ff3a30}.btn-primary{background:#007dff}.btn-success{background:#4ddb5e}.btn-danger{background:#ff3a30}.btn-secondary{background:#dedede;color:#000}.btn-warning{background:#f6cb01}.btn-light{background:#f0f0f2}.alert-sm{padding:10px}.alert{border:none}.alert-primary{background:#007dff;color:#fff;text-shadow:0 0 10px rgba(0,0,0,.4)}.alert-success{background:#4ddb5e;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.alert-danger{background:#ff3a30;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.alert-secondary{background:#fafafc!important;color:#fff}.alert-warning{background:#f6cb01;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.alert-info{background:#30a7d5;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.badge-primary{background:#007dff;color:#fff;text-shadow:0 0 10px rgba(0,0,0,.4)}.badge-success{background:#4ddb5e;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.badge-danger{background:#ff3a30;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.badge-secondary{background:#dedede;color:#000!important;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.badge-warning{background:#f6cb01;text-shadow:0 0 10px rgba(0,0,0,.4);color:#fff}.td_required{color:#ff3a30}.td_optional{color:#007dff}.card-limited{height:400px;overflow:scroll}.hcover{background:#007dff;transition:.2s all;display:inline-block;padding:10px;border-radius:15px;overflow:hidden;height:50px;width:50px;color:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);cursor:pointer;margin-left:5px;margin-right:5px;color:#fff!important}.hcover:hover{transform:scale(1.3);margin-top:-10px;box-shadow:0 2px 3px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08);text-shadow:0 2px 5px rgba(0,0,0,.4)}.dock_parent{background:0 0;position:fixed;display:flex;justify-content:center;bottom:0;left:0;right:0;margin:auto;padding:10px;border-radius:15px;margin-bottom:5px!important;width:100%}.dock_itself{background:#fff;position:absolute;display:flex;justify-content:center;height:72px;border:1px solid rgba(0,0,0,.1);bottom:0;margin:auto;padding:10px;padding-left:7px;padding-right:7px;border-radius:20px;box-shadow:0 2px 3px rgba(0,0,0,.08),0 10px 30px rgba(0,0,0,.08);margin-bottom:5px!important;width:auto}.card-filtered{border:none!important;border-radius:10px!important;border:none!important;border-radius:10px!important;border:none!important;border-radius:10px!important}.heightwise{margin:auto;width:600px;margin:auto;width:600px}
+         .iconize{background:#007dff;transition:.2s all;display:inline-block;padding:10px;border-radius:15px;overflow:hidden;height:50px;width:50px;color:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);color:#fff!important}
       </style>
       <script type='text/javascript'>
          function urlify(a){return a.replace(/(https?:\/\/[^\s]+)/g,function(a){return'<a href="'+a+'" target="_blank"><i class="fas fa-globe-africa"></i> '+a+"</a>"})}
@@ -50,27 +51,26 @@
    <body>
       @include('sweet::alert')
       <!-- NAVBAR -->
-    <nav class='navbar navbar-expand-lg navbar-light bg-light' style='border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow:0px 2px 3px rgba(0,0,0,0.01), 0px 5px 10px rgba(0,0,0,0.03);'> <a class='navbar-brand' href='#'><span class='featurefont' style='color: #007DFF;'>Innoventory</span> <small class='text-muted'>by SDO - Marikina City</small></a> <button id='btn_navsdietoggle' class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'> <span class='navbar-toggler-icon'></span> </button> <div class='collapse navbar-collapse' id='navbarSupportedContent'> <ul class='navbar-nav mr-auto'> </ul> <div class='dropdown'> <a class='btn btn-light dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user'></i> <?php echo ucfirst(session('user_uname')) . ' ' . $acc_badge; ?> </a> <form action='{{route("proc_logout")}}' method="GET" class="form-inline my-2 my-lg-0"> <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'> <a class='dropdown-item' href='{{route("myaccount")}}'><i class='fas fa-user'></i> My Account</a> <button class='dropdown-item' type='submit'><i class='fas fa-sign-out-alt'></i> Sign-out</button> </div></div></form> </div></nav>
+    <nav class='navbar navbar-expand-lg navbar-light bg-light' style='border-bottom: 1px solid rgba(0,0,0,0.05); box-shadow:0px 2px 3px rgba(0,0,0,0.01), 0px 5px 10px rgba(0,0,0,0.03);'> <a class='navbar-brand' href='#'><span class='featurefont' style='color: #007DFF;'>Innoventory</span> <small class='text-muted'>by SDO - Marikina City</small></a> <button id='btn_navsdietoggle' class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'> <span class='navbar-toggler-icon'></span> </button> <div class='collapse navbar-collapse' id='navbarSupportedContent'> <ul class='navbar-nav mr-auto'> </ul> <div class='dropdown'> <a class='btn btn-light dropdown-toggle' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user'></i> <?php echo ucfirst(session('user_uname')) . ' ' . $acc_badge; ?> </a> <form action='{{route("proc_logout")}}' method="GET" class="form-inline my-2 my-lg-0"> <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'> <a class='dropdown-item' href='{{route("myaccount")}}'><i class='fas fa-user'></i> My Account</a> <button class='dropdown-item' type='submit' onclick="localStorage.clear()"><i class='fas fa-sign-out-alt'></i> Sign-out</button> </div></div></form> </div></nav>
     <!-- SIDEBAR -->
       <div class='container-fluid'>
          <div class='row mt-3'>
             <div class='col-lg-2 mb-3' id='sidebarmenu'>
-               <!-- START OF MENU -->
-               <h6>CORE</h6>
                <ul class='list-group mb-3'>
                   <a class='list-group-item' href='{{ route("dboard") }}'><i class='fas fa-tachometer-alt'></i> <span class="text-muted">Dashboard</span></a>
-                  <a class='list-group-item' href='{{ route("assetregistry") }}'><i class='fas fa-clipboard-check'></i> <span class="text-muted">Asset Registry</span></a>
+                  <a class='list-group-item' href='{{ route("assetregistry") }}'><i class='fas fa-clipboard-check'></i> <span class="text-muted">Assets</span></a>
                   <a class='list-group-item'  href='{{ route("asset_scanned") }}'><i class='fas fa-search'></i> <span class='text-muted'>Inventory</span></a>
-                  <a class='list-group-item'  href='{{ route("asset_disposed") }}'><i class='fas fa-trash'></i> <span class='text-muted'>Disposed Assets</span></a>
+                  <a class='list-group-item'  href='{{ route("asset_disposed") }}'><i class='fas fa-trash'></i> <span class='text-muted'>Disposed</span></a>
                   <a class='list-group-item'  data-toggle='collapse' href='#collapse1' onclick='GetServiceCentersForOption()'><i class='fas fa-chart-bar'></i> <span class='text-muted'>Reports</span> <i class='float-right fas fa-sort-down'></i></a>
                   <div id='collapse1' class='panel-collapse collapse in'>
                      <ul class='sub-list-group mb-3'>
                         <?php
-                           if(session('user_type') < '4' && session('user_type') != '2'){
-                             ?>
+                        if(session('user_type') < '4' && session('user_type') != '2'){
+                        ?>
                         <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
                         <li class='sub-list'><a href='#' data-toggle='modal' data-target='#m_generatereport' onclick='getcountofgen()'><i class='fas fa-file-pdf'></i> <span class='text-muted'>Appendix 73</span></a>
-                        <li class='sub-list'><a href='#' data-toggle='modal' data-target='#m_generatesemireports' onclick='getcountofgen()'><i class='fas fa-file-pdf'></i> <span class='text-muted'>Appendix 66</span></a><?php } ?>
+                        <li class='sub-list'><a href='#' data-toggle='modal' data-target='#m_generatesemireports' onclick='getcountofgen()'><i class='fas fa-file-pdf'></i> <span class='text-muted'>Appendix 66</span></a>
+                        <?php } ?>
                         <li class='sub-list'><a href='{{ route("manage_reports") }}'><i class='fas fa-layer-group'></i> <span class='text-muted'>Figures</span></a>
                         <li class='sub-list'><a href='{{ route("reg_omissions") }}'><i class='fas fa-eraser'></i> <span class='text-muted'>Registry Omissions</span></a>
                         <li class='sub-list'><a href=''><i class='fas fa-exchange-alt'></i> <span class='text-muted'>Returns to LGU</span></a>
@@ -79,14 +79,16 @@
                      </ul>
                   </div>
                   <a class='list-group-item' href='{{ route("asset_resources") }}'><i class='fas fa-folder'></i> <span class='text-muted'>Resources</span></a>
-               </ul>
-               <h6>ADD-ON</h6>
-               <ul class='list-group mb-3'>
-                  <?php
+
+                   <a class='list-group-item'  data-toggle='collapse' href='#col_2x'><i class="fas fa-toolbox"></i> <span class='text-muted'>Utilities</span> <i class='float-right fas fa-sort-down'></i></a>
+                  <div id='col_2x' class='panel-collapse collapse in'>
+                     <ul class='sub-list-group mb-3'>
+             
+                          <?php
                      if(session('user_type') < '4' && session('user_type') != '2'){
                      ?>
-                  <!-- NOT FOR TEACHERS -->					
-                  <a class='list-group-item' href='{{ route("usermanagement") }}'><i class='fas fa-users'></i> <span class='text-muted'>Manage Users</span></a>
+                  <!-- NOT FOR TEACHERS -->              
+                  <li class="sub-list"><a href='{{ route("usermanagement") }}'><i class='fas fa-users'></i> <span class='text-muted'>Manage Users</span></a></li>
                   <?php
                      }
                      if(session('user_type') == '0' || session('user_type') == '1'){
@@ -98,17 +100,21 @@
                      ?>
                   <?php
                      if(session('user_type') < '4'){
-                     	?>
+                        ?>
                   <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
-                  <a class='list-group-item' href='{{ route("stationmy") }}'><i class='fas fa-warehouse'></i> <span class='text-muted'>Service Centers</span></a>
-                  <a class='list-group-item' href='{{ route("manage_reminders") }}'><i class='fas fa-bell'></i> <span class='text-muted'>Reminders</span></a>
-                  <a class='list-group-item' href='{{ route("goto_print_asset_qr") }}'><i class='fas fa-qrcode'></i> <span class='text-muted'>QR Stickers</span></a>
+                    <li class="sub-list"><a href='{{ route("stationmy") }}'><i class='fas fa-warehouse'></i> <span class='text-muted'>Service Centers</span></a></li>
+                    <li class="sub-list"><a href='{{ route("manage_reminders") }}'><i class='fas fa-bell'></i> <span class='text-muted'>Reminders</span></a></li>
+                    <li class="sub-list"><a href='{{ route("goto_print_asset_qr") }}'><i class='fas fa-qrcode'></i> <span class='text-muted'>QR Stickers</span></a></li>
                   <?php
                      }
                      ?>
-                  <a class='list-group-item' href='{{ route("ass_transhistory") }}'><i class='fas fa-history'></i> <span class='text-muted'>History</span></a>
+                    <li class="sub-list"><a href='{{ route("ass_transhistory") }}'><i class='fas fa-history'></i> <span class='text-muted'>History</span></a></li>
+                     </ul>
+                  </div>
+          
+                
                   <a class='list-group-item' href='{{ route("gohow") }}'><i class='far fa-question-circle'></i> <span class='text-muted'>How to?</span></a>
-                  <a class='list-group-item' href='{{ route("abouts_sys") }}'><i class='fas fa-robot'></i> <span class='text-muted'>About the System</span></a>
+                  <a class='list-group-item' href='{{ route("abouts_sys") }}'><i class='fas fa-robot'></i> <span class='text-muted'>Innoventory</span></a>
                </ul>
                <!-- END OF MENU -->
                <script type='text/javascript'>
@@ -154,13 +160,13 @@
                         </div>
                      </div>
                      <div class='form-group'>
-                        <label>Room</label>
+                        <label>Service Center</label>
                         <select class='form-control allservicenterrooms' id='co_service_center' onchange='getcountofgen()' name='my_room'>
                            <option>Sample</option>
                         </select>
                      </div>
                      <div class='form-group'>
-                        <label>Category</label>
+                        <label>Asset Classification</label>
                         <select class='form-control' id='allcategoriesz' onchange='getcountofgen()' name='my_category'>
                            <option>Sample</option>
                         </select>
@@ -213,7 +219,7 @@
                         </div>
                      </div>
                      <div class='form-group'>
-                        <label>Room</label>
+                        <label>Service Center</label>
                         <select class='form-control allservicenterrooms' required='' name='my_room'>
                            <option>Sample</option>
                         </select>

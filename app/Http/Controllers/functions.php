@@ -123,6 +123,11 @@ class functions extends Controller {
         return view('asset_utilities');
     }
     // FUNCTIONS
+    public function fire_restore_disposed_semi(Request $req){
+        $out = $this->send(["tag"=>"RESTORE_DISPOSED_SE_DATA","itemid"=>$this->sdmenc($req["item_id"])]);
+        Alert::success("Item Restored!");
+       return redirect()->back();
+    }
     public function look_get_disposed_semiexpendable(Request $req){
         $out = $this->send_get(["tag"=>"GET_SEMI_EXPENDABLE_DISPOSED","station_id"=>$this->sdmenc($req["sta_id"])]);
 
@@ -148,7 +153,7 @@ class functions extends Controller {
   
   
     <div class='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenuLink'>
-      <a class='dropdown-item' href='#'><i class='fas fa-trash-restore'></i> Restore</a>
+      <a class='dropdown-item' onclick='OpenAssetToDispose_Semi(this)' data-asset_id='" . $out[$i]["item_id"] . "' href='#' data-toggle='modal' data-target='#restore_semi_item'><i class='fas fa-trash-restore'></i> Restore</a>
     </div>
   </div>
           </td>
@@ -383,7 +388,7 @@ class functions extends Controller {
                 $short_ov_quantity = ($bal_per_card - $on_hand_per_count);
                 $output[$i]['unit_value'] = str_replace(",", "", $output[$i]['unit_value']);
                 $output[$i]['unit_value'] = str_replace(" ", "", $output[$i]['unit_value']);
-                $short_ov_value = number_format(($short_ov_quantity * $output[$i]['unit_value']));
+                $short_ov_value = number_format((int)$short_ov_quantity * (int)$output[$i]['unit_value'],2);
                 $disp_onhandcount = "";
                 if ($on_hand_per_count == null || $on_hand_per_count == '') {
                     $disp_onhandcount = "Missing Inv.";
@@ -397,7 +402,7 @@ class functions extends Controller {
                 $toecho.= '
             <td>' . $output[$i]['stock_num'] . '</td>
             <td>' . $output[$i]['unit_of_mesure'] . '</td>
-            <td style="text-align:right;">' . number_format($output[$i]['unit_value'], 2) . '</td>
+            <td style="text-align:right;">' . number_format((int)$output[$i]['unit_value'], 2) . '</td>
             <td style="text-align:center;">' . $bal_per_card . '</td>
             <td style="text-align:center;">' . $disp_onhandcount . '</td>
             <td style="text-align:center;">' . $short_ov_quantity . '</td>
@@ -2482,6 +2487,20 @@ class functions extends Controller {
               </div>
               ", "
               <div class='text-dark alert alert-secondary pt-5 pb-5 announcement_card mb-4 card-shadow'>
+              "  . 
+              "<div class='iconize' style='background-color: #1B8EF5; margin-bottom: 10px;'>
+                <center> <span style='font-size: 20px;'><i class='fas fa-box'></i></span> </center>
+              </div>
+<div class='iconize' style='background-color: #4EDD57; margin-bottom: 10px;'>
+                <center> <span style='font-size: 20px;'><i class='fas fa-boxes'></i></span> </center>
+              </div>"
+               . "
+              <h5 class='text-primary'>Capital Outlay and Semi-Expendable Templates</h5>
+              <p class='text-muted'>Get them by going to Resources page > Templates to download a blank csv template.</p>
+              
+              </div>
+              ", "
+              <div class='text-dark alert alert-secondary pt-5 pb-5 announcement_card mb-4 card-shadow'>
               <h5 class='text-primary'>Discover how you can post your own Announcement</h5>
               <p class='text-muted'>If you are a Property Custodian or Property Admin, you can post your own reminder in Innoventory by going to the reminders page.</p>
               <ul>
@@ -2859,7 +2878,7 @@ class functions extends Controller {
                 $bal_per_card = $output[$i]['balance_per_card'];
                 $on_hand_per_count = $output[$i]["physical_count"];
                 $short_ov_quantity = ($bal_per_card - $on_hand_per_count);
-                $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition']));
+                $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition']),2);
                 $disp_onhandcount = "";
                 if ($on_hand_per_count == null || $on_hand_per_count == '') {
                     $disp_onhandcount = "Missing Inv.";
@@ -2884,7 +2903,7 @@ class functions extends Controller {
                     $toecho.= $output[$i]["current_condition"];
                 }
                 $toecho.= '</td>
-      </tr>';
+                  </tr>';
             }
         }
         $client = new \GuzzleHttp\Client();
@@ -2919,7 +2938,7 @@ class functions extends Controller {
             $quantity = (int)$output[$i]["quantity"];
             $blpercard = (int)$output[$i]["balance_per_card"];
             $short_ov_quantity = ($blpercard - $quantity);
-            $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition']));
+            $short_ov_value = number_format(($short_ov_quantity * $output[$i]['cost_of_acquisition']),2);
             $toecho.= "<tr>
            <td>" . $output[$i]["uacs_object_code"] . "</td>
            <td>" . $output[$i]["group_name"] . "</td>
@@ -3348,25 +3367,21 @@ class functions extends Controller {
             <tr>
                 <td>";
             switch ($output[$i]["status"]) {
-                case '1':
-                    $toecho.= "<strong style='color: #c0392b;'>" . $output[$i]["property_number"] . "</strong>";
-                break;
-                case '2':
-                    $toecho.= "<strong style='color: #27ae60;'>" . $output[$i]["property_number"] . "</strong>";
-                break;
-                case '3':
-                    $toecho.= "<strong style='color: #2980b9;'>" . $output[$i]["property_number"] . "</strong>";
-                break;
-                case '4':
-                    $toecho.= "<strong style='color: #8e44ad;'>" . $output[$i]["property_number"] . "</strong>";
-                break;
-                case '5':
-                    $toecho.= "<strong style='color: #d35400;'>" . $output[$i]["property_number"] . "</strong>";
-                break;
-                default:
-                    # code...
-                    
-                break;
+        case '1':
+            $toecho.= "<strong  class='text-danger'>" . $output[$i]["property_number"] . " <small class='text-muted'>COND/DES</small></strong>";
+        break;
+        case '2':
+            $toecho.= "<strong class='text-info'>" . $output[$i]["property_number"] . " <small class='text-muted'>TOPR</small></strong>";
+        break;
+        case '3':
+            $toecho.= "<strong class='text-warning'>" . $output[$i]["property_number"] . " <small class='text-muted'>SUPR</small></strong>";
+        break;
+        case '4':
+            $toecho.= "<strong class='text-primary'>" . $output[$i]["property_number"] . " <small class='text-muted'>DOPR</small></strong>";
+        break;
+        case '5':
+            $toecho.= "<strong class='text-secondary'>" . $output[$i]["property_number"] . " <small class='text-muted'>INCPR</small></strong>";
+        break;
             }
             $toecho.= "</td>
                 <td>" . $output[$i]["asset_item"] . "</td>
