@@ -112,7 +112,10 @@ Innoventory - Inventory
             </div>
           </div>
 
-
+ <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+    ?>
+  
       <div class="card card-shadow">
         <div class="card-body ">
            <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
@@ -124,6 +127,7 @@ Innoventory - Inventory
          <p class="mt-0 mb-0 text-muted">Conduct inventory in this station so you can generate appendix 66/73.</p>
         </div>
       </div>
+      <?php } ?>
     </div>
    
   </div>
@@ -185,7 +189,10 @@ Innoventory - Inventory
 
         </div>
       </div>
-       
+      <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+    ?>
+
       <div class="card card-shadow">
         <div class="card-body">
           <form action="{{ route('goto_inventory_co') }}" method="GET" target="_blank">
@@ -198,7 +205,7 @@ Innoventory - Inventory
         </div>
       </div>
     </div>
-
+<?php } ?> 
       </div>
        <div class="col-sm-12 mt-3">
         <table class="table table-hover table-borderless" id="tbl_scannnedsemi">

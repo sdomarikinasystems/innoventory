@@ -5,13 +5,46 @@ Innoventory - Dashboard
 @section('contents')
 <!--REMINDERS-->
 <div class="row">
-   <div class="col-sm-7">
+
+  <?php
+ if(session("user_type") < "4" && session("user_type") != "2"){
+// if admin or propcos
+  ?>
+ <div class="col-sm-7">
+  <?php
+ }else{
+// if center manager
+?>
+ <div class="col-sm-12">
+<?php
+
+ }
+  ?>
+  
+
+   <?php
+ if(session("user_type") < "4" && session("user_type") != "2"){
+// if admin or propcos
+  ?>
+ <div >
+  <?php
+ }else{
+// if center manager
+?>
+ <div class="container">
+<?php
+
+ }
+  ?>
+  
       <div id="lod_bar" style="display: none;">
          <center>
             <img src="{{ asset('images/loading.gif') }}" style="width: 80px;">
             <h5>Loading Summary...</h5>
          </center>
       </div>
+
+   
       <div class="card-deck mb-3 mobiletext" id="statbar" style="display: none;">
          <div class="card">
             <div class="card-body card-body-sm carddet" data-placement="bottom" data-content="Total uploaded assets (Capital Outlay - Semi-Expendable)" data-trigger="hover" style='text-align:center;'>
@@ -47,11 +80,15 @@ Innoventory - Dashboard
             </div>
          </div>
       </div>
+       </div>
       <div class="announcement_card_body" style="padding:0;" >
          <div id="newann" style="margin: 20px;">
          </div>
       </div>
    </div>
+   <?php
+            if(session("user_type") < "4" && session("user_type") != "2"){
+            ?>
    <div class="col-sm-5">
       <ul class="nav nav-tabs nav-fill mb-3" id="pills-tab" role="tablist">
          <li class="nav-item">
@@ -91,6 +128,10 @@ Innoventory - Dashboard
          </div>
       </div>
    </div>
+
+    <?php
+            }
+            ?>
 </div>
 <script type="text/javascript">
    var isallload_station =! 1;
@@ -149,7 +190,7 @@ Innoventory - Dashboard
    }
    
    function LoadDashboardInfo() {
-   	DisplayDashSumData(localStorage.getItem("dashsumdata"));
+  
        $.ajax({
            type: "GET",
            url: "{{ route('count_all_created_asset_loc') }}",
@@ -175,6 +216,12 @@ Innoventory - Dashboard
    if(localStorage.getItem("dashsumdata") == null){
    	$("#lod_bar").css("display", "block");
    }
-   CheckIfReadyForInventory(), $("#statbar").css("display", "none");
+   CheckIfReadyForInventory();
+   if(localStorage.getItem("dashsumdata") != ""){
+      DisplayDashSumData(localStorage.getItem("dashsumdata"));
+$("#statbar").css("display", "flex");
+   }else{
+    $("#statbar").css("display", "none");
+   }
 </script>
 @endsection

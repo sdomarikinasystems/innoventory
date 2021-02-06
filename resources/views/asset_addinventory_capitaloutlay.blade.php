@@ -65,7 +65,6 @@ Innoventory - Inventory Mode
 		<h5 class="m-0"><?php echo $_GET["station_full_name"]; ?></h5>
 	</div>
 	<div class="col-sm-4">
-
 		<div class="dropdown float-right m-0">
 		  <a class="btn btn-link btn-sm btn-text" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		    <i class="fas fa-ellipsis-v"></i>

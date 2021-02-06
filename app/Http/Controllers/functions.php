@@ -1277,8 +1277,33 @@ class functions extends Controller {
         return $toecho;
     }
     public function look_all_ofmy_service_center(Request $req) {
-        $out = $this->send_get(['tag' => "GET_ALL_SERVICE_CENTERS_MYSTATION", "station_id" => $this->sdmenc($req["station_id"]) ]);
+
         $toecho = "";
+
+        if(session('user_type') == "4"){
+            // LOAD SPECIFICALLY FOR CENTER MANAGER
+            $out = $this->send_get(['tag'=>"GET_SERVICE_CENTER_BY_EID","user_eid"=>$this->sdmenc(session("user_eid")), "station_id" => $this->sdmenc($req["station_id"]) ]);
+            if( count($out) == "0"){
+$toecho.= "<option value='' disabled selected>No Service Center Assigned</option>";
+            }else{
+                $toecho.= "<option value='' disabled selected>Choose here...</option>";
+            }
+            
+        for ($i = 0;$i < count($out);$i++) {
+            $extra_info = "";
+            $name = "";
+            if($out[$i]["items_count"] != "0"){
+                 $extra_info = " → " . number_format($out[$i]["items_count"]) . " stored";
+                $name = "(" . $out[$i]["office"] . " - " . $out[$i]["room_number"] .")";
+            }else{
+                $name = $out[$i]["office"] . " - " . $out[$i]["room_number"];
+            }
+
+            $toecho.= "<option value='" . $out[$i]["id"] . "'>" . $name .  $extra_info . "</option>";
+        }
+        }else{
+            // EVERYONE ELSE
+        $out = $this->send_get(['tag' => "GET_ALL_SERVICE_CENTERS_MYSTATION", "station_id" => $this->sdmenc($req["station_id"]) ]);
         $toecho.= "<option value='' disabled selected>Choose here...</option>";
         for ($i = 0;$i < count($out);$i++) {
             $extra_info = "";
@@ -1292,6 +1317,11 @@ class functions extends Controller {
 
             $toecho.= "<option value='" . $out[$i]["id"] . "'>" . $name .  $extra_info . "</option>";
         }
+
+
+        }
+
+       
         return $toecho;
     }
     public function fire_add_semi_expendible(Request $req) {
@@ -2020,7 +2050,7 @@ class functions extends Controller {
         
          <td><span style='display:none;'>" . date("Y-m-d H:i:s", strtotime($output[$i]["timestamp"])) . "</span>" . "<span class='float-right text-muted'>" . $this->DateExplainder($output[$i]["timestamp"]) . "</span>" . date("F d, Y g:i a", strtotime($output[$i]["timestamp"])) . "</td>
          <td>" . $output[$i]["action_taken"] . "</td>
-         <td>" . $output[$i]["username"] . "</td>
+         <td>" . ucwords(strtolower($output[$i]["username"])) . "</td>
         </tr>";
         }
         return $toecho;
@@ -2355,7 +2385,7 @@ class functions extends Controller {
             if ($out_2 == '') {
                 $toecho.= "<span class='text-muted'>(none)<span>";
             } else {
-                $toecho.= $out_2;
+                $toecho.= ucwords(strtolower($out_2));
             }
             $toecho.= "</td>
                 <td>
@@ -2574,7 +2604,7 @@ class functions extends Controller {
                   <div class='card card-shadow mb-4 announcement_card'>
                     <div class='card-body mt-3 mb-3'>
                     <p class='float-right'><small style='color:#007DFF;'><i class='fas fa-globe-asia'></i> " . strtoupper($remtype) . "</small></p>
-                      <p><strong><i class='fas fa-user-circle'></i> " . $output[$i]["username"] . "</strong>
+                      <p><strong><i class='fas fa-user-circle'></i> " . ucwords(strtolower($output[$i]["username"])) . "</strong>
                         <br><span class='text-muted' title='" . date("m/d/y g:i a", strtotime($output[$i]["dateposted"])) . "'>" . $this->DateExplainder($output[$i]["dateposted"]) . "</span>
                       </p>
                       <h5>" . $output[$i]["title"] . "</h5>
@@ -2618,7 +2648,7 @@ class functions extends Controller {
         for ($xc = 0;$xc < count($out_2);$xc++) {
             // GET STATION ACCOUNT NAMES
             for ($xc = 0;$xc < count($out_2);$xc++) {
-                $toecho.= "<option value='" . $out_2[$xc]["employee_id"] . "'>" . $out_2[$xc]["username"] . "</option>";
+                $toecho.= "<option value='" . $out_2[$xc]["employee_id"] . "'>" . ucwords(strtolower($out_2[$xc]["username"])) . "</option>";
             }
         }
         return $toecho;
@@ -3312,10 +3342,8 @@ class functions extends Controller {
                 }
                 $toecho.= "<tr>
 
-    <td><small class='text-muted float-right'>" . $output[$i]["employee_id"] . "</small>" . $output[$i]["username"] . "</td>
+    <td><small class='text-muted float-right'>" . $output[$i]["employee_id"] . "</small>" . ucwords(strtolower($output[$i]["username"])) . "</td>
     <td>" . $usertype . "</td>
-<td>" . $output[$i]["schoolname"] . "</td>
-
 ";
                 if (session("user_depedemail") == $output[$i]["depedemail"] || session("user_type") >= $output[$i]["type"]) {
                     $toecho.= "
@@ -3323,8 +3351,8 @@ class functions extends Controller {
 <td>" . '
   <center>
 <div class="dropdown ">
-  <a class="btn disabled btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Action
+  <a class="btn disabled btn-link btn-sm" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fas fa-ellipsis-v"></i>
   </a>
 
 </div>
@@ -3338,8 +3366,8 @@ class functions extends Controller {
 <td>" . '
  <center>
 <div class="dropdown">
-  <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Action
+  <a class="btn btn-link btn-sm " href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fas fa-ellipsis-v"></i>
   </a>
 
   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
@@ -3817,7 +3845,7 @@ class functions extends Controller {
             if ($output[$i]["username"] == '') {
                 $toecho.= "Not Available";
             } else {
-                $toecho.= $output[$i]["username"];
+                $toecho.= ucwords(strtolower($output[$i]["username"]));
             }
             $toecho.= "</td>
             <td><small class='float-right text-muted'>" . $this->DateExplainder($output[$i]["dateuploaded"]) . "</small>" . date("F d, Y g:i a", strtotime($output[$i]["dateuploaded"])) . "</td>
@@ -3856,7 +3884,7 @@ class functions extends Controller {
             }
             $toecho.= "</td><td>  <a download='" . $output[$i]["realname"] . "' href='" . asset('/uploads/' . $output[$i]["filename"]) . "'>" . $output[$i]["realname"];
             $toecho.= "</a></td>
-           <td>" . $output[$i]["username"] . "</td>
+           <td>" . ucwords(strtolower($output[$i]["username"])) . "</td>
             <td><small class='float-right text-muted'>" . $this->DateExplainder($output[$i]["dateuploaded"]) . "</small>" . date("F d, Y g:i a", strtotime($output[$i]["dateuploaded"])) . " </td>
              <td>
         

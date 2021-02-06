@@ -29,7 +29,7 @@
    	$acc_badge = '<small class="badge badge-warning" title="Property Custodian"><i class="fas fa-user-lock"></i></small>';
    	break;
    	case '4':
-   	$acc_badge = '<small class="badge badge-secondary" title="Division or Teaching Personnel"><i class="fas fa-user-friends"></i></small>';
+   	$acc_badge = '<small class="badge badge-secondary" title="Center Manager"><i class="fas fa-warehouse"></i></small>';
    	break;
    	}
    }

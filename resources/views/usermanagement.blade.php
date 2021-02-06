@@ -71,10 +71,9 @@ Innoventory - User Management
     <table class="mt-3 table table-borderless table-hover" id="tblu">
   <thead>
     <tr>
-      <th scope="col">Account Name</th>
+      <th style="width: 40%;">Account Name</th>
       <th scope="col">Type</th>
-      <th scope="col">Station</th>
-      <th scope="col">Action</th>
+      <th style="width: 50px;">Action</th>
     </tr>
   </thead>
   <tbody id="tallemp">

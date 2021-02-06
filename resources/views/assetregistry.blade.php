@@ -55,7 +55,7 @@ Innoventory - Asset Registry
     <li class="nav-item">
       <a class="nav-link"  data-toggle="pill" id="btn_gotosemiexpendable" href="#semiexpendable" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-boxes"></i> <span >Semi-Expendable</span></a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" style="display: none;">
       <a class="nav-link"  data-toggle="pill" id="btn_gotosuppytable" href="#suplliestbl" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-parachute-box"></i> <span >Supplies</span></a>
     </li>
   </ul>
@@ -443,14 +443,15 @@ Innoventory - Asset Registry
 
    </div>
   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-      
+       <?php
+      if(session("user_type") < "4" && session("user_type") != "2"){
+    ?>
 <div class="row mb-3">
+ 
   <div class="col-lg-3">
     <div class="card card-shadow" style="height: 158px;">
     <div class="card-body d-flex flex-column">
-        <?php
-      if(session("user_type") < "4" && session("user_type") != "2"){
-    ?>
+        
     <!-- FOR SUPPLY OFFICER AND PROPERTY CUSTODIAN ONLY -->
     <div id="readystatus_co"></div>
     <a class="btn btn-success importbutton m-0 btn-sm mt-auto" href="#" title="Import Capital Outlay" data-toggle="modal" data-target="#uploadcapitaloutlaymodal" onclick="LoadAllSCNamesForCapOut()"><i class="fas fa-file-import"></i> Import</a>
@@ -458,10 +459,11 @@ Innoventory - Asset Registry
      <div class="importwarning" role="alert">
      
     </div>
-    <?php } ?>
+  
     </div>
   </div>
   </div>
+   
   <div class="col-lg-9">
     <div class="card card-shadow" style="height: 158px;">
     <div class="card-body">
@@ -505,6 +507,8 @@ Innoventory - Asset Registry
   </div>
   </div>
 </div>
+
+<?php } ?>
       <div class="row">
 
 </div>
